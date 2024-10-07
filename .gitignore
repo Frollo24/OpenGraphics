@@ -1,3 +1,10 @@
+# IDE folders
+.idea/
+.vs/
+
+# Build directories
+build/
+
 # Prerequisites
 *.d
 
