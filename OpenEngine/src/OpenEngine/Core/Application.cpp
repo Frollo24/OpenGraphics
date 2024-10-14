@@ -4,7 +4,10 @@ namespace OpenGraphics
 {
     void Application::Run()
     {
-        this->Update();
-        this->Render();
+        while (m_Running)
+        {
+            this->Update();
+            this->Render();
+        }
     }
 }

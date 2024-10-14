@@ -16,6 +16,11 @@ namespace OpenGraphics
         virtual void Shutdown() = 0;
 
         void Run();
+
+        void Quit() { m_Running = false; }
+
+    private:
+        bool m_Running = true;
     };
 
     Application* CreateApplication();

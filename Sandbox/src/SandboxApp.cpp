@@ -2,6 +2,8 @@
 #include <OpenEngine.h>
 #include <iostream>
 
+using namespace OpenGraphics;
+
 class SandboxApp : public OpenGraphics::Application
 {
 public:
@@ -9,20 +11,26 @@ public:
     ~SandboxApp() = default;
 
     void Initialize() override {
-        std::cout << "Initialize" << std::endl;
+        WindowSystem::Init();
+        m_TestWindow = WindowSystem::Create();
     }
 
     void Update() override {
-        std::cout << "Update" << std::endl;
+        if (m_TestWindow->ShouldClose())
+            Quit();
     }
 
     void Render() override {
-        std::cout << "Render" << std::endl;
+        m_TestWindow->SwapBuffers();
     }
 
     void Shutdown() override {
-        std::cout << "Shutdown" << std::endl;
+        WindowSystem::Destroy(m_TestWindow);
+        WindowSystem::Shutdown();
     }
+
+private:
+    Window* m_TestWindow = nullptr;
 };
 
 OpenGraphics::Application* OpenGraphics::CreateApplication() {
