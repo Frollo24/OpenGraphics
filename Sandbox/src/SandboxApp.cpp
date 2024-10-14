@@ -10,27 +10,22 @@ public:
     SandboxApp() = default;
     ~SandboxApp() = default;
 
-    void Initialize() override {
-        WindowSystem::Init();
-        m_TestWindow = WindowSystem::Create();
+    void Load() override {
+        std::cout << "Resource loading..." << std::endl;
     }
 
     void Update() override {
-        if (m_TestWindow->ShouldClose())
+        if (GetWindow()->ShouldClose())
             Quit();
     }
 
     void Render() override {
-        m_TestWindow->SwapBuffers();
+        GetWindow()->SwapBuffers();
     }
 
-    void Shutdown() override {
-        WindowSystem::Destroy(m_TestWindow);
-        WindowSystem::Shutdown();
+    void Cleanup() override {
+        std::cout << "Resource cleanup..." << std::endl;
     }
-
-private:
-    Window* m_TestWindow = nullptr;
 };
 
 OpenGraphics::Application* OpenGraphics::CreateApplication() {

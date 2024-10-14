@@ -8,9 +8,9 @@ namespace OpenGraphics
     int Main(int argc, char** argv)
     {
         auto app = CreateApplication();
-        app->Initialize();
+        app->OnCreate();
         app->Run();
-        app->Shutdown();
+        app->OnDestroy();
         delete app;
 
         return 0;
