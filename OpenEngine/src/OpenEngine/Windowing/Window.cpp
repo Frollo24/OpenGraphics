@@ -13,6 +13,9 @@ namespace OpenGraphics
         glfwWindowHint(GLFW_SAMPLES, 4);
 
         m_WindowHandle = glfwCreateWindow(800, 600, "Test Window", nullptr, nullptr);
+
+        m_Context = new Context(m_WindowHandle);
+        m_Context->Init();
     }
 
     Window::~Window()

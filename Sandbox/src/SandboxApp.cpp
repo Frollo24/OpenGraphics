@@ -20,6 +20,8 @@ public:
     }
 
     void Render() override {
+        RenderCommand::BeginFrame();
+        RenderCommand::EndFrame();
         GetWindow()->SwapBuffers();
     }
 

@@ -11,8 +11,10 @@ target_include_directories(${TARGET} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_compile_definitions(${TARGET} PUBLIC "OG_BUILD_SHARED")
 
 add_subdirectory("vendor/GLFW")
+add_subdirectory("vendor/glad")
 target_link_libraries(${TARGET} PUBLIC
     glfw
+    glad
 )
 
 add_custom_command(TARGET OpenEngine POST_BUILD
