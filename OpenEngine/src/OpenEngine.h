@@ -5,6 +5,8 @@
 #include "OpenEngine/Core/Build.h"
 
 // Rendering
+#include "OpenEngine/Render/Buffer.h"
+#include "OpenEngine/Render/VertexArray.h"
 #include "OpenEngine/Render/RenderCommand.h"
 
 // Window system

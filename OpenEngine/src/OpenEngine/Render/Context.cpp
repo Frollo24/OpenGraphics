@@ -55,5 +55,39 @@ namespace OpenGraphics
 
         glEnable(GL_FRAMEBUFFER_SRGB);
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+        // HACK: we should create a proper pipeline and a proper shader before drawing anything
+        const GLchar* vsGLSL = R"(#version 450
+layout(location = 0) in vec2 aPosition;
+layout(location = 1) in vec3 aColor;
+
+layout(location = 0) out vec3 vColor;
+
+void main(){
+	gl_Position = vec4(aPosition, 0.0, 1.0);
+	vColor = aColor;
+}
+)";
+        const GLchar* fsGLSL = R"(#version 450
+layout(location = 0) in vec3 vColor;
+
+layout(location = 0) out vec4 oColor;
+
+void main(){
+	oColor = vec4(vColor, 1.0);
+}
+)";
+
+        GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vs, 1, &vsGLSL, nullptr);
+        glCompileShader(vs);
+        GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(fs, 1, &fsGLSL, nullptr);
+        glCompileShader(fs);
+        GLuint program = glCreateProgram();
+        glAttachShader(program, vs);
+        glAttachShader(program, fs);
+        glLinkProgram(program);
+        glUseProgram(program);
     }
 }
