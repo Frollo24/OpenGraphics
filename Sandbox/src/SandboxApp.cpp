@@ -40,7 +40,8 @@ public:
 
     void Render() override {
         RenderCommand::BeginFrame();
-        RenderCommand::BindVertexBuffer(m_TriangleVertexArray, m_VertexBuffer, m_TriangleVertexAttribBinding);
+        RenderCommand::BindVertexArray(m_TriangleVertexArray);
+        RenderCommand::SetVertexBuffer(m_VertexBuffer, m_TriangleVertexAttribBinding);
         RenderCommand::Draw(3);
         RenderCommand::EndFrame();
         GetWindow()->SwapBuffers();
@@ -48,6 +49,8 @@ public:
 
     void Cleanup() override {
         std::cout << "Resource cleanup..." << std::endl;
+        delete m_TriangleVertexArray;
+        delete m_VertexBuffer;
     }
 
 private:

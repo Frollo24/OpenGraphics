@@ -36,6 +36,11 @@ namespace OpenGraphics
         }
     }
 
+    VertexArray::~VertexArray()
+    {
+        glDeleteVertexArrays(1, &m_RendererID);
+    }
+
     void VertexArray::HandleAttributes(const VertexAttribBinding& binding, const uint32_t& bindingIndex, uint32_t& currentAttribIndex) const
     {
         for (const auto& attribute : binding.GetAttributes())

@@ -7,14 +7,23 @@
 
 namespace OpenGraphics
 {
+    struct RenderState
+    {
+        VertexArray* VertexArray = nullptr;
+    };
+
     class OPEN_API RenderCommand
     {
     public:
         static void BeginFrame();
         static void EndFrame();
 
-        static void BindVertexBuffer(const VertexArray* vertexArray, const Buffer* vertexBuffer, const VertexAttribBinding& binding);
+        static void BindVertexArray(const VertexArray* vertexArray);
+        static void SetVertexBuffer(const Buffer* vertexBuffer, const VertexAttribBinding& binding);
 
         static void Draw(uint32_t vertexCount);
+
+    private:
+        inline static RenderState s_RenderState = {};
     };
 }

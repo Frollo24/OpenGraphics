@@ -17,9 +17,15 @@ namespace OpenGraphics
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     }
 
-    void RenderCommand::BindVertexBuffer(const VertexArray* vertexArray, const Buffer* vertexBuffer, const VertexAttribBinding& binding)
+    void RenderCommand::BindVertexArray(const VertexArray* vertexArray)
     {
-        GLuint vertexArrayID = vertexArray->GetRendererID();
+        s_RenderState.VertexArray = const_cast<VertexArray*>(vertexArray);
+        glBindVertexArray(vertexArray->GetRendererID());
+    }
+
+    void RenderCommand::SetVertexBuffer(const Buffer* vertexBuffer, const VertexAttribBinding& binding)
+    {
+        GLuint vertexArrayID = s_RenderState.VertexArray->GetRendererID();
         GLuint vertexBufferID = vertexBuffer->GetRendererID();
         glBindVertexArray(vertexArrayID);
         glVertexArrayVertexBuffer(vertexArrayID, binding.GetBinding(), vertexBufferID, 0, binding.GetStride());
