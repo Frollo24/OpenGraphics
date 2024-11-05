@@ -1,5 +1,7 @@
 #include "Application.h"
 
+#include "Logger.h"
+
 namespace OpenGraphics
 {
     Application::Application()
@@ -42,6 +44,7 @@ namespace OpenGraphics
 
     void Application::Initialize()
     {
+        Logger::Init();
         WindowSystem::Init();
         m_Window = WindowSystem::Create();
     }
@@ -50,5 +53,6 @@ namespace OpenGraphics
     {
         WindowSystem::Destroy(m_Window);
         WindowSystem::Shutdown();
+        Logger::Shutdown();
     }
 }

@@ -3,7 +3,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <iostream>
+#include "OpenEngine/Core/Logger.h"
 
 namespace OpenGraphics
 {
@@ -11,10 +11,10 @@ namespace OpenGraphics
     {
         switch (severity)
         {
-            case GL_DEBUG_SEVERITY_HIGH:         std::cout << "ERROR: " << message << std::endl; return;
-            case GL_DEBUG_SEVERITY_MEDIUM:       std::cout << "WARNING: " << message << std::endl; return;
-            case GL_DEBUG_SEVERITY_LOW:          std::cout << "INFO: " << message << std::endl; return;
-            case GL_DEBUG_SEVERITY_NOTIFICATION: std::cout << "TRACE: " << message << std::endl; return;
+            case GL_DEBUG_SEVERITY_HIGH:         Logger::Error("OpenGL: {}", message); return;
+            case GL_DEBUG_SEVERITY_MEDIUM:       Logger::Warn("OpenGL: {}", message); return;
+            case GL_DEBUG_SEVERITY_LOW:          Logger::Info("OpenGL: {}", message); return;
+            case GL_DEBUG_SEVERITY_NOTIFICATION: Logger::Trace("OpenGL: {}", message); return;
             default:
                 break;
         }
@@ -36,16 +36,15 @@ namespace OpenGraphics
         int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
         if (!status)
         {
-            std::cerr << "OpenGL Extension Loading Status: ERROR" << std::endl;
+            Logger::Fatal("OpenGL Extension Loading Status: ERROR");
             exit(EXIT_FAILURE);
         }
 
-        // TODO: add logger
-        std::cout << "OpenGL Extension Loading Status: OK" << std::endl;
-        std::cout << "OpenGL Info:\n";
-        std::cout << "  Vendor: " << glGetString(GL_VENDOR) << '\n';
-        std::cout << "  Renderer: " << glGetString(GL_RENDERER) << '\n';
-        std::cout << "  Version: " << glGetString(GL_VERSION) << '\n';
+        Logger::Info("OpenGL Extension Loading Status: OK");
+        Logger::Debug("OpenGL Info:");
+        Logger::Debug("  Vendor: {}", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
+        Logger::Debug("  Renderer: {}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
+        Logger::Debug("  Version: {}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
 
         // TODO: setup config levels
         glEnable(GL_DEBUG_OUTPUT);

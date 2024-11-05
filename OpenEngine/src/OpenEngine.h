@@ -3,6 +3,7 @@
 // Core elements
 #include "OpenEngine/Core/Application.h"
 #include "OpenEngine/Core/Build.h"
+#include "OpenEngine/Core/Logger.h"
 
 // Rendering
 #include "OpenEngine/Render/Buffer.h"

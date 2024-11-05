@@ -11,7 +11,7 @@ public:
     ~SandboxApp() = default;
 
     void Load() override {
-        std::cout << "Resource loading..." << std::endl;
+        Logger::Trace("Resource loading...");
 
         float vertexBuffer[] = {
             0.0f,  0.5f, 1.0f, 0.0f, 0.0f,
@@ -48,7 +48,7 @@ public:
     }
 
     void Cleanup() override {
-        std::cout << "Resource cleanup..." << std::endl;
+        Logger::Trace("Resource cleanup...");
         delete m_TriangleVertexArray;
         delete m_VertexBuffer;
     }
