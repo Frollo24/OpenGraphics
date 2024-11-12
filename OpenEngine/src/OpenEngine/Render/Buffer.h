@@ -11,9 +11,18 @@ namespace OpenGraphics
         Vertex, Index
     };
 
+    // NOTE: It may be preferable to break it down by frequency and type of use
+    enum class BufferUsage
+    {
+        StreamDraw,  StreamRead,  StreamCopy,
+        StaticDraw,  StaticRead,  StaticCopy,
+        DynamicDraw, DynamicRead, DynamicCopy
+    };
+
     struct BufferDescription
     {
         BufferType Type;
+        BufferUsage Usage = BufferUsage::StaticDraw;
         uint32_t Size = 0;
         void* Data = nullptr;
     };
