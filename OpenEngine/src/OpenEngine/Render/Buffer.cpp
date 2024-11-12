@@ -30,7 +30,6 @@ namespace OpenGraphics
     Buffer::Buffer(const BufferDescription& desc)
         : m_BufferDesc(desc)
     {
-        // TODO: customize desired buffer usage
         glCreateBuffers(1, &m_RendererID);
         glNamedBufferData(m_RendererID, desc.Size, desc.Data, BufferUsageToOpenGLBufferUsage(desc.Usage));
     }
