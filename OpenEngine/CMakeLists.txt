@@ -3,7 +3,7 @@ project(OpenEngine LANGUAGES C CXX)
 
 set(TARGET OpenEngine)
 set(CMAKE_<CONFIG>_POSTFIX "")
-file(GLOB_RECURSE SRC_FILES "src/*.h" "src/*.cpp")
+file(GLOB_RECURSE SRC_FILES "src/*.h" "src/*.cpp" "src/*.inl")
 
 add_library(${TARGET} SHARED ${SRC_FILES})
 target_include_directories(${TARGET} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
@@ -12,9 +12,11 @@ target_compile_definitions(${TARGET} PUBLIC "OG_BUILD_SHARED")
 
 add_subdirectory("vendor/GLFW")
 add_subdirectory("vendor/glad")
+add_subdirectory("vendor/glm")
 target_link_libraries(${TARGET} PUBLIC
     glfw
     glad
+    glm
 )
 
 add_custom_command(TARGET OpenEngine POST_BUILD

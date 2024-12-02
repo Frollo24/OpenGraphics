@@ -1,3 +1,6 @@
 [submodule "OpenEngine/vendor/GLFW"]
 	path = OpenEngine/vendor/GLFW
 	url = https://github.com/glfw/glfw
+[submodule "OpenEngine/vendor/glm"]
+	path = OpenEngine/vendor/glm
+	url = https://github.com/g-truc/glm

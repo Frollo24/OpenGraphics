@@ -5,6 +5,14 @@
 #include "OpenEngine/Core/Build.h"
 #include "OpenEngine/Core/Logger.h"
 
+// Maths
+#include "OpenEngine/Math/Mathf.h"
+#include "OpenEngine/Math/Vector2D.h"
+#include "OpenEngine/Math/Vector3D.h"
+#include "OpenEngine/Math/Vector4D.h"
+#include "OpenEngine/Math/Color.h"
+#include "OpenEngine/Math/Color32.h"
+
 // Rendering
 #include "OpenEngine/Render/Buffer.h"
 #include "OpenEngine/Render/VertexArray.h"
