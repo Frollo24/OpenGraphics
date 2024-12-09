@@ -1,8 +1,8 @@
 #define OG_ENTRY_POINT
 #include <OpenEngine.h>
-#include <iostream>
 
 using namespace OpenGraphics;
+using Random = UniformRandom;
 
 class SandboxApp : public OpenGraphics::Application
 {
@@ -18,6 +18,13 @@ public:
            -0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
             0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
         };
+
+        Random rng = Random();
+        Vector3D vector = Vector3D(rng.NextFloat(), rng.NextFloat(), rng.NextFloat());
+        Logger::Trace(vector);
+
+        Logger::Trace(rng.Range(1, 6));
+        Logger::Trace(rng.Range(1, 50));
 
         BufferDescription vertexDescription = {};
         vertexDescription.Type = BufferType::Vertex;

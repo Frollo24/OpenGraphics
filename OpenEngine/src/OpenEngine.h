@@ -12,6 +12,7 @@
 #include "OpenEngine/Math/Vector4D.h"
 #include "OpenEngine/Math/Color.h"
 #include "OpenEngine/Math/Color32.h"
+#include "OpenEngine/Math/Random.h"
 
 // Rendering
 #include "OpenEngine/Render/Buffer.h"

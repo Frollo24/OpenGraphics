@@ -36,3 +36,7 @@ namespace OpenGraphics
         return a * (1 - t) + b * t;
     }
 }
+
+inline std::ostream& operator<<(std::ostream& os, const OpenGraphics::Vector2D& vector) {
+    return os << "{" << vector.x << ", " << vector.y << "}";
+}
