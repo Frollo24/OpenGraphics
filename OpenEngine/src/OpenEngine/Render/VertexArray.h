@@ -1,11 +1,6 @@
 #pragma once
 
-#include "OpenEngine/Core/Build.h"
-
-#include <stdint.h>
-#include <vector>
-#include <string>
-#include <iostream>
+#include "OpenEngine/Core/Base.h"
 
 namespace OpenGraphics
 {

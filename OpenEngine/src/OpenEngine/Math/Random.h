@@ -5,7 +5,7 @@
 #include <random>
 #include <cstdlib>
 #include <ctime>
-#include <stdint.h>
+#include <cstdint>
 
 namespace OpenGraphics
 {

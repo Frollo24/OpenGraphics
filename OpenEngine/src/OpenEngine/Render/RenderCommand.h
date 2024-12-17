@@ -1,6 +1,6 @@
 #pragma once
 
-#include "OpenEngine/Core/Build.h"
+#include "OpenEngine/Core/Base.h"
 
 #include "OpenEngine/Render/Buffer.h"
 #include "OpenEngine/Render/VertexArray.h"

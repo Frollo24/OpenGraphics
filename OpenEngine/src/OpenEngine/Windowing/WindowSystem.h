@@ -1,6 +1,6 @@
 #pragma once
 
-#include "OpenEngine/Core/Build.h"
+#include "OpenEngine/Core/Base.h"
 #include "OpenEngine/Windowing/Window.h"
 
 namespace OpenGraphics
