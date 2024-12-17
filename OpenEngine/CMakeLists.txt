@@ -8,6 +8,21 @@ file(GLOB_RECURSE SRC_FILES "src/*.h" "src/*.cpp" "src/*.inl")
 add_library(${TARGET} SHARED ${SRC_FILES})
 target_include_directories(${TARGET} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
+target_precompile_headers(${TARGET} PUBLIC "src/ogpch.h")
+
+#[[
+if (MSVC)
+    get_filename_component(PRECOMPILED_BASENAME "src/ogpch.h" NAME_WE)
+    set(PRECOMPILED_BINARY "${CMAKE_CURRENT_BINARY_DIR}/${PRECOMPILED_BASENAME}.pch")
+    set_source_files_properties("src/ogpch.cpp" PROPERTIES
+            COMPILE_FLAGS "/Ycogpch.h"
+            OBJECT_OUTPUTS "${PRECOMPILED_BINARY}")
+    set_source_files_properties(SRC_FILES PROPERTIES
+            COMPILE_FLAGS "/Yuogpch.h"
+            OBJECT_DEPENDS "${PRECOMPILED_BINARY}")
+endif (MSVC)
+]]
+
 target_compile_definitions(${TARGET} PUBLIC "OG_BUILD_SHARED")
 
 add_subdirectory("vendor/GLFW")

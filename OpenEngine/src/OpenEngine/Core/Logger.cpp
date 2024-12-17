@@ -1,3 +1,4 @@
+#include "ogpch.h"
 #include "Logger.h"
 
 namespace OpenGraphics

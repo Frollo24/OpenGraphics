@@ -1,7 +1,4 @@
-//
-// Created by Adrian on 29/10/2024.
-//
-
+#include "ogpch.h"
 #include "Buffer.h"
 
 #include <glad/glad.h>
