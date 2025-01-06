@@ -32,8 +32,21 @@ namespace OpenGraphics
         glVertexArrayVertexBuffer(vertexArrayID, binding.GetBinding(), vertexBufferID, 0, binding.GetStride());
     }
 
+    void RenderCommand::SetIndexBuffer(const Buffer *indexBuffer)
+    {
+        GLuint vertexArrayID = s_RenderState.VertexArray->GetRendererID();
+        GLuint indexBufferID = indexBuffer->GetRendererID();
+        glBindVertexArray(vertexArrayID);
+        glVertexArrayElementBuffer(vertexArrayID, indexBufferID);
+    }
+
     void RenderCommand::Draw(uint32_t vertexCount)
     {
         glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+    }
+
+    void RenderCommand::DrawIndexed(uint32_t indexCount)
+    {
+        glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
     }
 }

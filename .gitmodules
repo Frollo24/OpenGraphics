@@ -4,3 +4,6 @@
 [submodule "OpenEngine/vendor/glm"]
 	path = OpenEngine/vendor/glm
 	url = https://github.com/g-truc/glm
+[submodule "OpenEngine/vendor/assimp"]
+	path = OpenEngine/vendor/assimp
+	url = https://github.com/assimp/assimp

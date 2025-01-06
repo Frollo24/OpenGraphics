@@ -18,6 +18,10 @@
 #include "OpenEngine/Render/Buffer.h"
 #include "OpenEngine/Render/VertexArray.h"
 #include "OpenEngine/Render/RenderCommand.h"
+#include "OpenEngine/Render/RenderEntity.h"
+
+// Elements
+#include "OpenEngine/Elements/Model.h"
 
 // Window system
 #include "OpenEngine/Windowing/WindowSystem.h"

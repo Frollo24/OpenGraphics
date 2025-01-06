@@ -28,10 +28,12 @@ target_compile_definitions(${TARGET} PUBLIC "OG_BUILD_SHARED")
 add_subdirectory("vendor/GLFW")
 add_subdirectory("vendor/glad")
 add_subdirectory("vendor/glm")
+add_subdirectory("vendor/assimp")
 target_link_libraries(${TARGET} PUBLIC
     glfw
     glad
     glm
+    assimp
 )
 
 add_custom_command(TARGET OpenEngine POST_BUILD

@@ -15,8 +15,8 @@ public:
 
         float vertexBuffer[] = {
             0.0f,  0.5f, 1.0f, 0.0f, 0.0f,
-           -0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-            0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
+           -0.4f, -0.3f, 0.0f, 1.0f, 0.0f,
+            0.4f, -0.3f, 0.0f, 0.0f, 1.0f,
         };
 
         Random rng = Random();
@@ -38,6 +38,8 @@ public:
         };
 
         m_TriangleVertexArray = new VertexArray({m_TriangleVertexAttribBinding});
+
+        m_StarModel = new Model("assets/models/Star.obj");
     }
 
     void Update() override {
@@ -47,6 +49,8 @@ public:
 
     void Render() override {
         RenderCommand::BeginFrame();
+        for (const Mesh& mesh : m_StarModel->GetMeshes())
+            mesh.Render();
         RenderCommand::BindVertexArray(m_TriangleVertexArray);
         RenderCommand::SetVertexBuffer(m_VertexBuffer, m_TriangleVertexAttribBinding);
         RenderCommand::Draw(3);
@@ -58,12 +62,16 @@ public:
         Logger::Trace("Resource cleanup...");
         delete m_TriangleVertexArray;
         delete m_VertexBuffer;
+
+        delete m_StarModel;
     }
 
 private:
     Buffer* m_VertexBuffer = nullptr;
     VertexArray* m_TriangleVertexArray = nullptr;
     VertexAttribBinding m_TriangleVertexAttribBinding = {};
+
+    Model* m_StarModel = nullptr;
 };
 
 OpenGraphics::Application* OpenGraphics::CreateApplication() {
