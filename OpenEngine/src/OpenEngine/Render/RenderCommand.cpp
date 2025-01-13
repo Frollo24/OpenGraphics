@@ -40,6 +40,11 @@ namespace OpenGraphics
         glVertexArrayElementBuffer(vertexArrayID, indexBufferID);
     }
 
+    void RenderCommand::UseShader(const Shader *shader)
+    {
+        glUseProgram(shader->GetRendererID());
+    }
+
     void RenderCommand::Draw(uint32_t vertexCount)
     {
         glDrawArrays(GL_TRIANGLES, 0, vertexCount);

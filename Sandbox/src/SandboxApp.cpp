@@ -1,4 +1,5 @@
 #define OG_ENTRY_POINT
+#define GLM_FORCE_LEFT_HANDED
 #include <OpenEngine.h>
 
 using namespace OpenGraphics;
@@ -14,9 +15,9 @@ public:
         Logger::Trace("Resource loading...");
 
         float vertexBuffer[] = {
-            0.0f,  0.5f, 1.0f, 0.0f, 0.0f,
-           -0.4f, -0.3f, 0.0f, 1.0f, 0.0f,
-            0.4f, -0.3f, 0.0f, 0.0f, 1.0f,
+            0.0f,  0.35f, 1.0f, 0.0f, 0.0f,
+           -0.3f, -0.25f, 0.0f, 1.0f, 0.0f,
+            0.3f, -0.25f, 0.0f, 0.0f, 1.0f,
         };
 
         Random rng = Random();
@@ -39,7 +40,23 @@ public:
 
         m_TriangleVertexArray = new VertexArray({m_TriangleVertexAttribBinding});
 
-        m_StarModel = new Model("assets/models/Star.obj");
+        ShaderSpecs triangleVertexShader{};
+        triangleVertexShader.Filepath = "assets/shaders/TriangleShader.vert";
+        triangleVertexShader.Type = ShaderType::Vertex;
+        ShaderSpecs triangleFragmentShader{};
+        triangleFragmentShader.Filepath = "assets/shaders/TriangleShader.frag";
+        triangleFragmentShader.Type = ShaderType::Fragment;
+        m_TriangleShader = new Shader({triangleVertexShader, triangleFragmentShader});
+
+        m_SphereModel = new Model("assets/models/Sphere.obj");
+
+        ShaderSpecs modelVertexShader{};
+        modelVertexShader.Filepath = "assets/shaders/ModelShader.vert";
+        modelVertexShader.Type = ShaderType::Vertex;
+        ShaderSpecs modelFragmentShader{};
+        modelFragmentShader.Filepath = "assets/shaders/ModelShader.frag";
+        modelFragmentShader.Type = ShaderType::Fragment;
+        m_ModelShader = new Shader({modelVertexShader, modelFragmentShader});
     }
 
     void Update() override {
@@ -49,11 +66,28 @@ public:
 
     void Render() override {
         RenderCommand::BeginFrame();
-        for (const Mesh& mesh : m_StarModel->GetMeshes())
+
+        RenderCommand::UseShader(m_ModelShader);
+        Matrix4x4 model = Matrix4x4::identity;
+        model.Translate(Vector3D(0, 0, -3));
+        model.Scale(Vector3D(.75f, .75f, .75f));
+        Matrix4x4 view = Matrix4x4::LookAt(Vector3D(0.0f, 0.0f, -5.0f), Vector3D::zero, Vector3D::up);
+        Matrix4x4 proj = Matrix4x4::Perspective(60.0f, 4.0f / 3.0f, 0.3f, 50.0f);
+        Matrix4x4 modelViewProj = proj * view * model;
+
+        m_ModelShader->SetMat4("u_ModelViewProj", modelViewProj);
+        m_ModelShader->SetMat4("u_Model", model);
+        m_ModelShader->SetMat4("u_Normal", model.Inverse().Transpose());
+        m_ModelShader->SetFloat4("u_LightDir", Vector4D(1.0f, 1.0f, -1.0f, 0.0f));
+
+        for (const Mesh& mesh : m_SphereModel->GetMeshes())
             mesh.Render();
+
+        RenderCommand::UseShader(m_TriangleShader);
         RenderCommand::BindVertexArray(m_TriangleVertexArray);
         RenderCommand::SetVertexBuffer(m_VertexBuffer, m_TriangleVertexAttribBinding);
         RenderCommand::Draw(3);
+
         RenderCommand::EndFrame();
         GetWindow()->SwapBuffers();
     }
@@ -63,7 +97,10 @@ public:
         delete m_TriangleVertexArray;
         delete m_VertexBuffer;
 
-        delete m_StarModel;
+        delete m_SphereModel;
+
+        delete m_TriangleShader;
+        delete m_ModelShader;
     }
 
 private:
@@ -71,7 +108,10 @@ private:
     VertexArray* m_TriangleVertexArray = nullptr;
     VertexAttribBinding m_TriangleVertexAttribBinding = {};
 
-    Model* m_StarModel = nullptr;
+    Model* m_SphereModel = nullptr;
+
+    Shader* m_TriangleShader = nullptr;
+    Shader* m_ModelShader = nullptr;
 };
 
 OpenGraphics::Application* OpenGraphics::CreateApplication() {

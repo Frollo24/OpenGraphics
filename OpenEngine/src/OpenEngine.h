@@ -17,6 +17,7 @@
 // Rendering
 #include "OpenEngine/Render/Buffer.h"
 #include "OpenEngine/Render/VertexArray.h"
+#include "OpenEngine/Render/Shader.h"
 #include "OpenEngine/Render/RenderCommand.h"
 #include "OpenEngine/Render/RenderEntity.h"
 
