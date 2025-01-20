@@ -75,8 +75,7 @@ namespace OpenGraphics
 				glDeleteShader(shaderID);
 
 				Logger::Error("{0}", infoLog.data());
-				// TODO: Add proper assertions
-				assert(false && "Shader compilation failure!");
+				OG_ASSERT(false, "Shader compilation failure!");
 				break;
 			}
 
@@ -106,8 +105,7 @@ namespace OpenGraphics
 			program = 0;
 
 			Logger::Error("{0}", infoLog.data());
-			// TODO: Add proper assertions
-			assert(false && "Shader linking failure!");
+			OG_ASSERT(false, "Shader compilation failure!");
 		}
 
 		for (const GLuint& id : glShaderIDs)
@@ -125,7 +123,7 @@ namespace OpenGraphics
     	sources.reserve(shaderFiles.size());
     	for (const auto& shader : shaderFiles)
     	{
-    		std::string source = ReadFile(shader.Filepath);
+    		const std::string source = ReadFile(shader.Filepath);
     		sources[shader.Type] = source;
     	}
     	m_RendererID = Compile(sources);

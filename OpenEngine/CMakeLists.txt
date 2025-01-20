@@ -25,6 +25,12 @@ endif (MSVC)
 
 target_compile_definitions(${TARGET} PUBLIC "OG_BUILD_SHARED")
 
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    target_compile_definitions(${TARGET} PUBLIC "OG_DEBUG")
+else()
+    target_compile_definitions(${TARGET} PUBLIC "OG_RELEASE")
+endif()
+
 add_subdirectory("vendor/GLFW")
 add_subdirectory("vendor/glad")
 add_subdirectory("vendor/glm")
