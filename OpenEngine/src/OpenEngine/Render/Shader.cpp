@@ -27,7 +27,7 @@ namespace OpenGraphics
 		if (in)
 		{
 			in.seekg(0, std::ios::end);
-			size_t size = in.tellg();
+			std::streamsize size = in.tellg();
 			if (size != -1)
 			{
 				result.resize(size);
