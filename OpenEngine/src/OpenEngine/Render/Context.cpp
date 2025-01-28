@@ -53,8 +53,5 @@ namespace OpenGraphics
 
         glEnable(GL_FRAMEBUFFER_SRGB);
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-
-        // HACK: depth state should be enabled per pipeline
-        glEnable(GL_DEPTH_TEST);
     }
 }

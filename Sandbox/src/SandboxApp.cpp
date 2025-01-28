@@ -1,5 +1,4 @@
 #define OG_ENTRY_POINT
-#define GLM_FORCE_LEFT_HANDED
 #include <OpenEngine.h>
 
 using namespace OpenGraphics;
@@ -48,6 +47,9 @@ public:
         triangleFragmentShader.Type = ShaderType::Fragment;
         m_TriangleShader = new Shader({triangleVertexShader, triangleFragmentShader});
 
+        PipelineState trianglePipelineState{};
+        m_TrianglePipeline = new Pipeline(trianglePipelineState, m_TriangleShader);
+
         m_SphereModel = new Model("assets/models/Sphere.obj");
 
         ShaderSpecs modelVertexShader{};
@@ -57,6 +59,11 @@ public:
         modelFragmentShader.Filepath = "assets/shaders/ModelShader.frag";
         modelFragmentShader.Type = ShaderType::Fragment;
         m_ModelShader = new Shader({modelVertexShader, modelFragmentShader});
+
+        PipelineState modelPipelineState{};
+        // TODO: check handedness of the models
+        modelPipelineState.PolygonState.FrontFace = FrontFaceMode::Clockwise;
+        m_ModelPipeline = new Pipeline(modelPipelineState, m_ModelShader);
     }
 
     void Update() override {
@@ -67,7 +74,7 @@ public:
     void Render() override {
         RenderCommand::BeginFrame();
 
-        RenderCommand::UseShader(m_ModelShader);
+        m_ModelPipeline->Bind();
         Matrix4x4 model = Matrix4x4::identity;
         model.Translate(Vector3D(0, 0, -3));
         model.Scale(Vector3D(.75f, .75f, .75f));
@@ -78,12 +85,12 @@ public:
         m_ModelShader->SetMat4("u_ModelViewProj", modelViewProj);
         m_ModelShader->SetMat4("u_Model", model);
         m_ModelShader->SetMat4("u_Normal", model.Inverse().Transpose());
-        m_ModelShader->SetFloat4("u_LightDir", Vector4D(1.0f, 1.0f, -1.0f, 0.0f));
+        m_ModelShader->SetFloat4("u_LightDir", Vector4D(1.0f, 1.0f, 1.0f, 0.0f));
 
         for (const Mesh& mesh : m_SphereModel->GetMeshes())
             mesh.Render();
 
-        RenderCommand::UseShader(m_TriangleShader);
+        m_TrianglePipeline->Bind();
         RenderCommand::BindVertexArray(m_TriangleVertexArray);
         RenderCommand::SetVertexBuffer(m_VertexBuffer, m_TriangleVertexAttribBinding);
         RenderCommand::Draw(3);
@@ -99,6 +106,9 @@ public:
 
         delete m_SphereModel;
 
+        delete m_ModelPipeline;
+        delete m_TrianglePipeline;
+
         delete m_TriangleShader;
         delete m_ModelShader;
     }
@@ -112,6 +122,9 @@ private:
 
     Shader* m_TriangleShader = nullptr;
     Shader* m_ModelShader = nullptr;
+
+    Pipeline* m_TrianglePipeline = nullptr;
+    Pipeline* m_ModelPipeline = nullptr;
 };
 
 OpenGraphics::Application* OpenGraphics::CreateApplication() {
