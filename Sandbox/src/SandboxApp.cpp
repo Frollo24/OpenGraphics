@@ -64,6 +64,25 @@ public:
         // TODO: check handedness of the models
         modelPipelineState.PolygonState.FrontFace = FrontFaceMode::Clockwise;
         m_ModelPipeline = new Pipeline(modelPipelineState, m_ModelShader);
+
+        TextureDescription textureDesc = {};
+        textureDesc.ImageExtent = { 16, 16, 1 };
+        textureDesc.ImageFormat = ImageFormat::RGBA8;
+        textureDesc.GenerateMipmaps = false;
+        textureDesc.FilterMode = TextureFilterMode::Nearest;
+        m_CheckerboardTexture = new Texture(textureDesc);
+
+        const uint32_t gray = 0x88888888;
+        const uint32_t white = 0xffffffff;
+        const uint32_t black = 0x00000000;
+        const uint32_t magenta = 0xffff00ff;
+        std::array<uint32_t, 16 * 16 > checkerboardPixels = { 0 };
+        for (int x = 0; x < 16; x++) {
+            for (int y = 0; y < 16; y++) {
+                checkerboardPixels[x * 16 + y] = ((x % 2) ^ (y % 2)) ? magenta : black;
+            }
+        }
+        m_CheckerboardTexture->SetData(checkerboardPixels.data());
     }
 
     void Update() override {
@@ -87,13 +106,15 @@ public:
         m_ModelShader->SetMat4("u_Normal", model.Inverse().Transpose());
         m_ModelShader->SetFloat4("u_LightDir", Vector4D(1.0f, 1.0f, 1.0f, 0.0f));
 
+        m_CheckerboardTexture->BindTextureUnit(0);
+
         for (const Mesh& mesh : m_SphereModel->GetMeshes())
             mesh.Render();
 
         m_TrianglePipeline->Bind();
         RenderCommand::BindVertexArray(m_TriangleVertexArray);
         RenderCommand::SetVertexBuffer(m_VertexBuffer, m_TriangleVertexAttribBinding);
-        RenderCommand::Draw(3);
+        // RenderCommand::Draw(3);
 
         RenderCommand::EndFrame();
         GetWindow()->SwapBuffers();
@@ -105,6 +126,8 @@ public:
         delete m_VertexBuffer;
 
         delete m_SphereModel;
+
+        delete m_CheckerboardTexture;
 
         delete m_ModelPipeline;
         delete m_TrianglePipeline;
@@ -125,6 +148,8 @@ private:
 
     Pipeline* m_TrianglePipeline = nullptr;
     Pipeline* m_ModelPipeline = nullptr;
+
+    Texture* m_CheckerboardTexture = nullptr;
 };
 
 OpenGraphics::Application* OpenGraphics::CreateApplication() {

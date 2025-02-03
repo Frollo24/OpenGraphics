@@ -5,6 +5,8 @@ layout(location = 2) in mat3 v_TBN;
 
 layout(location = 0) out vec4 o_Color;
 
+layout(binding = 0) uniform sampler2D u_MainTexture;
+
 uniform vec4 u_LightDir;
 uniform vec4 u_MainColor;
 
@@ -13,6 +15,7 @@ void main() {
 
     vec3 normalColor = normalize(normalWS) * 0.5 + 0.5;
     normalColor *= max(dot(normalize(u_LightDir.xyz), normalWS), 0.1);
+    normalColor *= texture(u_MainTexture, v_TexCoord * 2.0).rgb;
 
     o_Color = vec4(normalColor, 1.0);
 }
