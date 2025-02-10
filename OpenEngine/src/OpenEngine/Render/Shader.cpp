@@ -20,6 +20,20 @@ namespace OpenGraphics
 		}
 	}
 
+	static std::string_view ShaderTypeToString(const ShaderType type)
+	{
+    	switch (type)
+    	{
+    		using enum OpenGraphics::ShaderType;
+    		case None:     return "None Shader";
+    		case Vertex:   return "Vertex Shader";
+    		case Fragment: return "Fragment Shader";
+
+    		default:
+    			return "";
+    	}
+    }
+
 	static std::string ReadFile(const std::string& filepath)
 	{
 		std::string result;
@@ -69,14 +83,16 @@ namespace OpenGraphics
 				GLint maxLength = 0;
 				glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &maxLength);
 
-				std::vector<GLchar> infoLog(maxLength);
-				glGetShaderInfoLog(shaderID, maxLength, &maxLength, &infoLog[0]);
+				if (maxLength != 0)
+				{
+					std::vector<GLchar> infoLog(maxLength);
+					glGetShaderInfoLog(shaderID, maxLength, &maxLength, &infoLog[0]);
+					Logger::Error("{0} compilation failure:\n{1}", ShaderTypeToString(type), infoLog.data());
+					OG_ASSERT(false, "Shader compilation failure!");
+				}
 
 				glDeleteShader(shaderID);
-
-				Logger::Error("{0}", infoLog.data());
-				OG_ASSERT(false, "Shader compilation failure!");
-				break;
+				continue;
 			}
 
 			glAttachShader(program, shaderID);
@@ -92,8 +108,13 @@ namespace OpenGraphics
 			GLint maxLength = 0;
 			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
 
-			std::vector<GLchar> infoLog(maxLength);
-			glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
+			if (maxLength != 0)
+			{
+				std::vector<GLchar> infoLog(maxLength);
+				glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
+				Logger::Error("Shader linkage failure:\n{0}", infoLog.data());
+				OG_ASSERT(false, "Shader linkage failure!");
+			}
 
 			for (const GLuint& id : glShaderIDs)
 			{
@@ -103,9 +124,6 @@ namespace OpenGraphics
 
 			glDeleteProgram(program);
 			program = 0;
-
-			Logger::Error("{0}", infoLog.data());
-			OG_ASSERT(false, "Shader compilation failure!");
 		}
 
 		for (const GLuint& id : glShaderIDs)
