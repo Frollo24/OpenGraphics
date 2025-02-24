@@ -61,6 +61,36 @@ namespace OpenGraphics
 		return result;
 	}
 
+	static std::string PreProcess(const std::string& source)
+	{
+	    const char* SHADER_INCLUDE_PATH = "../OpenEngine/shaders/";
+
+    	std::stringstream stream(source);
+    	std::stringstream finalSource;
+    	std::string line;
+
+    	while (getline(stream, line))
+    	{
+    		if (line.find("#include") != std::string::npos)
+    		{
+    			std::string file = line.substr(line.find_first_of('"') + 1);
+    			file = file.substr(0, file.length() - 1);
+				const std::string includedFile = ReadFile(SHADER_INCLUDE_PATH + file);
+
+    			const std::string versionLine = includedFile.substr(0, includedFile.find_first_of('\n') + 1);
+    			const std::string includedSource = includedFile.substr(versionLine.length());
+
+    			finalSource << includedSource.substr(0, includedSource.find_first_of('\0')) << '\n';
+    		}
+    		else
+    		{
+    			finalSource << line << '\n';
+    		}
+    	}
+
+    	return finalSource.str();
+    }
+
 	static GLuint Compile(const ShaderStringMap& shaderSources)
 	{
 		GLuint program = glCreateProgram();
@@ -141,7 +171,8 @@ namespace OpenGraphics
     	sources.reserve(shaderFiles.size());
     	for (const auto& shader : shaderFiles)
     	{
-    		const std::string source = ReadFile(shader.Filepath);
+    		const std::string text = ReadFile(shader.Filepath);
+    		const std::string source = PreProcess(text);
     		sources[shader.Type] = source;
     	}
     	m_RendererID = Compile(sources);
