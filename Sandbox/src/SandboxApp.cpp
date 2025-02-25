@@ -54,9 +54,11 @@ public:
 
         ShaderSpecs modelVertexShader{};
         modelVertexShader.Filepath = "assets/shaders/ModelShader.vert";
+        modelVertexShader.Filepath = "assets/shaders/BlinnPhong.vert";
         modelVertexShader.Type = ShaderType::Vertex;
         ShaderSpecs modelFragmentShader{};
         modelFragmentShader.Filepath = "assets/shaders/ModelShader.frag";
+        modelFragmentShader.Filepath = "assets/shaders/BlinnPhong.frag";
         modelFragmentShader.Type = ShaderType::Fragment;
         m_ModelShader = new Shader({modelVertexShader, modelFragmentShader});
 
@@ -65,12 +67,12 @@ public:
         modelPipelineState.PolygonState.FrontFace = FrontFaceMode::Clockwise;
         m_ModelPipeline = new Pipeline(modelPipelineState, m_ModelShader);
 
-        TextureDescription textureDesc = {};
-        textureDesc.ImageExtent = { 16, 16, 1 };
-        textureDesc.ImageFormat = ImageFormat::RGBA8;
-        textureDesc.GenerateMipmaps = false;
-        textureDesc.FilterMode = TextureFilterMode::Nearest;
-        m_CheckerboardTexture = new Texture(textureDesc);
+        TextureDescription checkerTextureDesc = {};
+        checkerTextureDesc.ImageExtent = { 16, 16, 1 };
+        checkerTextureDesc.ImageFormat = ImageFormat::RGBA8;
+        checkerTextureDesc.GenerateMipmaps = false;
+        checkerTextureDesc.FilterMode = TextureFilterMode::Nearest;
+        m_CheckerboardTexture = new Texture(checkerTextureDesc);
 
         const uint32_t gray = 0x88888888;
         const uint32_t white = 0xffffffff;
@@ -83,6 +85,14 @@ public:
             }
         }
         m_CheckerboardTexture->SetData(checkerboardPixels.data());
+
+        TextureDescription whiteTextureDesc = {};
+        whiteTextureDesc.ImageExtent = { 1, 1, 1 };
+        whiteTextureDesc.ImageFormat = ImageFormat::RGBA8;
+        whiteTextureDesc.GenerateMipmaps = false;
+        whiteTextureDesc.FilterMode = TextureFilterMode::Nearest;
+        m_WhiteTexture = new Texture(whiteTextureDesc);
+        m_WhiteTexture->SetData(&white);
     }
 
     void Update() override {
@@ -95,9 +105,9 @@ public:
 
         m_ModelPipeline->Bind();
         Matrix4x4 model = Matrix4x4::identity;
-        model.Translate(Vector3D(0, 0, -3));
+        model.Translate(Vector3D(0, 0, 0));
         model.Scale(Vector3D(.75f, .75f, .75f));
-        Matrix4x4 view = Matrix4x4::LookAt(Vector3D(0.0f, 0.0f, -5.0f), Vector3D::zero, Vector3D::up);
+        Matrix4x4 view = Matrix4x4::LookAt(Vector3D(0.0f, 0.0f, -2.0f), Vector3D::zero, Vector3D::up);
         Matrix4x4 proj = Matrix4x4::Perspective(60.0f, 4.0f / 3.0f, 0.3f, 50.0f);
         Matrix4x4 modelViewProj = proj * view * model;
 
@@ -105,8 +115,17 @@ public:
         m_ModelShader->SetMat4("u_Model", model);
         m_ModelShader->SetMat4("u_Normal", model.Inverse().Transpose());
         m_ModelShader->SetFloat4("u_LightDir", Vector4D(1.0f, 1.0f, 1.0f, 0.0f));
+        m_ModelShader->SetFloat3("u_CameraPosition", Vector3D(0.0f, 0.0f, -2.0f));
 
-        m_CheckerboardTexture->BindTextureUnit(0);
+        m_ModelShader->SetColor("u_MainColor", Color(0.9f, 0.1f, 0.1f, 1.0f));
+        m_ModelShader->SetColor("u_Material.diffuseColor", Color(0.9f, 0.1f, 0.1f, 1.0f));
+        m_ModelShader->SetColor("u_Material.specularColor", Color(1.0f, 1.0f, 1.0f, 1.0f));
+        m_ModelShader->SetColor("u_Material.emissiveColor", Color(0.0f, 0.0f, 0.0f, 1.0f));
+
+        m_WhiteTexture->BindTextureUnit(0);
+        m_WhiteTexture->BindTextureUnit(1);
+        m_WhiteTexture->BindTextureUnit(2);
+        // m_CheckerboardTexture->BindTextureUnit(0);
 
         for (const Mesh& mesh : m_SphereModel->GetMeshes())
             mesh.Render();
@@ -150,6 +169,7 @@ private:
     Pipeline* m_ModelPipeline = nullptr;
 
     Texture* m_CheckerboardTexture = nullptr;
+    Texture* m_WhiteTexture = nullptr;
 };
 
 OpenGraphics::Application* OpenGraphics::CreateApplication() {
