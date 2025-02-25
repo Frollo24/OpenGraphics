@@ -43,6 +43,11 @@ target_link_libraries(${TARGET} PUBLIC
 )
 
 add_custom_command(TARGET OpenEngine POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+        "${CMAKE_SOURCE_DIR}/OpenEngine/shaders/"
+        "${CMAKE_BINARY_DIR}/OpenEngine/shaders/")
+
+add_custom_command(TARGET OpenEngine POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${CMAKE_BINARY_DIR}/OpenEngine/OpenEngine.dll"
         "${CMAKE_BINARY_DIR}/Sandbox/OpenEngine.dll")

@@ -31,6 +31,7 @@ namespace OpenGraphics
         Shader(const std::vector<ShaderSpecs>& shaderFiles);
         ~Shader();
 
+        void SetFloat3(const std::string& name, const Vector3D& value) const;
         void SetFloat4(const std::string& name, const Vector4D& value) const;
         void SetColor(const std::string& name, const Color& color) const;
         void SetMat4(const std::string& name, const Matrix4x4& matrix) const;
