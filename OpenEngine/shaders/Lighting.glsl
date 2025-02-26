@@ -56,7 +56,7 @@ vec3 LightBlinnPhongWorld(Light light, BlinnPhongSurfaceData surface, vec3 world
 
     // Lighting vectors
     vec3 L = normalize(light.direction);
-    vec3 V = normalize(-worldViewDirection);  // TODO: Check mathematical correctness
+    vec3 V = normalize(worldViewDirection);
     vec3 H = normalize(L + V);
     vec3 N = worldNormal;
 
@@ -108,7 +108,7 @@ vec3 PointLightBlinnPhongWorld(PointLight pointLight, BlinnPhongSurfaceData surf
     return LightBlinnPhongWorld(light, surface, worldViewDirection, worldNormal);
 }
 
-vec3 SpotLightBlinnPhongWorld(SpotLight spotLight, BlinnPhongSurfaceData surface, vec3 worldPos, vec3 worldNormal){
+vec3 SpotLightBlinnPhongWorld(SpotLight spotLight, BlinnPhongSurfaceData surface, vec3 worldPos, vec3 worldNormal) {
     vec3 color = vec3(0.0);
 
     vec3 lightDirection = normalize(spotLight.position - worldPos);

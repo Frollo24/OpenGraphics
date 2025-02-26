@@ -63,8 +63,6 @@ public:
         m_ModelShader = new Shader({modelVertexShader, modelFragmentShader});
 
         PipelineState modelPipelineState{};
-        // TODO: check handedness of the models
-        modelPipelineState.PolygonState.FrontFace = FrontFaceMode::Clockwise;
         m_ModelPipeline = new Pipeline(modelPipelineState, m_ModelShader);
 
         TextureDescription checkerTextureDesc = {};
@@ -103,11 +101,14 @@ public:
     void Render() override {
         RenderCommand::BeginFrame();
 
+        Vector3D cameraPosition = Vector3D(0.5f, 1.0f, 3.0f);
+
         m_ModelPipeline->Bind();
         Matrix4x4 model = Matrix4x4::identity;
         model.Translate(Vector3D(0, 0, 0));
         model.Scale(Vector3D(.75f, .75f, .75f));
-        Matrix4x4 view = Matrix4x4::LookAt(Vector3D(0.0f, 0.0f, -2.0f), Vector3D::zero, Vector3D::up);
+        // model.Scale(Vector3D(1, 1, -1));
+        Matrix4x4 view = Matrix4x4::LookAt(cameraPosition, Vector3D::zero, Vector3D::up);
         Matrix4x4 proj = Matrix4x4::Perspective(60.0f, 4.0f / 3.0f, 0.3f, 50.0f);
         Matrix4x4 modelViewProj = proj * view * model;
 
@@ -115,7 +116,7 @@ public:
         m_ModelShader->SetMat4("u_Model", model);
         m_ModelShader->SetMat4("u_Normal", model.Inverse().Transpose());
         m_ModelShader->SetFloat4("u_LightDir", Vector4D(1.0f, 1.0f, 1.0f, 0.0f));
-        m_ModelShader->SetFloat3("u_CameraPosition", Vector3D(0.0f, 0.0f, -2.0f));
+        m_ModelShader->SetFloat3("u_CameraPosition", cameraPosition);
 
         m_ModelShader->SetColor("u_MainColor", Color(0.9f, 0.1f, 0.1f, 1.0f));
         m_ModelShader->SetColor("u_Material.diffuseColor", Color(0.9f, 0.1f, 0.1f, 1.0f));

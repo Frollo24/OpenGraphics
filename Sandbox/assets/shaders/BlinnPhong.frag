@@ -39,7 +39,7 @@ void main() {
     DirectionalLight light;
     light.color = vec3(1.0);
     light.intensity = 1.0;
-    light.direction = normalize(vec3(1.0, -1.0, -1.0));
+    light.direction = normalize(vec3(-1.0, -1.0, -1.0));
 
     vec3 finalColor = vec3(0.0);
     finalColor += AmbientBlinnPhong(blinnPhongData);
