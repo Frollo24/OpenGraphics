@@ -33,4 +33,12 @@ namespace OpenGraphics
         // TODO: expand
         Color MainColor;
     };
+
+    inline VertexAttribBinding GetGizmoVertexBinding()
+    {
+        return VertexAttribBinding{
+            {ShaderDataType::Float3, "a_Position"},
+            {ShaderDataType::Float4, "a_Color"},
+        };
+    }
 }

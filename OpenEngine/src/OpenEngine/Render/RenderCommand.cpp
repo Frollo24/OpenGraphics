@@ -110,6 +110,11 @@ namespace OpenGraphics
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     }
 
+    void RenderCommand::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+	{
+		glViewport(x, y, width, height);
+    }
+
     void RenderCommand::BindVertexArray(const VertexArray* vertexArray)
     {
         s_RenderState.VertexArray = const_cast<VertexArray*>(vertexArray);
@@ -194,6 +199,7 @@ namespace OpenGraphics
     void RenderCommand::UseShader(const Shader* shader)
     {
         glUseProgram(shader->GetRendererID());
+		s_RenderState.Shader = const_cast<Shader*>(shader);
     }
 
     void RenderCommand::Draw(uint32_t vertexCount)
@@ -204,5 +210,15 @@ namespace OpenGraphics
     void RenderCommand::DrawIndexed(uint32_t indexCount)
     {
         glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
+    }
+
+    void RenderCommand::DrawLines(uint32_t vertexCount)
+	{
+		glDrawArrays(GL_LINES, 0, vertexCount);
+    }
+
+    void RenderCommand::DrawPoints(uint32_t first, uint32_t vertexCount)
+	{
+		glDrawArrays(GL_POINTS, first, vertexCount);
     }
 }

@@ -91,6 +91,31 @@ public:
         whiteTextureDesc.FilterMode = TextureFilterMode::Nearest;
         m_WhiteTexture = new Texture(whiteTextureDesc);
         m_WhiteTexture->SetData(&white);
+
+        m_Xaxis = new VectorGizmo(Vector3D::zero, Vector3D::right, Color(1.0f, 0.0f, 0.0f, 1.0f));
+        m_Yaxis = new VectorGizmo(Vector3D::zero, Vector3D::up, Color(0.0f, 1.0f, 0.0f, 1.0f));
+        m_Zaxis = new VectorGizmo(Vector3D::zero, Vector3D::forward, Color(0.0f, 0.0f, 1.0f, 1.0f));
+        m_Origin = new PointGizmo(Vector3D::zero, Color(0.6f, 0.6f, 0.6f, 1.0f));
+
+        ShaderSpecs axisVertexShader{};
+        axisVertexShader.Filepath = "assets/shaders/VectorGizmo.vert";
+        axisVertexShader.Type = ShaderType::Vertex;
+        ShaderSpecs axisFragmentShader{};
+        axisFragmentShader.Filepath = "assets/shaders/VectorGizmo.frag";
+        axisFragmentShader.Type = ShaderType::Fragment;
+        m_VectorGizmoShader = new Shader({axisVertexShader, axisFragmentShader});
+
+        ShaderSpecs pointVertexShader{};
+        pointVertexShader.Filepath = "assets/shaders/PointGizmo.vert";
+        pointVertexShader.Type = ShaderType::Vertex;
+        ShaderSpecs pointFragmentShader{};
+        pointFragmentShader.Filepath = "assets/shaders/PointGizmo.frag";
+        pointFragmentShader.Type = ShaderType::Fragment;
+        m_PointGizmoShader = new Shader({pointVertexShader, pointFragmentShader});
+
+        // HACK: Should be two different pipelines
+        PipelineState axisPipelineState{};
+        m_AxisPipeline = new Pipeline(axisPipelineState, m_VectorGizmoShader);
     }
 
     void Update() override {
@@ -108,6 +133,7 @@ public:
         model.Translate(Vector3D(0, 0, 0));
         model.Scale(Vector3D(.75f, .75f, .75f));
         // model.Scale(Vector3D(1, 1, -1));
+        // Logger::Info(model.Determinant());
         Matrix4x4 view = Matrix4x4::LookAt(cameraPosition, Vector3D::zero, Vector3D::up);
         Matrix4x4 proj = Matrix4x4::Perspective(60.0f, 4.0f / 3.0f, 0.3f, 50.0f);
         Matrix4x4 modelViewProj = proj * view * model;
@@ -136,6 +162,27 @@ public:
         RenderCommand::SetVertexBuffer(m_VertexBuffer, m_TriangleVertexAttribBinding);
         // RenderCommand::Draw(3);
 
+        // TODO: extract into a separated engine/editor feature
+        {
+            RenderCommand::SetViewport(0, 500, 100, 100);
+            m_AxisPipeline->Bind();
+
+            Matrix4x4 vectorModel = Matrix4x4::identity;
+            Matrix4x4 vectorView = Matrix4x4::LookAt(cameraPosition.Normalized(), Vector3D::zero, Vector3D::up);
+            Matrix4x4 vectorProj = Matrix4x4::Ortho(-1.25f, 1.25f, -1.25f, 1.25f, 0.03f, 2.0f);
+            // vectorModel.columns[2].z *= -1;
+
+            m_VectorGizmoShader->SetMat4("u_ModelViewProj", vectorProj * vectorView * vectorModel);
+            m_Xaxis->Render();
+            m_Yaxis->Render();
+            m_Zaxis->Render();
+            RenderCommand::UseShader(m_PointGizmoShader);
+            m_PointGizmoShader->SetMat4("u_ModelViewProj", vectorProj * vectorView * vectorModel);
+            m_Origin->Render();
+
+            RenderCommand::SetViewport(0, 0, 800, 600);
+        }
+
         RenderCommand::EndFrame();
         GetWindow()->SwapBuffers();
     }
@@ -144,6 +191,14 @@ public:
         Logger::Trace("Resource cleanup...");
         delete m_TriangleVertexArray;
         delete m_VertexBuffer;
+
+        delete m_Xaxis;
+        delete m_Yaxis;
+        delete m_Zaxis;
+
+        delete m_AxisPipeline;
+        delete m_VectorGizmoShader;
+        delete m_PointGizmoShader;
 
         delete m_SphereModel;
 
@@ -165,12 +220,20 @@ private:
 
     Shader* m_TriangleShader = nullptr;
     Shader* m_ModelShader = nullptr;
+    Shader* m_VectorGizmoShader = nullptr;
+    Shader* m_PointGizmoShader = nullptr;
 
     Pipeline* m_TrianglePipeline = nullptr;
     Pipeline* m_ModelPipeline = nullptr;
+    Pipeline* m_AxisPipeline = nullptr;
 
     Texture* m_CheckerboardTexture = nullptr;
     Texture* m_WhiteTexture = nullptr;
+
+    VectorGizmo* m_Xaxis = nullptr;
+    VectorGizmo* m_Yaxis = nullptr;
+    VectorGizmo* m_Zaxis = nullptr;
+    PointGizmo* m_Origin = nullptr;
 };
 
 OpenGraphics::Application* OpenGraphics::CreateApplication() {

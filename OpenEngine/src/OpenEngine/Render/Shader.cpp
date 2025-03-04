@@ -193,6 +193,12 @@ namespace OpenGraphics
     	return location;
     }
 
+	void Shader::SetFloat(const std::string &name, const float &value) const
+	{
+    	GLint location = GetUniformLocation(name);
+    	glProgramUniform1f(m_RendererID, location, value);
+    }
+
 	void Shader::SetFloat3(const std::string &name, const Vector3D &value) const
 	{
     	GLint location = GetUniformLocation(name);

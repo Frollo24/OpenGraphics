@@ -26,6 +26,7 @@ namespace OpenGraphics
         static const Matrix4x4& zero;
         static const Matrix4x4& identity;
 
+        float Determinant() const;
         Matrix4x4& Inverse();
         Matrix4x4& Transpose();
 
@@ -34,6 +35,7 @@ namespace OpenGraphics
         Matrix4x4& Scale(const Vector3D& scale);
 
         static Matrix4x4 LookAt(const Vector3D& from, const Vector3D& to, const Vector3D& up);
+        static Matrix4x4 Ortho(float left, float right, float bottom, float top, float zNear, float zFar);
         static Matrix4x4 Perspective(float fov, float aspect, float zNear, float zFar);
 
         [[nodiscard]] Vector3D MultiplyVector(const Vector3D& vector) const;

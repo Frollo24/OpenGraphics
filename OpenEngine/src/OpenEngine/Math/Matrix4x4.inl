@@ -5,6 +5,11 @@
 
 namespace OpenGraphics
 {
+    inline float Matrix4x4::Determinant() const
+    {
+        return glm::determinant(this->toGlmMatrix());
+    }
+
     inline Matrix4x4& Matrix4x4::Inverse()
     {
         glm::mat4 inverse = glm::inverse(this->toGlmMatrix());
@@ -63,6 +68,17 @@ namespace OpenGraphics
             Vector4D(lookAt[1].x, lookAt[1].y, lookAt[1].z, lookAt[1].w),
             Vector4D(lookAt[2].x, lookAt[2].y, lookAt[2].z, lookAt[2].w),
             Vector4D(lookAt[3].x, lookAt[3].y, lookAt[3].z, lookAt[3].w)
+        );
+    }
+
+    inline Matrix4x4 Matrix4x4::Ortho(float left, float right, float bottom, float top, float zNear, float zFar)
+    {
+        glm::mat4 ortho = glm::ortho(left, right, bottom, top, zNear, zFar);
+        return Matrix4x4(
+            Vector4D(ortho[0].x, ortho[0].y, ortho[0].z, ortho[0].w),
+            Vector4D(ortho[1].x, ortho[1].y, ortho[1].z, ortho[1].w),
+            Vector4D(ortho[2].x, ortho[2].y, ortho[2].z, ortho[2].w),
+            Vector4D(ortho[3].x, ortho[3].y, ortho[3].z, ortho[3].w)
         );
     }
 

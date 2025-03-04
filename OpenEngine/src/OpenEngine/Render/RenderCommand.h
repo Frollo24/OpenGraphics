@@ -11,6 +11,7 @@ namespace OpenGraphics
     struct RenderState
     {
         VertexArray* VertexArray = nullptr;
+        Shader* Shader = nullptr;
     };
 
     class OPEN_API RenderCommand
@@ -18,6 +19,8 @@ namespace OpenGraphics
     public:
         static void BeginFrame();
         static void EndFrame();
+
+        static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
 
         static void BindVertexArray(const VertexArray* vertexArray);
         static void SetVertexBuffer(const Buffer* vertexBuffer, const VertexAttribBinding& binding);
@@ -30,6 +33,9 @@ namespace OpenGraphics
 
         static void Draw(uint32_t vertexCount);
         static void DrawIndexed(uint32_t indexCount);
+
+        static void DrawLines(uint32_t vertexCount);
+        static void DrawPoints(uint32_t first, uint32_t vertexCount);
 
     private:
         inline static RenderState s_RenderState = {};
