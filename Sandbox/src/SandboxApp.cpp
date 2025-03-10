@@ -126,15 +126,28 @@ public:
     void Render() override {
         RenderCommand::BeginFrame();
 
+#define ROTATE_CAMERA 0
+#if ROTATE_CAMERA
+        static float angle = 0.0f;
+        float speed = glm::radians(90.0f);
+        Vector3D cameraPosition = Vector3D(0.5f * cos(angle) - 3.0f * sin(angle), 1.0f, 3.0f * cos(angle) + 0.5f * sin(angle));
+        angle += speed * float(1.0 / 144.0);
+#else
         Vector3D cameraPosition = Vector3D(0.5f, 1.0f, 3.0f);
+#endif
 
         m_ModelPipeline->Bind();
         Matrix4x4 model = Matrix4x4::identity;
         model.Translate(Vector3D(0, 0, 0));
         model.Scale(Vector3D(.75f, .75f, .75f));
-        // model.Scale(Vector3D(1, 1, -1));
-        // Logger::Info(model.Determinant());
         Matrix4x4 view = Matrix4x4::LookAt(cameraPosition, Vector3D::zero, Vector3D::up);
+#define LEFT_HANDED 0
+#if LEFT_HANDED
+        model.Scale(Vector3D(1, 1, -1));
+        view.Scale(Vector3D(1, 1, -1));
+        cameraPosition.z *= -1;
+#endif
+        // Logger::Info(model.Determinant());
         Matrix4x4 proj = Matrix4x4::Perspective(60.0f, 4.0f / 3.0f, 0.3f, 50.0f);
         Matrix4x4 modelViewProj = proj * view * model;
 
@@ -168,9 +181,12 @@ public:
             m_AxisPipeline->Bind();
 
             Matrix4x4 vectorModel = Matrix4x4::identity;
+#if LEFT_HANDED
+            vectorModel.columns[2].z *= -1;
+            cameraPosition.z *= -1;
+#endif
             Matrix4x4 vectorView = Matrix4x4::LookAt(cameraPosition.Normalized(), Vector3D::zero, Vector3D::up);
             Matrix4x4 vectorProj = Matrix4x4::Ortho(-1.25f, 1.25f, -1.25f, 1.25f, 0.03f, 2.0f);
-            // vectorModel.columns[2].z *= -1;
 
             m_VectorGizmoShader->SetMat4("u_ModelViewProj", vectorProj * vectorView * vectorModel);
             m_Xaxis->Render();
