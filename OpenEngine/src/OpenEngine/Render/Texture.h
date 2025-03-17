@@ -35,7 +35,12 @@ namespace OpenGraphics
     enum class TextureFilterMode : uint8_t
     {
         Nearest = 0,
-        Linear,
+        Linear
+    };
+
+    enum class TextureMipmapFilterMode : uint8_t
+    {
+        NoMipmap = 0,
         NearestMipmap,
         LinearMipmap
     };
@@ -66,6 +71,7 @@ namespace OpenGraphics
         ImageType ImageType = ImageType::Image2D;
         ImageFormat ImageFormat = ImageFormat::RGBA8;
         TextureFilterMode FilterMode = TextureFilterMode::Linear;
+        TextureMipmapFilterMode MipmapMode = TextureMipmapFilterMode::LinearMipmap;
         TextureWrapMode WrapMode = TextureWrapMode::Repeat;
         Color BorderColor = {0.0f, 0.0f, 0.0f, 1.0f};
         SampleCount SampleCount = SampleCount::Count1;

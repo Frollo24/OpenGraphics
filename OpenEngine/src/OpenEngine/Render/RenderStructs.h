@@ -4,6 +4,8 @@
 #include "OpenEngine/Math/Vector3D.h"
 #include "OpenEngine/Math/Color.h"
 
+#include "SkyboxVertices.h"
+
 namespace OpenGraphics
 {
     struct Vertex
@@ -39,6 +41,12 @@ namespace OpenGraphics
         return VertexAttribBinding{
             {ShaderDataType::Float3, "a_Position"},
             {ShaderDataType::Float4, "a_Color"},
+        };
+    }
+
+    inline VertexAttribBinding GetSkyboxVertexBinding() {
+        return VertexAttribBinding{
+            {ShaderDataType::Float3, "a_Position"},
         };
     }
 }

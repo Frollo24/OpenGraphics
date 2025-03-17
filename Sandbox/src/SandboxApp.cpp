@@ -76,7 +76,7 @@ public:
         const uint32_t white = 0xffffffff;
         const uint32_t black = 0x00000000;
         const uint32_t magenta = 0xffff00ff;
-        std::array<uint32_t, 16 * 16 > checkerboardPixels = { 0 };
+        std::array<uint32_t, 16 * 16> checkerboardPixels = { 0 };
         for (int x = 0; x < 16; x++) {
             for (int y = 0; y < 16; y++) {
                 checkerboardPixels[x * 16 + y] = ((x % 2) ^ (y % 2)) ? magenta : black;
@@ -91,6 +91,39 @@ public:
         whiteTextureDesc.FilterMode = TextureFilterMode::Nearest;
         m_WhiteTexture = new Texture(whiteTextureDesc);
         m_WhiteTexture->SetData(&white);
+
+        std::array<void*, 6> cubemapData = {
+            checkerboardPixels.data(),
+            checkerboardPixels.data(),
+            checkerboardPixels.data(),
+            checkerboardPixels.data(),
+            checkerboardPixels.data(),
+            checkerboardPixels.data(),
+        };
+
+        TextureDescription cubemapDesc = {};
+        cubemapDesc.ImageType = ImageType::Cubemap;
+        cubemapDesc.ImageExtent = { 16, 16, 1};
+        cubemapDesc.FilterMode = TextureFilterMode::Nearest;
+        cubemapDesc.MipmapMode = TextureMipmapFilterMode::LinearMipmap;
+        cubemapDesc.GenerateMipmaps = true;
+        m_Cubemap = new Texture(cubemapDesc);
+        m_Cubemap->SetData(cubemapData.data());
+
+        BufferDescription skyboxVertexDescription = {};
+        skyboxVertexDescription.Type = BufferType::Vertex;
+        skyboxVertexDescription.Size = g_SkyboxVertices.size() * sizeof(Vector3D);
+        skyboxVertexDescription.Data = g_SkyboxVertices.data();
+        m_SkyboxVertexBuffer = new Buffer(skyboxVertexDescription);
+
+        m_SkyboxVertexAttribBinding = GetSkyboxVertexBinding();
+        m_SkyboxVertexArray = new VertexArray({m_SkyboxVertexAttribBinding});
+
+        BufferDescription skyboxIndexDescription = {};
+        skyboxIndexDescription.Type = BufferType::Index;
+        skyboxIndexDescription.Size = g_SkyboxIndices.size() * sizeof(uint32_t);
+        skyboxIndexDescription.Data = g_SkyboxIndices.data();
+        m_SkyboxIndexBuffer = new Buffer(skyboxIndexDescription);
 
         m_Xaxis = new VectorGizmo(Vector3D::zero, Vector3D::right, Color(1.0f, 0.0f, 0.0f, 1.0f));
         m_Yaxis = new VectorGizmo(Vector3D::zero, Vector3D::up, Color(0.0f, 1.0f, 0.0f, 1.0f));
@@ -116,6 +149,20 @@ public:
         // HACK: Should be two different pipelines
         PipelineState axisPipelineState{};
         m_AxisPipeline = new Pipeline(axisPipelineState, m_VectorGizmoShader);
+
+        ShaderSpecs skyboxVertexShader{};
+        skyboxVertexShader.Filepath = "assets/shaders/Skybox.vert";
+        skyboxVertexShader.Type = ShaderType::Vertex;
+        ShaderSpecs skyboxFragmentShader{};
+        skyboxFragmentShader.Filepath = "assets/shaders/Skybox.frag";
+        skyboxFragmentShader.Type = ShaderType::Fragment;
+        m_SkyboxShader = new Shader({skyboxVertexShader, skyboxFragmentShader});
+
+        PipelineState skyboxPipelineState{};
+        skyboxPipelineState.PolygonState.FrontFace = FrontFaceMode::Clockwise;
+        skyboxPipelineState.DepthState.DepthFunc = DepthComparison::LessOrEqual;
+        skyboxPipelineState.DepthState.DepthWrite = false;
+        m_SkyboxPipeline = new Pipeline(skyboxPipelineState, m_SkyboxShader);
     }
 
     void Update() override {
@@ -126,7 +173,7 @@ public:
     void Render() override {
         RenderCommand::BeginFrame();
 
-#define ROTATE_CAMERA 0
+#define ROTATE_CAMERA 1
 #if ROTATE_CAMERA
         static float angle = 0.0f;
         float speed = glm::radians(90.0f);
@@ -199,6 +246,20 @@ public:
             RenderCommand::SetViewport(0, 0, 800, 600);
         }
 
+        Matrix4x4 skyboxView = view;
+        skyboxView.columns[3] = Vector4D::zero;
+        skyboxView.columns[3].w = 1.0f;
+        Matrix4x4 skyboxViewProj = proj * skyboxView;
+
+        m_SkyboxShader->SetMat4("u_ViewProj", skyboxViewProj);
+        m_SkyboxPipeline->Bind();
+        m_Cubemap->BindTextureUnit(0);
+
+        RenderCommand::BindVertexArray(m_SkyboxVertexArray);
+        RenderCommand::SetVertexBuffer(m_SkyboxVertexBuffer, m_SkyboxVertexAttribBinding);
+        RenderCommand::SetIndexBuffer(m_SkyboxIndexBuffer);
+        RenderCommand::DrawIndexed(36);
+
         RenderCommand::EndFrame();
         GetWindow()->SwapBuffers();
     }
@@ -207,6 +268,12 @@ public:
         Logger::Trace("Resource cleanup...");
         delete m_TriangleVertexArray;
         delete m_VertexBuffer;
+
+        delete m_SkyboxPipeline;
+        delete m_SkyboxShader;
+        delete m_SkyboxVertexArray;
+        delete m_SkyboxVertexBuffer;
+        delete m_SkyboxIndexBuffer;
 
         delete m_Xaxis;
         delete m_Yaxis;
@@ -232,19 +299,27 @@ private:
     VertexArray* m_TriangleVertexArray = nullptr;
     VertexAttribBinding m_TriangleVertexAttribBinding = {};
 
+    Buffer* m_SkyboxVertexBuffer = nullptr;
+    Buffer* m_SkyboxIndexBuffer = nullptr;
+    VertexArray* m_SkyboxVertexArray = nullptr;
+    VertexAttribBinding m_SkyboxVertexAttribBinding = {};
+
     Model* m_SphereModel = nullptr;
 
     Shader* m_TriangleShader = nullptr;
     Shader* m_ModelShader = nullptr;
     Shader* m_VectorGizmoShader = nullptr;
     Shader* m_PointGizmoShader = nullptr;
+    Shader* m_SkyboxShader = nullptr;
 
     Pipeline* m_TrianglePipeline = nullptr;
     Pipeline* m_ModelPipeline = nullptr;
     Pipeline* m_AxisPipeline = nullptr;
+    Pipeline* m_SkyboxPipeline = nullptr;
 
     Texture* m_CheckerboardTexture = nullptr;
     Texture* m_WhiteTexture = nullptr;
+    Texture* m_Cubemap = nullptr;
 
     VectorGizmo* m_Xaxis = nullptr;
     VectorGizmo* m_Yaxis = nullptr;

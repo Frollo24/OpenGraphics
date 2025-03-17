@@ -81,18 +81,31 @@ namespace OpenGraphics
 		}
 	}
 
-	static GLint TextureFilterModeToOpenGLFilterMode(const TextureFilterMode filterMode)
+	static GLint TextureFilterModeToOpenGLFilterMode(const TextureFilterMode filterMode, const TextureMipmapFilterMode mipmapMode)
 	{
-		switch (filterMode)
+		switch (mipmapMode)
 		{
-			case TextureFilterMode::Nearest:       return GL_NEAREST;
-			case TextureFilterMode::Linear:        return GL_LINEAR;
-			case TextureFilterMode::NearestMipmap: return GL_LINEAR_MIPMAP_NEAREST;
-			case TextureFilterMode::LinearMipmap:  return GL_LINEAR_MIPMAP_LINEAR;
+			case TextureMipmapFilterMode::NoMipmap:
+				return filterMode == TextureFilterMode::Linear ? GL_LINEAR : GL_NEAREST;
+			case TextureMipmapFilterMode::NearestMipmap:
+				return filterMode == TextureFilterMode::Linear ? GL_LINEAR_MIPMAP_NEAREST : GL_NEAREST_MIPMAP_NEAREST;
+			case TextureMipmapFilterMode::LinearMipmap:
+				return filterMode == TextureFilterMode::Linear ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_LINEAR;
 			default:
 				return GL_NONE;
 		}
 	}
+
+	static GLint TextureMagFilterModeToOpenGLFilterMode(const TextureFilterMode filterMode)
+	{
+	    switch (filterMode)
+	    {
+	    	case TextureFilterMode::Linear:  return GL_LINEAR;
+	    	case TextureFilterMode::Nearest: return GL_NEAREST;
+	    	default:
+	    		return GL_NONE;
+	    }
+    }
 
 	static GLint TextureWrapModeToOpenGLWrapMode(const TextureWrapMode wrapMode)
 	{
@@ -124,9 +137,10 @@ namespace OpenGraphics
         bool isMultisampled = static_cast<int>(desc.SampleCount) > 1;
         if (!isMultisampled)
         {
-	        const GLint filterMode = TextureFilterModeToOpenGLFilterMode(desc.FilterMode);
+	        const GLint filterMode = TextureFilterModeToOpenGLFilterMode(desc.FilterMode, desc.MipmapMode);
+        	const GLint magFilterMode = TextureMagFilterModeToOpenGLFilterMode(desc.FilterMode);
             glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, filterMode);
-            glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, filterMode == GL_NEAREST ? filterMode : GL_LINEAR);
+            glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, magFilterMode);
 
 	        const GLint wrapMode = TextureWrapModeToOpenGLWrapMode(desc.WrapMode);
             glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, wrapMode);
