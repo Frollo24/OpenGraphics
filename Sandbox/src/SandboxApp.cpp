@@ -1,8 +1,14 @@
 #define OG_ENTRY_POINT
 #include <OpenEngine.h>
 
+// HACK: image loading should be delegated to the engine
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 using namespace OpenGraphics;
 using Random = UniformRandom;
+
+#define LEFT_HANDED 0
 
 class SandboxApp : public OpenGraphics::Application
 {
@@ -92,23 +98,30 @@ public:
         m_WhiteTexture = new Texture(whiteTextureDesc);
         m_WhiteTexture->SetData(&white);
 
+        stbi_set_flip_vertically_on_load(false);
+        int width, height, channels;
+
         std::array<void*, 6> cubemapData = {
-            checkerboardPixels.data(),
-            checkerboardPixels.data(),
-            checkerboardPixels.data(),
-            checkerboardPixels.data(),
-            checkerboardPixels.data(),
-            checkerboardPixels.data(),
+            stbi_load("assets/textures/skyboxFaces/right.jpg", &width, &height, &channels, 0),
+            stbi_load("assets/textures/skyboxFaces/left.jpg", &width, &height, &channels, 0),
+            stbi_load("assets/textures/skyboxFaces/top.jpg", &width, &height, &channels, 0),
+            stbi_load("assets/textures/skyboxFaces/bottom.jpg", &width, &height, &channels, 0),
+            stbi_load("assets/textures/skyboxFaces/front.jpg", &width, &height, &channels, 0),
+            stbi_load("assets/textures/skyboxFaces/back.jpg", &width, &height, &channels, 0),
         };
 
         TextureDescription cubemapDesc = {};
         cubemapDesc.ImageType = ImageType::Cubemap;
-        cubemapDesc.ImageExtent = { 16, 16, 1};
+        cubemapDesc.ImageExtent = { (uint32_t)width, (uint32_t)height, 1};
+        cubemapDesc.ImageFormat = ImageFormat::RGB8;
         cubemapDesc.FilterMode = TextureFilterMode::Nearest;
         cubemapDesc.MipmapMode = TextureMipmapFilterMode::LinearMipmap;
         cubemapDesc.GenerateMipmaps = true;
         m_Cubemap = new Texture(cubemapDesc);
         m_Cubemap->SetData(cubemapData.data());
+
+        for (const void* face : cubemapData)
+            stbi_image_free(const_cast<void*>(face));
 
         BufferDescription skyboxVertexDescription = {};
         skyboxVertexDescription.Type = BufferType::Vertex;
@@ -159,7 +172,9 @@ public:
         m_SkyboxShader = new Shader({skyboxVertexShader, skyboxFragmentShader});
 
         PipelineState skyboxPipelineState{};
+#if !LEFT_HANDED
         skyboxPipelineState.PolygonState.FrontFace = FrontFaceMode::Clockwise;
+#endif
         skyboxPipelineState.DepthState.DepthFunc = DepthComparison::LessOrEqual;
         skyboxPipelineState.DepthState.DepthWrite = false;
         m_SkyboxPipeline = new Pipeline(skyboxPipelineState, m_SkyboxShader);
@@ -173,7 +188,7 @@ public:
     void Render() override {
         RenderCommand::BeginFrame();
 
-#define ROTATE_CAMERA 1
+#define ROTATE_CAMERA 0
 #if ROTATE_CAMERA
         static float angle = 0.0f;
         float speed = glm::radians(90.0f);
@@ -188,7 +203,7 @@ public:
         model.Translate(Vector3D(0, 0, 0));
         model.Scale(Vector3D(.75f, .75f, .75f));
         Matrix4x4 view = Matrix4x4::LookAt(cameraPosition, Vector3D::zero, Vector3D::up);
-#define LEFT_HANDED 0
+
 #if LEFT_HANDED
         model.Scale(Vector3D(1, 1, -1));
         view.Scale(Vector3D(1, 1, -1));

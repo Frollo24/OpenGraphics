@@ -3,10 +3,12 @@ project(OpenEngine LANGUAGES C CXX)
 
 set(TARGET OpenEngine)
 set(CMAKE_<CONFIG>_POSTFIX "")
-file(GLOB_RECURSE SRC_FILES "src/*.h" "src/*.cpp" "src/*.inl")
+file(GLOB_RECURSE SRC_FILES "src/*.h" "src/*.cpp" "src/*.inl"
+        "vendor/stb_image/*")
 
 add_library(${TARGET} SHARED ${SRC_FILES})
-target_include_directories(${TARGET} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_include_directories(${TARGET} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src"
+        "${CMAKE_CURRENT_SOURCE_DIR}/vendor/stb_image")
 
 target_precompile_headers(${TARGET} PUBLIC "src/ogpch.h")
 
