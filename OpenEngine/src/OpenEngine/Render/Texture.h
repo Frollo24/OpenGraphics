@@ -29,6 +29,9 @@ namespace OpenGraphics
         RG16F,
         RGB16F,
         RGBA16F,
+        RG32F,
+        RGB32F,
+        RGBA32F,
         DEPTH32
     };
 

@@ -1,10 +1,6 @@
 #define OG_ENTRY_POINT
 #include <OpenEngine.h>
 
-// HACK: image loading should be delegated to the engine
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
 using namespace OpenGraphics;
 using Random = UniformRandom;
 
@@ -98,21 +94,17 @@ public:
         m_WhiteTexture = new Texture(whiteTextureDesc);
         m_WhiteTexture->SetData(&white);
 
-        stbi_set_flip_vertically_on_load(false);
-        int width, height, channels;
+        auto cubemapFaces = TextureImporter::LoadCubemapFromSeparateFaces("assets/textures/skyboxFaces/",
+{ "right.jpg", "left.jpg", "top.jpg", "bottom.jpg", "front.jpg", "back.jpg" }
+        );
 
-        std::array<void*, 6> cubemapData = {
-            stbi_load("assets/textures/skyboxFaces/right.jpg", &width, &height, &channels, 0),
-            stbi_load("assets/textures/skyboxFaces/left.jpg", &width, &height, &channels, 0),
-            stbi_load("assets/textures/skyboxFaces/top.jpg", &width, &height, &channels, 0),
-            stbi_load("assets/textures/skyboxFaces/bottom.jpg", &width, &height, &channels, 0),
-            stbi_load("assets/textures/skyboxFaces/front.jpg", &width, &height, &channels, 0),
-            stbi_load("assets/textures/skyboxFaces/back.jpg", &width, &height, &channels, 0),
-        };
+        std::array<void*, 6> cubemapData = {nullptr};
+        for (int i = 0; i < cubemapFaces.size(); i++)
+            cubemapData[i] = cubemapFaces[i].Data;
 
         TextureDescription cubemapDesc = {};
         cubemapDesc.ImageType = ImageType::Cubemap;
-        cubemapDesc.ImageExtent = { (uint32_t)width, (uint32_t)height, 1};
+        cubemapDesc.ImageExtent = { (uint32_t)cubemapFaces[0].Width, (uint32_t)cubemapFaces[0].Height, 1};
         cubemapDesc.ImageFormat = ImageFormat::RGB8;
         cubemapDesc.FilterMode = TextureFilterMode::Nearest;
         cubemapDesc.MipmapMode = TextureMipmapFilterMode::LinearMipmap;
@@ -121,7 +113,7 @@ public:
         m_Cubemap->SetData(cubemapData.data());
 
         for (const void* face : cubemapData)
-            stbi_image_free(const_cast<void*>(face));
+            TextureImporter::FreeImageData(face);
 
         BufferDescription skyboxVertexDescription = {};
         skyboxVertexDescription.Type = BufferType::Vertex;

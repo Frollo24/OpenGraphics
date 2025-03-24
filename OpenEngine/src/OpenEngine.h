@@ -22,6 +22,9 @@
 #include "OpenEngine/Render/RenderCommand.h"
 #include "OpenEngine/Render/RenderEntity.h"
 
+// Asset Loading
+#include "OpenEngine/Asset/TextureImporter.h"
+
 // Elements
 #include "OpenEngine/Elements/VectorGizmo.h"
 #include "OpenEngine/Elements/PointGizmo.h"
