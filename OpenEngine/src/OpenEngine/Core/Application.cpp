@@ -1,5 +1,6 @@
 #include "ogpch.h"
 #include "Application.h"
+#include "OpenEngine/Render/RenderSystem.h"
 
 namespace OpenGraphics
 {
@@ -46,11 +47,17 @@ namespace OpenGraphics
         Logger::Init();
         WindowSystem::Init();
         m_Window = WindowSystem::Create();
+
+        RenderSystem::Init();
     }
 
     void Application::Shutdown()
     {
+        RenderSystem::Shutdown();
+
         WindowSystem::Destroy(m_Window);
+        m_Window = nullptr;
+
         WindowSystem::Shutdown();
         Logger::Shutdown();
     }
