@@ -45,11 +45,12 @@ namespace OpenGraphics
         Logger::Debug("  Renderer: {}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
         Logger::Debug("  Version: {}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
 
-        // TODO: setup config levels
+#ifdef OG_DEBUG
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
         glDebugMessageCallback(OpenGLDebugCallback, nullptr);
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
+#endif
 
         glEnable(GL_FRAMEBUFFER_SRGB);
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
