@@ -13,14 +13,16 @@ target_include_directories(${TARGET} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src"
 target_precompile_headers(${TARGET} PUBLIC "src/ogpch.h")
 
 #[[
+# This no longer is necessary, since target_precompile_headers handles this automatically
+
 if (MSVC)
-    get_filename_component(PRECOMPILED_BASENAME "src/ogpch.h" NAME_WE)
+    get_filename_component(PRECOMPILED_BASENAME "src/ogpch.h" NAME_WE)  # PRECOMPILED_BASENAME = ogpch
     set(PRECOMPILED_BINARY "${CMAKE_CURRENT_BINARY_DIR}/${PRECOMPILED_BASENAME}.pch")
     set_source_files_properties("src/ogpch.cpp" PROPERTIES
-            COMPILE_FLAGS "/Ycogpch.h"
+            COMPILE_FLAGS "/Yc\"ogpch.h\" /Fp\"${PRECOMPILED_BINARY}\""
             OBJECT_OUTPUTS "${PRECOMPILED_BINARY}")
     set_source_files_properties(SRC_FILES PROPERTIES
-            COMPILE_FLAGS "/Yuogpch.h"
+            COMPILE_FLAGS "/Yu\"ogpch.h\" /Fp\"${PRECOMPILED_BINARY}\""
             OBJECT_DEPENDS "${PRECOMPILED_BINARY}")
 endif (MSVC)
 ]]
@@ -51,5 +53,5 @@ add_custom_command(TARGET OpenEngine POST_BUILD
 
 add_custom_command(TARGET OpenEngine POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_BINARY_DIR}/OpenEngine/OpenEngine.dll"
-        "${CMAKE_BINARY_DIR}/Sandbox/OpenEngine.dll")
+        "${CMAKE_BINARY_DIR}/OpenEngine/OpenEngine${CMAKE_DEBUG_POSTFIX}.dll"
+        "${CMAKE_BINARY_DIR}/Sandbox/OpenEngine${CMAKE_DEBUG_POSTFIX}.dll")
