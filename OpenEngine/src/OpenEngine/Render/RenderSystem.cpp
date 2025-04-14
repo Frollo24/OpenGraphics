@@ -1,3 +1,4 @@
+#include "ogpch.h"
 #include "RenderSystem.h"
 #include "RenderCommand.h"
 

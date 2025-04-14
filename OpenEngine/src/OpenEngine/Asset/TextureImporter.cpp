@@ -1,7 +1,4 @@
-//
-// Created by Adrian on 21/04/2025.
-//
-
+#include "ogpch.h"
 #include "TextureImporter.h"
 
 #include <stb_image.h>
