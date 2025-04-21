@@ -1,6 +1,7 @@
 #pragma once
 
 #include "OpenEngine/Core/Base.h"
+#include "RenderCamera.h"
 
 namespace OpenGraphics
 {
@@ -10,15 +11,15 @@ namespace OpenGraphics
         RenderWorkflow() = default;
         virtual ~RenderWorkflow() = default;
 
-        virtual void Render();
+        virtual void Render(const std::vector<RenderCamera*>& cameras);
 
         // HACK: this should be managed by asset loading and render system common data
         static void InitResources();
         static void DeleteResources();
 
     protected:
-        void DrawGameObjects();
-        void DrawSkybox();
-        void DrawGizmos();
+        void DrawGameObjects(const RenderCamera* camera);
+        void DrawSkybox(const RenderCamera* camera);
+        void DrawGizmos(const RenderCamera* camera);
     };
 } // OpenGraphics

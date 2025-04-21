@@ -2,9 +2,6 @@
 #include "RenderWorkflow.h"
 #include "RenderCommand.h"
 
-// HACK: should be substituted with a "Camera" concept on the render loop
-#include "OpenEngine/Math/Matrix4x4.h"
-
 // HACK: this shouldn't be directly included here
 #include "RenderStructs.h"
 #include "OpenEngine/Asset/TextureImporter.h"
@@ -12,13 +9,11 @@
 #include "OpenEngine/Elements/VectorGizmo.h"
 #include "OpenEngine/Elements/PointGizmo.h"
 
+// NOTE: could be interesting to leave this as a parameter for the user
 #define LEFT_HANDED 0
 
 namespace OpenGraphics
 {
-    static Vector3D s_CameraPosition = Vector3D(0.5f, 1.0f, 3.0f);
-    static const Matrix4x4 s_Projection = Matrix4x4::Perspective(60.0f, 4.0f / 3.0f, 0.3f, 50.0f);
-
     // GameObjects
     static Model* s_SphereModel = nullptr;
     static Shader* s_ModelShader = nullptr;
@@ -43,21 +38,14 @@ namespace OpenGraphics
     static Pipeline* s_SkyboxPipeline = nullptr;
     static Texture* s_SkyboxCubemap = nullptr;
 
-    void RenderWorkflow::Render()
+    void RenderWorkflow::Render(const std::vector<RenderCamera*>& cameras)
     {
-#define ROTATE_CAMERA 0
-#if ROTATE_CAMERA
-        static float angle = 0.0f;
-        float speed = glm::radians(90.0f);
-        s_CameraPosition = Vector3D(0.5f * cos(angle) - 3.0f * sin(angle), 1.0f, 3.0f * cos(angle) + 0.5f * sin(angle));
-        angle += speed * float(1.0 / 144.0);
-#else
-        s_CameraPosition = Vector3D(0.5f, 1.0f, 3.0f);
-#endif
-
-        DrawGameObjects();
-        DrawSkybox();
-        DrawGizmos();
+        for (const auto& camera : cameras)
+        {
+            DrawGameObjects(camera);
+            DrawSkybox(camera);
+            DrawGizmos(camera);
+        }
     }
 
     void RenderWorkflow::InitResources()
@@ -199,22 +187,22 @@ namespace OpenGraphics
 #pragma endregion
     }
 
-    void RenderWorkflow::DrawGameObjects()
+    void RenderWorkflow::DrawGameObjects(const RenderCamera* camera)
     {
-        Vector3D cameraPosition = s_CameraPosition;
+        Vector3D cameraPosition = camera->GetPosition();
 
         s_ModelPipeline->Bind();
         Matrix4x4 model = Matrix4x4::identity;
         model.Translate(Vector3D(0, 0, 0));
         model.Scale(Vector3D(.75f, .75f, .75f));
-        Matrix4x4 view = Matrix4x4::LookAt(cameraPosition, Vector3D::zero, Vector3D::up);
+        Matrix4x4 view = camera->GetView();
 
 #if LEFT_HANDED
         model.Scale(Vector3D(1, 1, -1));
         view.Scale(Vector3D(1, 1, -1));
         cameraPosition.z *= -1;
 #endif
-        Matrix4x4 proj = Matrix4x4::Perspective(60.0f, 4.0f / 3.0f, 0.3f, 50.0f);
+        Matrix4x4 proj = camera->GetProjection();
         Matrix4x4 modelViewProj = proj * view * model;
 
         s_ModelShader->SetMat4("u_ModelViewProj", modelViewProj);
@@ -236,19 +224,18 @@ namespace OpenGraphics
             mesh.Render();
     }
 
-    void RenderWorkflow::DrawSkybox()
+    void RenderWorkflow::DrawSkybox(const RenderCamera* camera)
     {
-        Vector3D cameraPosition = s_CameraPosition;
-        Matrix4x4 skyboxView = Matrix4x4::LookAt(cameraPosition, Vector3D::zero, Vector3D::up);
+        Matrix4x4 skyboxView = camera->GetView();
+        const Matrix4x4& skyboxProj = camera->GetProjection();
 
 #if LEFT_HANDED
         skyboxView.Scale(Vector3D(1, 1, -1));
-        cameraPosition.z *= -1;
 #endif
 
         skyboxView.columns[3] = Vector4D::zero;
         skyboxView.columns[3].w = 1.0f;
-        const Matrix4x4 skyboxViewProj = s_Projection * skyboxView;
+        const Matrix4x4 skyboxViewProj = skyboxProj * skyboxView;
 
         s_SkyboxShader->SetMat4("u_ViewProj", skyboxViewProj);
         s_SkyboxPipeline->Bind();
@@ -260,9 +247,9 @@ namespace OpenGraphics
         RenderCommand::DrawIndexed(36);
     }
 
-    void RenderWorkflow::DrawGizmos()
+    void RenderWorkflow::DrawGizmos(const RenderCamera* camera)
     {
-        Vector3D cameraPosition = s_CameraPosition;
+        Vector3D cameraPosition = camera->GetPosition();
 
         RenderCommand::SetViewport(0, 500, 100, 100);
         s_AxisPipeline->Bind();

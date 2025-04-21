@@ -20,7 +20,9 @@ namespace OpenGraphics
 
     void RenderSystem::RenderScene()
     {
-        s_RenderWorkflow->Render();
+        // TODO: get camera vector from a scene renderer
+
+        s_RenderWorkflow->Render({});
     }
 
     void RenderSystem::EndFrame()
@@ -36,4 +38,8 @@ namespace OpenGraphics
         // TODO: delete render system common data
     }
 
+    void RenderSystem::RenderScene(const std::vector<RenderCamera*>& cameras)
+    {
+        s_RenderWorkflow->Render(cameras);
+    }
 }

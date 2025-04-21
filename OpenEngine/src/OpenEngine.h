@@ -21,6 +21,7 @@
 #include "OpenEngine/Render/Texture.h"
 #include "OpenEngine/Render/RenderCommand.h"
 #include "OpenEngine/Render/RenderEntity.h"
+#include "OpenEngine/Render/RenderCamera.h"
 #include "OpenEngine/Render/RenderSystem.h"
 
 // Asset Loading
