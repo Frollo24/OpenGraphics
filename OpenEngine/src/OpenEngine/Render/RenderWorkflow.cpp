@@ -16,6 +16,7 @@ namespace OpenGraphics
 {
     // GameObjects
     static Model* s_SphereModel = nullptr;
+    static Model* s_StarModel = nullptr;
     static Shader* s_ModelShader = nullptr;
     static Pipeline* s_ModelPipeline = nullptr;
     static Texture* s_WhiteTexture = nullptr;
@@ -65,6 +66,7 @@ namespace OpenGraphics
         s_ModelPipeline = new Pipeline(modelPipelineState, s_ModelShader);
 
         s_SphereModel = new Model("assets/models/Sphere.obj");
+        s_StarModel = new Model("assets/models/Star.obj");
 
         TextureDescription whiteTextureDesc = {};
         whiteTextureDesc.ImageExtent = { 1, 1, 1 };
@@ -161,6 +163,7 @@ namespace OpenGraphics
     {
 #pragma region GameObjects
         delete s_SphereModel;
+        delete s_StarModel;
         delete s_ModelShader;
         delete s_ModelPipeline;
         delete s_WhiteTexture;
@@ -205,12 +208,12 @@ namespace OpenGraphics
         Matrix4x4 proj = camera->GetProjection();
         Matrix4x4 modelViewProj = proj * view * model;
 
-        s_ModelShader->SetMat4("u_ModelViewProj", modelViewProj);
-        s_ModelShader->SetMat4("u_Model", model);
-        s_ModelShader->SetMat4("u_Normal", model.Inverse().Transpose());
         s_ModelShader->SetFloat4("u_LightDir", Vector4D(1.0f, 1.0f, 1.0f, 0.0f));
         s_ModelShader->SetFloat3("u_CameraPosition", cameraPosition);
 
+        s_ModelShader->SetMat4("u_ModelViewProj", modelViewProj);
+        s_ModelShader->SetMat4("u_Model", model);
+        s_ModelShader->SetMat4("u_Normal", model.Inverse().Transpose());
         s_ModelShader->SetColor("u_MainColor", Color(0.9f, 0.1f, 0.1f, 1.0f));
         s_ModelShader->SetColor("u_Material.diffuseColor", Color(0.9f, 0.1f, 0.1f, 1.0f));
         s_ModelShader->SetColor("u_Material.specularColor", Color(1.0f, 1.0f, 1.0f, 1.0f));
@@ -221,6 +224,25 @@ namespace OpenGraphics
         s_WhiteTexture->BindTextureUnit(2);
 
         for (const Mesh& mesh : s_SphereModel->GetMeshes())
+            mesh.Render();
+
+        model = Matrix4x4::identity;
+        model.Translate(Vector3D(0, 0, 2));
+
+#if LEFT_HANDED
+        model.Scale(Vector3D(1, 1, -1));
+#endif
+
+        modelViewProj = proj * view * model;
+        s_ModelShader->SetMat4("u_ModelViewProj", modelViewProj);
+        s_ModelShader->SetMat4("u_Model", model);
+        s_ModelShader->SetMat4("u_Normal", model.Inverse().Transpose());
+        s_ModelShader->SetColor("u_MainColor", Color(0.8f, 0.65f, 0.0f, 1.0f));
+        s_ModelShader->SetColor("u_Material.diffuseColor", Color(0.8f, 0.65f, 0.0f, 1.0f));
+        s_ModelShader->SetColor("u_Material.specularColor", Color(1.0f, 1.0f, 1.0f, 1.0f));
+        s_ModelShader->SetColor("u_Material.emissiveColor", Color(0.0f, 0.0f, 0.0f, 1.0f));
+
+        for (const Mesh& mesh : s_StarModel->GetMeshes())
             mesh.Render();
     }
 
