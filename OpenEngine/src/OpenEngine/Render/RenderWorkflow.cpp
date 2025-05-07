@@ -8,6 +8,7 @@
 #include "OpenEngine/Elements/Model.h"
 #include "OpenEngine/Elements/VectorGizmo.h"
 #include "OpenEngine/Elements/PointGizmo.h"
+#include "OpenEngine/Scene/Transform.h"
 
 // NOTE: could be interesting to leave this as a parameter for the user
 #define LEFT_HANDED 0
@@ -17,6 +18,8 @@ namespace OpenGraphics
     // GameObjects
     static Model* s_SphereModel = nullptr;
     static Model* s_StarModel = nullptr;
+    static Transform* s_SphereTransform = nullptr;
+    static Transform* s_StarTransform = nullptr;
     static Shader* s_ModelShader = nullptr;
     static Pipeline* s_ModelPipeline = nullptr;
     static Texture* s_WhiteTexture = nullptr;
@@ -41,6 +44,12 @@ namespace OpenGraphics
 
     void RenderWorkflow::Render(const std::vector<RenderCamera*>& cameras)
     {
+        // HACK: this should be called in the update loop when a scene is created
+        s_SphereTransform->Rotate(Vector3D::up, 1.0f);
+
+        s_SphereTransform->OnUpdate();
+        s_StarTransform->OnUpdate();
+
         for (const auto& camera : cameras)
         {
             DrawGameObjects(camera);
@@ -67,6 +76,11 @@ namespace OpenGraphics
 
         s_SphereModel = new Model("assets/models/Sphere.obj");
         s_StarModel = new Model("assets/models/Star.obj");
+
+        s_SphereTransform = new Transform();
+        s_SphereTransform->Scale(Vector3D(.75f, .75f, .75f));
+
+        s_StarTransform = new Transform(Vector3D(0, 0, 2), s_SphereTransform);
 
         TextureDescription whiteTextureDesc = {};
         whiteTextureDesc.ImageExtent = { 1, 1, 1 };
@@ -164,6 +178,8 @@ namespace OpenGraphics
 #pragma region GameObjects
         delete s_SphereModel;
         delete s_StarModel;
+        delete s_SphereTransform;
+        delete s_StarTransform;
         delete s_ModelShader;
         delete s_ModelPipeline;
         delete s_WhiteTexture;
@@ -195,9 +211,7 @@ namespace OpenGraphics
         Vector3D cameraPosition = camera->GetPosition();
 
         s_ModelPipeline->Bind();
-        Matrix4x4 model = Matrix4x4::identity;
-        model.Translate(Vector3D(0, 0, 0));
-        model.Scale(Vector3D(.75f, .75f, .75f));
+        Matrix4x4 model = s_SphereTransform->GetModelMatrix();
         Matrix4x4 view = camera->GetView();
 
 #if LEFT_HANDED
@@ -226,8 +240,7 @@ namespace OpenGraphics
         for (const Mesh& mesh : s_SphereModel->GetMeshes())
             mesh.Render();
 
-        model = Matrix4x4::identity;
-        model.Translate(Vector3D(0, 0, 2));
+        model = s_StarTransform->GetModelMatrix();
 
 #if LEFT_HANDED
         model.Scale(Vector3D(1, 1, -1));

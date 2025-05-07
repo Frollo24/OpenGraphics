@@ -4,6 +4,8 @@
 using namespace OpenGraphics;
 using Random = UniformRandom;
 
+#define ROTATE_CAMERA 0
+
 class SandboxApp : public OpenGraphics::Application
 {
 public:
@@ -70,13 +72,15 @@ public:
         m_CheckerboardTexture->SetData(checkerboardPixels.data());
 
         m_RenderCamera = new RenderCamera(Matrix4x4::Perspective(60.0f, 4.0f / 3.0f, 0.3f, 50.0f));
-        m_RenderCamera->SetView(Matrix4x4::LookAt(Vector3D(0.5f, 1.0f, 3.0f), Vector3D::zero, Vector3D::up));
+        m_RenderCamera->SetPosition(Vector3D(0.5f, 1.0f, 3.0f));
+        m_RenderCamera->SetView(Matrix4x4::LookAt(m_RenderCamera->GetPosition(), Vector3D::zero, Vector3D::up));
     }
 
     void Update() override {
         if (GetWindow()->ShouldClose())
             Quit();
 
+#if ROTATE_CAMERA
         static float angle = 0.0f;
         float speed = 1.5f;
         m_RenderCamera->SetPosition(
@@ -85,8 +89,10 @@ public:
                 1.0f,
                 3.0f * cos(angle) + 0.5f * sin(angle)
             ));
-        m_RenderCamera->SetView(Matrix4x4::LookAt(m_RenderCamera->GetPosition(), Vector3D::zero, Vector3D::up));
         angle += speed * float(1.0 / 144.0);
+#endif
+
+        m_RenderCamera->SetView(Matrix4x4::LookAt(m_RenderCamera->GetPosition(), Vector3D::zero, Vector3D::up));
     }
 
     void Render() override {
