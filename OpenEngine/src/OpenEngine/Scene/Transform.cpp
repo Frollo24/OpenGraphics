@@ -40,6 +40,12 @@ namespace OpenGraphics
 
     void Transform::Parent(Transform* parent)
     {
+        if (!parent)
+        {
+            Unparent();
+            return;
+        }
+
         if (IsDeepChildOf(parent) || parent == this) return;
         if (m_Parent) Unparent();
 

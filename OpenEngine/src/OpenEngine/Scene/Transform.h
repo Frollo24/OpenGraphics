@@ -1,11 +1,12 @@
 #pragma once
 
 #include "OpenEngine/Core/Base.h"
+#include "OpenEngine/Scene/Component.h"
 #include "OpenEngine/Math/Matrix4x4.h"
 
 namespace OpenGraphics
 {
-    class OPEN_API Transform
+    class OPEN_API Transform final : public Component
     {
     public:
         Transform() = default;
@@ -15,7 +16,7 @@ namespace OpenGraphics
         [[nodiscard]] inline const Matrix4x4& GetLocalMatrix() const { return m_LocalMatrix; }
         [[nodiscard]] inline const Matrix4x4& GetModelMatrix() const { return m_ModelMatrix; }
 
-        void OnUpdate();
+        void OnUpdate() override;
 
         void Translate(const Vector3D& translation);
         void Rotate(const Vector3D& axis, const float& angle);
