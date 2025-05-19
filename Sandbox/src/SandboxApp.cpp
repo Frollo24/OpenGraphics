@@ -74,11 +74,30 @@ public:
         m_RenderCamera = new RenderCamera(Matrix4x4::Perspective(60.0f, 4.0f / 3.0f, 0.3f, 50.0f));
         m_RenderCamera->SetPosition(Vector3D(0.5f, 1.0f, 3.0f));
         m_RenderCamera->SetView(Matrix4x4::LookAt(m_RenderCamera->GetPosition(), Vector3D::zero, Vector3D::up));
+
+        m_Scene = new Scene();
+
+        m_SphereGameObject = new GameObject();
+        m_SphereGameObject->GetTransform()->Scale(Vector3D(.75f, .75f, .75f));
+        const auto starGameObject = new GameObject(Vector3D(0, 0, 2), m_SphereGameObject->GetTransform());
+
+        const auto sphereRenderComponent = m_SphereGameObject->AddComponent<RenderComponent>();
+        sphereRenderComponent->SetModel(new Model("assets/models/Sphere.obj"));
+        const auto starRenderComponent = starGameObject->AddComponent<RenderComponent>();
+        starRenderComponent->SetModel(new Model("assets/models/Star.obj"));
+
+        m_Scene->AddGameObject(m_SphereGameObject);
+        m_Scene->AddGameObject(starGameObject);
+        m_Scene->SetCamera(m_RenderCamera);
+        m_RenderCamera->SetScene(m_Scene);
     }
 
     void Update() override {
         if (GetWindow()->ShouldClose())
             Quit();
+
+        m_SphereGameObject->GetTransform()->Rotate(Vector3D::up, 1.0f);
+        m_Scene->OnUpdate();
 
 #if ROTATE_CAMERA
         static float angle = 0.0f;
@@ -97,7 +116,7 @@ public:
 
     void Render() override {
         RenderSystem::BeginFrame();
-        RenderSystem::RenderScene({m_RenderCamera});
+        RenderSystem::RenderScene(m_Scene);
 
         m_TrianglePipeline->Bind();
         RenderCommand::BindVertexArray(m_TriangleVertexArray);
@@ -132,6 +151,8 @@ private:
     Texture* m_CheckerboardTexture = nullptr;
 
     RenderCamera* m_RenderCamera = nullptr;
+    Scene* m_Scene = nullptr;
+    GameObject* m_SphereGameObject = nullptr;
 };
 
 OpenGraphics::Application* OpenGraphics::CreateApplication() {

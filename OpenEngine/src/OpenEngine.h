@@ -24,6 +24,11 @@
 #include "OpenEngine/Render/RenderCamera.h"
 #include "OpenEngine/Render/RenderSystem.h"
 
+// Scene elements
+#include "OpenEngine/Scene/Scene.h"
+#include "OpenEngine/Scene/Transform.h"
+#include "OpenEngine/Scene/RenderComponent.h"
+
 // Asset Loading
 #include "OpenEngine/Asset/TextureImporter.h"
 

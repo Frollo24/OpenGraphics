@@ -11,7 +11,7 @@ namespace OpenGraphics
         RenderWorkflow() = default;
         virtual ~RenderWorkflow() = default;
 
-        virtual void Render(const std::vector<RenderCamera*>& cameras);
+        virtual void Render(const std::vector<const RenderCamera*>& cameras);
 
         // HACK: this should be managed by asset loading and render system common data
         static void InitResources();

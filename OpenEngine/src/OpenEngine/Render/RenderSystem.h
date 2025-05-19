@@ -1,6 +1,7 @@
 #pragma once
 
 #include "OpenEngine/Core/Base.h"
+#include "OpenEngine/Scene/Scene.h"
 #include "RenderWorkflow.h"
 
 namespace OpenGraphics
@@ -10,12 +11,9 @@ namespace OpenGraphics
     public:
         static void Init();
         static void BeginFrame();
-        static void RenderScene();
+        static void RenderScene(const Scene* scene);
         static void EndFrame();
         static void Shutdown();
-
-        // TODO: temporary
-        static void RenderScene(const std::vector<RenderCamera*>& cameras);
 
     private:
         // NOTE: this should later be a RenderWorflowAsset that can be

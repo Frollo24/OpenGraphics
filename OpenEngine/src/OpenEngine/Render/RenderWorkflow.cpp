@@ -7,7 +7,7 @@
 #include "OpenEngine/Asset/TextureImporter.h"
 #include "OpenEngine/Elements/VectorGizmo.h"
 #include "OpenEngine/Elements/PointGizmo.h"
-#include "OpenEngine/Scene/GameObject.h"
+#include "OpenEngine/Scene/Scene.h"
 #include "OpenEngine/Scene/RenderComponent.h"
 
 // NOTE: could be interesting to leave this as a parameter for the user
@@ -16,8 +16,6 @@
 namespace OpenGraphics
 {
     // GameObjects
-    static GameObject* s_SphereGameObject = nullptr;
-    static GameObject* s_StarGameObject = nullptr;
     static Shader* s_ModelShader = nullptr;
     static Pipeline* s_ModelPipeline = nullptr;
     static Texture* s_WhiteTexture = nullptr;
@@ -40,14 +38,8 @@ namespace OpenGraphics
     static Pipeline* s_SkyboxPipeline = nullptr;
     static Texture* s_SkyboxCubemap = nullptr;
 
-    void RenderWorkflow::Render(const std::vector<RenderCamera*>& cameras)
+    void RenderWorkflow::Render(const std::vector<const RenderCamera*>& cameras)
     {
-        // HACK: this should be called in the update loop when a scene is created
-        s_SphereGameObject->GetTransform()->Rotate(Vector3D::up, 1.0f);
-
-        s_SphereGameObject->GetTransform()->OnUpdate();
-        s_StarGameObject->GetTransform()->OnUpdate();
-
         for (const auto& camera : cameras)
         {
             DrawGameObjects(camera);
@@ -71,15 +63,6 @@ namespace OpenGraphics
 
         PipelineState modelPipelineState{};
         s_ModelPipeline = new Pipeline(modelPipelineState, s_ModelShader);
-
-        s_SphereGameObject = new GameObject();
-        s_SphereGameObject->GetTransform()->Scale(Vector3D(.75f, .75f, .75f));
-        s_StarGameObject = new GameObject(Vector3D(0, 0, 2), s_SphereGameObject->GetTransform());
-
-        auto sphereRenderComponent = s_SphereGameObject->AddComponent<RenderComponent>();
-        sphereRenderComponent->SetModel(new Model("assets/models/Sphere.obj"));
-        auto starRenderComponent = s_StarGameObject->AddComponent<RenderComponent>();
-        starRenderComponent->SetModel(new Model("assets/models/Star.obj"));
 
         TextureDescription whiteTextureDesc = {};
         whiteTextureDesc.ImageExtent = { 1, 1, 1 };
@@ -175,8 +158,6 @@ namespace OpenGraphics
     void RenderWorkflow::DeleteResources()
     {
 #pragma region GameObjects
-        delete s_SphereGameObject;
-        delete s_StarGameObject;
         delete s_ModelShader;
         delete s_ModelPipeline;
         delete s_WhiteTexture;
@@ -208,7 +189,8 @@ namespace OpenGraphics
         Vector3D cameraPosition = camera->GetPosition();
 
         s_ModelPipeline->Bind();
-        Matrix4x4 model = s_SphereGameObject->GetTransform()->GetModelMatrix();
+        auto sphereGameObject = camera->GetScene()->GetGameObjects().at(0);
+        Matrix4x4 model = sphereGameObject->GetTransform()->GetModelMatrix();
         Matrix4x4 view = camera->GetView();
 
 #if LEFT_HANDED
@@ -233,10 +215,10 @@ namespace OpenGraphics
         s_WhiteTexture->BindTextureUnit(0);
         s_WhiteTexture->BindTextureUnit(1);
         s_WhiteTexture->BindTextureUnit(2);
+        sphereGameObject->OnRender();
 
-        s_SphereGameObject->OnRender();
-
-        model = s_StarGameObject->GetTransform()->GetModelMatrix();
+        auto starGameObject = camera->GetScene()->GetGameObjects().at(1);
+        model = starGameObject->GetTransform()->GetModelMatrix();
 
 #if LEFT_HANDED
         model.Scale(Vector3D(1, 1, -1));
@@ -251,7 +233,7 @@ namespace OpenGraphics
         s_ModelShader->SetColor("u_Material.specularColor", Color(1.0f, 1.0f, 1.0f, 1.0f));
         s_ModelShader->SetColor("u_Material.emissiveColor", Color(0.0f, 0.0f, 0.0f, 1.0f));
 
-        s_StarGameObject->OnRender();
+        starGameObject->OnRender();
     }
 
     void RenderWorkflow::DrawSkybox(const RenderCamera* camera)
