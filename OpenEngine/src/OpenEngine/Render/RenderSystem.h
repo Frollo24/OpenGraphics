@@ -1,7 +1,7 @@
 #pragma once
 
 #include "OpenEngine/Core/Base.h"
-#include "OpenEngine/Scene/Scene.h"
+#include "OpenEngine/Render/SceneRenderer.h"
 #include "RenderWorkflow.h"
 
 namespace OpenGraphics
@@ -11,7 +11,7 @@ namespace OpenGraphics
     public:
         static void Init();
         static void BeginFrame();
-        static void RenderScene(const Scene* scene);
+        static void RenderScene(const SceneRenderer& sceneRenderer);
         static void EndFrame();
         static void Shutdown();
 

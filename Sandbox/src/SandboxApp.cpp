@@ -90,6 +90,9 @@ public:
         m_Scene->AddGameObject(starGameObject);
         m_Scene->SetCamera(m_RenderCamera);
         m_RenderCamera->SetScene(m_Scene);
+
+        m_SceneRenderer = SceneRenderer(m_Scene);
+        m_SceneRenderer.SetEditorCamera(m_RenderCamera);
     }
 
     void Update() override {
@@ -116,7 +119,7 @@ public:
 
     void Render() override {
         RenderSystem::BeginFrame();
-        RenderSystem::RenderScene(m_Scene);
+        RenderSystem::RenderScene(m_SceneRenderer);
 
         m_TrianglePipeline->Bind();
         RenderCommand::BindVertexArray(m_TriangleVertexArray);
@@ -153,6 +156,8 @@ private:
     RenderCamera* m_RenderCamera = nullptr;
     Scene* m_Scene = nullptr;
     GameObject* m_SphereGameObject = nullptr;
+
+    SceneRenderer m_SceneRenderer = nullptr;
 };
 
 OpenGraphics::Application* OpenGraphics::CreateApplication() {

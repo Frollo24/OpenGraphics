@@ -18,12 +18,10 @@ namespace OpenGraphics
         RenderCommand::BeginFrame();
     }
 
-    void RenderSystem::RenderScene(const Scene* scene)
+    void RenderSystem::RenderScene(const SceneRenderer& sceneRenderer)
     {
-        // TODO: get camera vector from a scene renderer
-        const RenderCamera* camera = scene->GetCamera();
-
-        s_RenderWorkflow->Render({camera});
+        const auto& cameras = sceneRenderer.GetCameras();
+        s_RenderWorkflow->Render(cameras);
     }
 
     void RenderSystem::EndFrame()

@@ -21,5 +21,8 @@ namespace OpenGraphics
         void DrawGameObjects(const RenderCamera* camera);
         void DrawSkybox(const RenderCamera* camera);
         void DrawGizmos(const RenderCamera* camera);
+
+    private:
+
     };
 } // OpenGraphics

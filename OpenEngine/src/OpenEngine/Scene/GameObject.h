@@ -37,11 +37,11 @@ namespace OpenGraphics
         template <class T> T* GetComponent() requires std::is_base_of_v<Component, T>
         {
             if (typeid(T) == typeid(Transform))
-                return m_Transform;
+                return (T*)m_Transform;
 
             for (auto& component : m_ComponentList)
                 if (dynamic_cast<T*>(component))
-                    return component;
+                    return (T*)component;
 
             return nullptr;
         }

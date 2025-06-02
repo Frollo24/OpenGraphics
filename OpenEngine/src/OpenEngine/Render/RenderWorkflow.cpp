@@ -7,8 +7,8 @@
 #include "OpenEngine/Asset/TextureImporter.h"
 #include "OpenEngine/Elements/VectorGizmo.h"
 #include "OpenEngine/Elements/PointGizmo.h"
-#include "OpenEngine/Scene/Scene.h"
-#include "OpenEngine/Scene/RenderComponent.h"
+// #include "OpenEngine/Scene/Scene.h"
+// #include "OpenEngine/Scene/RenderComponent.h"
 
 // NOTE: could be interesting to leave this as a parameter for the user
 #define LEFT_HANDED 0
