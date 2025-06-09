@@ -34,6 +34,11 @@ namespace OpenGraphics
     {
         // TODO: expand
         Color MainColor;
+
+        inline bool operator==(const Material& other) const
+        {
+            return MainColor == other.MainColor;
+        }
     };
 
     inline VertexAttribBinding GetGizmoVertexBinding()
@@ -50,3 +55,12 @@ namespace OpenGraphics
         };
     }
 }
+
+
+template<> struct std::hash<OpenGraphics::Material>
+{
+    size_t operator()(OpenGraphics::Material const& material) const noexcept
+    {
+        return hash<glm::vec4>()(material.MainColor.toGlmVector());
+    }
+};

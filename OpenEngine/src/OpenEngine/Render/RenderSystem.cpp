@@ -21,6 +21,8 @@ namespace OpenGraphics
     void RenderSystem::RenderScene(const SceneRenderer& sceneRenderer)
     {
         const auto& cameras = sceneRenderer.GetCameras();
+        s_SceneRenderer = const_cast<SceneRenderer*>(&sceneRenderer);
+        s_RenderWorkflow->SetSceneRenderer(s_SceneRenderer);
         s_RenderWorkflow->Render(cameras);
     }
 

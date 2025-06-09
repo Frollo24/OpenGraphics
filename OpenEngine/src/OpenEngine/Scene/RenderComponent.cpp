@@ -1,6 +1,8 @@
 #include "ogpch.h"
 #include "RenderComponent.h"
 
+#include "OpenEngine/Render/RenderSystem.h"
+
 namespace OpenGraphics
 {
     RenderComponent::~RenderComponent()
@@ -11,7 +13,8 @@ namespace OpenGraphics
     void RenderComponent::OnRender()
     {
         if (m_Model) [[likely]]
-            for (const auto& mesh : m_Model->GetMeshes())
-                mesh.Render();
+            RenderSystem::ActiveSceneRenderer()->DrawModel(*m_Model, *GetGameObject().GetTransform());
+            // for (const auto& mesh : m_Model->GetMeshes())
+            //     mesh.Render();
     }
 }

@@ -81,15 +81,18 @@ public:
         m_SphereGameObject->GetTransform()->Scale(Vector3D(.75f, .75f, .75f));
         const auto starGameObject = new GameObject(Vector3D(0, 0, 2), m_SphereGameObject->GetTransform());
 
+        // HACK: materials should be modifiable by changing the reference to the material
         const auto sphereRenderComponent = m_SphereGameObject->AddComponent<RenderComponent>();
-        sphereRenderComponent->SetModel(new Model("assets/models/Sphere.obj"));
+        Model* sphereModel = new Model("assets/models/Sphere.obj");
+        const_cast<Material&>(sphereModel->GetMeshes().at(0).GetMaterial()).MainColor = Color(0.9f, 0.1f, 0.1f, 1.0f);
+        sphereRenderComponent->SetModel(sphereModel);
         const auto starRenderComponent = starGameObject->AddComponent<RenderComponent>();
-        starRenderComponent->SetModel(new Model("assets/models/Star.obj"));
+        Model* starModel = new Model("assets/models/Star.obj");
+        const_cast<Material&>(starModel->GetMeshes().at(0).GetMaterial()).MainColor = Color(0.8f, 0.65f, 0.0f, 1.0f);
+        starRenderComponent->SetModel(starModel);
 
         m_Scene->AddGameObject(m_SphereGameObject);
         m_Scene->AddGameObject(starGameObject);
-        m_Scene->SetCamera(m_RenderCamera);
-        m_RenderCamera->SetScene(m_Scene);
 
         m_SceneRenderer = SceneRenderer(m_Scene);
         m_SceneRenderer.SetEditorCamera(m_RenderCamera);
@@ -119,7 +122,12 @@ public:
 
     void Render() override {
         RenderSystem::BeginFrame();
+
+        // NOTE: on a proper editor application, we can use two similar scene renderers which only differs on
+        // having an aditional editor camera
+        m_SceneRenderer.BeginRendering();
         RenderSystem::RenderScene(m_SceneRenderer);
+        m_SceneRenderer.EndRendering();
 
         m_TrianglePipeline->Bind();
         RenderCommand::BindVertexArray(m_TriangleVertexArray);

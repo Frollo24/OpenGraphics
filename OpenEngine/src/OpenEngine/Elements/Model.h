@@ -16,6 +16,7 @@ namespace OpenGraphics
 
         [[nodiscard]] inline const std::vector<Vertex>& GetVertices() const { return m_Vertices; }
         [[nodiscard]] inline const std::vector<Index>& GetIndices() const { return m_Indices; }
+        [[nodiscard]] inline const Material& GetMaterial() const { return m_Material; }
         [[nodiscard]] inline const RenderEntity* GetRenderEntity() const { return m_RenderEntity; }
 
         inline void Render() const { m_RenderEntity->Render(); }

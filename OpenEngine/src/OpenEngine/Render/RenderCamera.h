@@ -4,8 +4,6 @@
 #include "OpenEngine/Math/Matrix4x4.h"
 #include "OpenEngine/Math/Vector3D.h"
 
-#include "OpenEngine/Scene/Scene.h"
-
 namespace OpenGraphics
 {
     class OPEN_API RenderCamera
@@ -26,17 +24,9 @@ namespace OpenGraphics
         [[nodiscard]] inline const Vector3D& GetPosition() const { return m_Position; }
         virtual void SetPosition(const Vector3D& position) { m_Position = position; }  // TODO: implemented by subclasses
 
-        // TODO: think about this
-        [[nodiscard]] inline const Scene* GetScene() const { return m_Scene; }
-        void SetScene(Scene* scene) { m_Scene = scene; }
-
-
     private:
         Matrix4x4 m_Projection = Matrix4x4::identity;
         Matrix4x4 m_View = Matrix4x4::identity;
         Vector3D m_Position = Vector3D::zero;
-
-        // TODO: think about this
-        Scene* m_Scene = nullptr;
     };
 }

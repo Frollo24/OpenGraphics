@@ -186,10 +186,17 @@ namespace OpenGraphics
 
     void RenderWorkflow::DrawGameObjects(const RenderCamera* camera)
     {
-        Vector3D cameraPosition = camera->GetPosition();
+        m_SceneRenderer->SetPipeline(*s_ModelPipeline);
 
-        s_ModelPipeline->Bind();
-        auto sphereGameObject = camera->GetScene()->GetGameObjects().at(0);
+        s_WhiteTexture->BindTextureUnit(0);
+        s_WhiteTexture->BindTextureUnit(1);
+        s_WhiteTexture->BindTextureUnit(2);
+
+        m_SceneRenderer->BeginCamera(*camera);
+        auto scene = m_SceneRenderer->GetScene();
+        auto sphereGameObject = scene->GetGameObjects().at(0);
+        /*
+        Vector3D cameraPosition = camera->GetPosition();
         Matrix4x4 model = sphereGameObject->GetTransform()->GetModelMatrix();
         Matrix4x4 view = camera->GetView();
 
@@ -199,40 +206,18 @@ namespace OpenGraphics
         cameraPosition.z *= -1;
 #endif
         Matrix4x4 proj = camera->GetProjection();
-        Matrix4x4 modelViewProj = proj * view * model;
-
-        s_ModelShader->SetFloat4("u_LightDir", Vector4D(1.0f, 1.0f, 1.0f, 0.0f));
-        s_ModelShader->SetFloat3("u_CameraPosition", cameraPosition);
-
-        s_ModelShader->SetMat4("u_ModelViewProj", modelViewProj);
-        s_ModelShader->SetMat4("u_Model", model);
-        s_ModelShader->SetMat4("u_Normal", model.Inverse().Transpose());
-        s_ModelShader->SetColor("u_MainColor", Color(0.9f, 0.1f, 0.1f, 1.0f));
-        s_ModelShader->SetColor("u_Material.diffuseColor", Color(0.9f, 0.1f, 0.1f, 1.0f));
-        s_ModelShader->SetColor("u_Material.specularColor", Color(1.0f, 1.0f, 1.0f, 1.0f));
-        s_ModelShader->SetColor("u_Material.emissiveColor", Color(0.0f, 0.0f, 0.0f, 1.0f));
-
-        s_WhiteTexture->BindTextureUnit(0);
-        s_WhiteTexture->BindTextureUnit(1);
-        s_WhiteTexture->BindTextureUnit(2);
+        */
         sphereGameObject->OnRender();
 
-        auto starGameObject = camera->GetScene()->GetGameObjects().at(1);
+
+        auto starGameObject = scene->GetGameObjects().at(1);
+        /*
         model = starGameObject->GetTransform()->GetModelMatrix();
 
 #if LEFT_HANDED
         model.Scale(Vector3D(1, 1, -1));
 #endif
-
-        modelViewProj = proj * view * model;
-        s_ModelShader->SetMat4("u_ModelViewProj", modelViewProj);
-        s_ModelShader->SetMat4("u_Model", model);
-        s_ModelShader->SetMat4("u_Normal", model.Inverse().Transpose());
-        s_ModelShader->SetColor("u_MainColor", Color(0.8f, 0.65f, 0.0f, 1.0f));
-        s_ModelShader->SetColor("u_Material.diffuseColor", Color(0.8f, 0.65f, 0.0f, 1.0f));
-        s_ModelShader->SetColor("u_Material.specularColor", Color(1.0f, 1.0f, 1.0f, 1.0f));
-        s_ModelShader->SetColor("u_Material.emissiveColor", Color(0.0f, 0.0f, 0.0f, 1.0f));
-
+        */
         starGameObject->OnRender();
     }
 

@@ -26,15 +26,8 @@ namespace OpenGraphics
         void OnRender();
         void OnDestroy();
 
-        // TODO: temporary
-        [[nodiscard]] inline const RenderCamera* GetCamera() const { return m_RenderCamera; }
-        void SetCamera(RenderCamera* camera) { m_RenderCamera = camera; }
-
     private:
         std::vector<GameObject*> m_GameObjects;
         std::string m_SceneName;
-
-        // TODO: temporary
-        RenderCamera* m_RenderCamera = nullptr;
     };
 }
