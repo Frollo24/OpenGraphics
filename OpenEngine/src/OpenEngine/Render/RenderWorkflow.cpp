@@ -149,7 +149,8 @@ namespace OpenGraphics
         pointFragmentShader.Type = ShaderType::Fragment;
         s_PointGizmoShader = new Shader({pointVertexShader, pointFragmentShader});
 
-        // HACK: Should be two different pipelines
+        // Could be two different pipelines, but with SetPrimitiveTopology command
+        // it is no longer necessary
         PipelineState axisPipelineState{};
         s_AxisPipeline = new Pipeline(axisPipelineState, s_VectorGizmoShader);
 #pragma endregion

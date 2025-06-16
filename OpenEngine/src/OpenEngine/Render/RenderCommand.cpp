@@ -7,6 +7,21 @@ namespace OpenGraphics
 {
 	namespace Utils
 	{
+		static GLenum PrimitiveTopologyToGLPrimitiveTopology(const PrimitiveTopology topology)
+		{
+			switch (topology)
+			{
+				case PrimitiveTopology::Points:        return GL_POINTS;
+				case PrimitiveTopology::Lines:         return GL_LINES;
+				case PrimitiveTopology::LineStrip:     return GL_LINE_STRIP;
+				case PrimitiveTopology::Triangles:     return GL_TRIANGLES;
+				case PrimitiveTopology::TriangleStrip: return GL_TRIANGLE_STRIP;
+				case PrimitiveTopology::TriangleFan:   return GL_TRIANGLE_FAN;
+				default:
+					return GL_NONE;
+			}
+		}
+
 		static GLenum DepthComparisonToGLDepthFunc(const DepthComparison comparison)
 		{
 			switch (comparison)
@@ -137,7 +152,12 @@ namespace OpenGraphics
         glVertexArrayElementBuffer(vertexArrayID, indexBufferID);
     }
 
-	void RenderCommand::SetDepthState(const PipelineDepthState& depthState)
+    void RenderCommand::SetPrimitiveTopology(const PrimitiveTopology& primitiveTopology)
+	{
+		s_RenderState.PrimitiveTopology = primitiveTopology;
+    }
+
+    void RenderCommand::SetDepthState(const PipelineDepthState& depthState)
 	{
 		if (!depthState.DepthTest)
 		{
@@ -202,16 +222,19 @@ namespace OpenGraphics
 		s_RenderState.Shader = const_cast<Shader*>(shader);
     }
 
-    void RenderCommand::Draw(uint32_t vertexCount)
+    void RenderCommand::Draw(uint32_t first, uint32_t vertexCount)
     {
-        glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+		GLenum topology = Utils::PrimitiveTopologyToGLPrimitiveTopology(s_RenderState.PrimitiveTopology);
+        glDrawArrays(topology, first, vertexCount);
     }
 
     void RenderCommand::DrawIndexed(uint32_t indexCount)
     {
-        glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
+		GLenum topology = Utils::PrimitiveTopologyToGLPrimitiveTopology(s_RenderState.PrimitiveTopology);
+        glDrawElements(topology, indexCount, GL_UNSIGNED_INT, nullptr);
     }
 
+	/*
     void RenderCommand::DrawLines(uint32_t vertexCount)
 	{
 		glDrawArrays(GL_LINES, 0, vertexCount);
@@ -221,4 +244,5 @@ namespace OpenGraphics
 	{
 		glDrawArrays(GL_POINTS, first, vertexCount);
     }
+    */
 }

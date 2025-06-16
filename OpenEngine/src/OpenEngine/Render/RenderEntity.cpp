@@ -4,8 +4,9 @@
 
 namespace OpenGraphics
 {
-    RenderEntity::RenderEntity(const std::vector<Vertex> &vertices, const std::vector<Index> &indices)
-        : m_VertexCount(vertices.size()), m_IndexCount(indices.size())
+    RenderEntity::RenderEntity(const std::vector<Vertex> &vertices, const std::vector<Index> &indices,
+        const PrimitiveTopology& topology)
+        : m_VertexCount(vertices.size()), m_IndexCount(indices.size()), m_Topology(topology)
     {
         BufferDescription vertexDescription = {};
         vertexDescription.Type = BufferType::Vertex;
@@ -37,6 +38,7 @@ namespace OpenGraphics
     void RenderEntity::Render() const
     {
         RenderCommand::BindVertexArray(m_VertexArray);
+        RenderCommand::SetPrimitiveTopology(m_Topology);
         RenderCommand::SetVertexBuffer(m_VertexBuffer, m_VertexAttribBinding);
 
         if (m_IndexBuffer)
@@ -46,7 +48,7 @@ namespace OpenGraphics
         }
         else
         {
-            RenderCommand::Draw(m_VertexCount);
+            RenderCommand::Draw(0, m_VertexCount);
         }
     }
 

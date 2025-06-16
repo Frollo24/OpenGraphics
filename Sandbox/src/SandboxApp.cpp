@@ -132,7 +132,7 @@ public:
         m_TrianglePipeline->Bind();
         RenderCommand::BindVertexArray(m_TriangleVertexArray);
         RenderCommand::SetVertexBuffer(m_VertexBuffer, m_TriangleVertexAttribBinding);
-        RenderCommand::Draw(3);
+        RenderCommand::Draw(0, 3);
 
         RenderSystem::EndFrame();
         GetWindow()->SwapBuffers();

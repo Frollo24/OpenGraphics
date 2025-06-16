@@ -37,7 +37,11 @@ namespace OpenGraphics
     {
         RenderCommand::BindVertexArray(m_VertexArray);
         RenderCommand::SetVertexBuffer(m_VertexBuffer, m_VertexAttribBinding);
-        RenderCommand::DrawLines(2);
-        RenderCommand::DrawPoints(1, 1);
+        RenderCommand::SetPrimitiveTopology(PrimitiveTopology::Lines);
+        RenderCommand::Draw(0, 2);
+        RenderCommand::SetPrimitiveTopology(PrimitiveTopology::Points);
+        RenderCommand::Draw(1, 1);
+        // RenderCommand::DrawLines(2);
+        // RenderCommand::DrawPoints(1, 1);
     }
 }

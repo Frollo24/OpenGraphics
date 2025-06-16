@@ -27,6 +27,7 @@ namespace OpenGraphics
     {
         RenderCommand::BindVertexArray(m_VertexArray);
         RenderCommand::SetVertexBuffer(m_VertexBuffer, m_VertexAttribBinding);
-        RenderCommand::DrawPoints(0, 1);
+        RenderCommand::SetPrimitiveTopology(PrimitiveTopology::Points);
+        RenderCommand::Draw(0, 1);
     }
 }
