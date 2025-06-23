@@ -91,7 +91,7 @@ namespace OpenGraphics
         [[nodiscard]] inline const TextureDescription& GetDescription() const { return m_TextureDesc; }
 
         void SetData(const void* data);
-        void BindTextureUnit(uint32_t textureUnit);
+        void BindTextureUnit(uint32_t textureUnit) const;
 
     private:
         TextureDescription m_TextureDesc{};

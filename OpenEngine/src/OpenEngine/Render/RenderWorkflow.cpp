@@ -4,6 +4,7 @@
 
 // HACK: this shouldn't be directly included here
 #include "RenderStructs.h"
+#include "RenderingData.h"
 #include "OpenEngine/Asset/TextureImporter.h"
 #include "OpenEngine/Elements/VectorGizmo.h"
 #include "OpenEngine/Elements/PointGizmo.h"
@@ -18,7 +19,6 @@ namespace OpenGraphics
     // GameObjects
     static Shader* s_ModelShader = nullptr;
     static Pipeline* s_ModelPipeline = nullptr;
-    static Texture* s_WhiteTexture = nullptr;
 
     // Gizmos
     static VectorGizmo* s_Xaxis = nullptr;
@@ -30,10 +30,6 @@ namespace OpenGraphics
     static Pipeline* s_AxisPipeline = nullptr;
 
     // Skybox
-    static Buffer* s_SkyboxVertexBuffer = nullptr;
-    static Buffer* s_SkyboxIndexBuffer = nullptr;
-    static VertexArray* s_SkyboxVertexArray = nullptr;
-    static VertexAttribBinding s_SkyboxVertexAttribBinding = {};
     static Shader* s_SkyboxShader = nullptr;
     static Pipeline* s_SkyboxPipeline = nullptr;
     static Texture* s_SkyboxCubemap = nullptr;
@@ -63,35 +59,10 @@ namespace OpenGraphics
 
         PipelineState modelPipelineState{};
         s_ModelPipeline = new Pipeline(modelPipelineState, s_ModelShader);
-
-        TextureDescription whiteTextureDesc = {};
-        whiteTextureDesc.ImageExtent = { 1, 1, 1 };
-        whiteTextureDesc.ImageFormat = ImageFormat::RGBA8;
-        whiteTextureDesc.GenerateMipmaps = false;
-        whiteTextureDesc.FilterMode = TextureFilterMode::Nearest;
-        s_WhiteTexture = new Texture(whiteTextureDesc);
-
-        const uint32_t white = 0xffffffff;
-        s_WhiteTexture->SetData(&white);
 #pragma endregion
 
 #pragma region Skybox
         // Skybox
-        BufferDescription skyboxVertexDescription = {};
-        skyboxVertexDescription.Type = BufferType::Vertex;
-        skyboxVertexDescription.Size = g_SkyboxVertices.size() * sizeof(Vector3D);
-        skyboxVertexDescription.Data = g_SkyboxVertices.data();
-        s_SkyboxVertexBuffer = new Buffer(skyboxVertexDescription);
-
-        s_SkyboxVertexAttribBinding = GetSkyboxVertexBinding();
-        s_SkyboxVertexArray = new VertexArray({s_SkyboxVertexAttribBinding});
-
-        BufferDescription skyboxIndexDescription = {};
-        skyboxIndexDescription.Type = BufferType::Index;
-        skyboxIndexDescription.Size = g_SkyboxIndices.size() * sizeof(uint32_t);
-        skyboxIndexDescription.Data = g_SkyboxIndices.data();
-        s_SkyboxIndexBuffer = new Buffer(skyboxIndexDescription);
-
         auto cubemapFaces = TextureImporter::LoadCubemapFromSeparateFaces("assets/textures/skyboxFaces/",
             { "right.jpg", "left.jpg", "top.jpg", "bottom.jpg", "front.jpg", "back.jpg" }
         );
@@ -161,13 +132,9 @@ namespace OpenGraphics
 #pragma region GameObjects
         delete s_ModelShader;
         delete s_ModelPipeline;
-        delete s_WhiteTexture;
 #pragma endregion
 
 #pragma region Skybox
-        delete s_SkyboxVertexArray;
-        delete s_SkyboxVertexBuffer;
-        delete s_SkyboxIndexBuffer;
         delete s_SkyboxCubemap;
         delete s_SkyboxShader;
         delete s_SkyboxPipeline;
@@ -187,11 +154,13 @@ namespace OpenGraphics
 
     void RenderWorkflow::DrawGameObjects(const RenderCamera* camera)
     {
+        // NOTE: This should be called per material type
         m_SceneRenderer->SetPipeline(*s_ModelPipeline);
 
-        s_WhiteTexture->BindTextureUnit(0);
-        s_WhiteTexture->BindTextureUnit(1);
-        s_WhiteTexture->BindTextureUnit(2);
+        // NOTE: This should be called per material instance
+        RenderingData::GetWhiteTexture().BindTextureUnit(0);
+        RenderingData::GetWhiteTexture().BindTextureUnit(1);
+        RenderingData::GetWhiteTexture().BindTextureUnit(2);
 
         m_SceneRenderer->BeginCamera(*camera);
         auto scene = m_SceneRenderer->GetScene();
@@ -239,9 +208,9 @@ namespace OpenGraphics
         s_SkyboxPipeline->Bind();
         s_SkyboxCubemap->BindTextureUnit(0);
 
-        RenderCommand::BindVertexArray(s_SkyboxVertexArray);
-        RenderCommand::SetVertexBuffer(s_SkyboxVertexBuffer, s_SkyboxVertexAttribBinding);
-        RenderCommand::SetIndexBuffer(s_SkyboxIndexBuffer);
+        RenderCommand::BindVertexArray(&RenderingData::GetSkyboxVertexArray());
+        RenderCommand::SetVertexBuffer(&RenderingData::GetSkyboxVertexBuffer(), GetSkyboxVertexBinding());
+        RenderCommand::SetIndexBuffer(&RenderingData::GetSkyboxIndexBuffer());
         RenderCommand::DrawIndexed(36);
     }
 

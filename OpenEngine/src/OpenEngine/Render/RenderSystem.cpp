@@ -1,16 +1,16 @@
 #include "ogpch.h"
 #include "RenderSystem.h"
 #include "RenderCommand.h"
+#include "RenderingData.h"
 
 namespace OpenGraphics
 {
     void RenderSystem::Init()
     {
+        RenderingData::Init();
+
         s_RenderWorkflow = new RenderWorkflow();
-
         RenderWorkflow::InitResources();
-
-        // TODO: init render system common data
     }
 
     void RenderSystem::BeginFrame()
@@ -36,6 +36,6 @@ namespace OpenGraphics
         delete s_RenderWorkflow;
         s_RenderWorkflow = nullptr;
 
-        // TODO: delete render system common data
+        RenderingData::Shutdown();
     }
 }

@@ -242,7 +242,7 @@ namespace OpenGraphics
     		glGenerateTextureMipmap(m_RendererID);
     }
 
-    void Texture::BindTextureUnit(uint32_t textureUnit)
+    void Texture::BindTextureUnit(uint32_t textureUnit) const
     {
     	glBindTextureUnit(textureUnit, m_RendererID);
     }

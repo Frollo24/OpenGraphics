@@ -52,25 +52,6 @@ public:
         PipelineState trianglePipelineState{};
         m_TrianglePipeline = new Pipeline(trianglePipelineState, m_TriangleShader);
 
-        TextureDescription checkerTextureDesc = {};
-        checkerTextureDesc.ImageExtent = { 16, 16, 1 };
-        checkerTextureDesc.ImageFormat = ImageFormat::RGBA8;
-        checkerTextureDesc.GenerateMipmaps = false;
-        checkerTextureDesc.FilterMode = TextureFilterMode::Nearest;
-        m_CheckerboardTexture = new Texture(checkerTextureDesc);
-
-        const uint32_t gray = 0x88888888;
-        const uint32_t white = 0xffffffff;
-        const uint32_t black = 0x00000000;
-        const uint32_t magenta = 0xffff00ff;
-        std::array<uint32_t, 16 * 16> checkerboardPixels = { 0 };
-        for (int x = 0; x < 16; x++) {
-            for (int y = 0; y < 16; y++) {
-                checkerboardPixels[x * 16 + y] = ((x % 2) ^ (y % 2)) ? magenta : black;
-            }
-        }
-        m_CheckerboardTexture->SetData(checkerboardPixels.data());
-
         m_RenderCamera = new RenderCamera(Matrix4x4::Perspective(60.0f, 4.0f / 3.0f, 0.3f, 50.0f));
         m_RenderCamera->SetPosition(Vector3D(0.5f, 1.0f, 3.0f));
         m_RenderCamera->SetView(Matrix4x4::LookAt(m_RenderCamera->GetPosition(), Vector3D::zero, Vector3D::up));
@@ -132,6 +113,7 @@ public:
         m_TrianglePipeline->Bind();
         RenderCommand::BindVertexArray(m_TriangleVertexArray);
         RenderCommand::SetVertexBuffer(m_VertexBuffer, m_TriangleVertexAttribBinding);
+        RenderCommand::SetPrimitiveTopology(PrimitiveTopology::Triangles);
         RenderCommand::Draw(0, 3);
 
         RenderSystem::EndFrame();
@@ -141,13 +123,12 @@ public:
     void Cleanup() override {
         Logger::Trace("Resource cleanup...");
         delete m_RenderCamera;
+        delete m_Scene;
 
         delete m_TriangleVertexArray;
         delete m_VertexBuffer;
 
-        delete m_CheckerboardTexture;
         delete m_TrianglePipeline;
-
         delete m_TriangleShader;
     }
 
@@ -158,8 +139,6 @@ private:
 
     Shader* m_TriangleShader = nullptr;
     Pipeline* m_TrianglePipeline = nullptr;
-
-    Texture* m_CheckerboardTexture = nullptr;
 
     RenderCamera* m_RenderCamera = nullptr;
     Scene* m_Scene = nullptr;
