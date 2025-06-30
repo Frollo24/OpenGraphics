@@ -32,7 +32,8 @@ namespace OpenGraphics
     {
         Assimp::Importer import;
         const aiScene* scene = import.ReadFile(path,
-            aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
+            aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace |
+            aiProcess_RemoveRedundantMaterials);
 
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
         {
@@ -119,22 +120,101 @@ namespace OpenGraphics
     void Model::LoadMaterials(const aiScene *scene)
     {
         m_Materials.reserve(scene->mNumMaterials);
+
+        if (scene->mNumMaterials == 1)
+        {
+            const aiMaterial* material = scene->mMaterials[0];
+            if (material->GetName() == aiString(AI_DEFAULT_MATERIAL_NAME))
+            {
+                m_Materials.push_back(ProcessDefaultMaterial(material, scene));
+                return;
+            }
+        }
+
         for (size_t i = 0; i < scene->mNumMaterials; i++)
         {
             const aiMaterial* material = scene->mMaterials[i];
+            if (material->GetName() == aiString(AI_DEFAULT_MATERIAL_NAME))
+                continue;
             m_Materials.push_back(ProcessMaterial(material, scene));
         }
     }
 
     Material Model::ProcessMaterial(const aiMaterial *material, const aiScene *scene)
     {
-        // TODO: load more material properties into the material
-        aiColor3D diffuse (0.f,0.f,0.f);
-        material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
-
         Material modelMaterial{};
-        modelMaterial.MainColor = Color(diffuse.r, diffuse.g, diffuse.b);
+        modelMaterial.Name = material->GetName().C_Str();
+
+        aiShadingMode shadingMode = aiShadingMode_Unlit;
+        ai_int shadingModeInt = 0;
+        material->Get(AI_MATKEY_SHADING_MODEL, shadingModeInt);
+        shadingMode = (aiShadingMode)shadingModeInt;
+
+        switch (shadingMode)
+        {
+            case aiShadingMode_PBR_BRDF: {
+                aiColor3D baseColor (0.f,0.f,0.f);
+                float metallic, roughness;
+                material->Get(AI_MATKEY_BASE_COLOR, baseColor);
+                material->Get(AI_MATKEY_METALLIC_FACTOR, metallic);
+                material->Get(AI_MATKEY_ROUGHNESS_FACTOR, roughness);
+                modelMaterial.MainColor = Color(baseColor.r, baseColor.g, baseColor.b);
+                modelMaterial.SetFloat("_Metallic", metallic);
+                modelMaterial.SetFloat("_Roughness", roughness);
+                break;
+            }
+            case aiShadingMode_Gouraud:
+            case aiShadingMode_Phong:
+            case aiShadingMode_Blinn: {
+                aiColor3D diffuse{}, specular{}, emissive{};
+                float shininess;
+                material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
+                material->Get(AI_MATKEY_COLOR_SPECULAR, specular);
+                material->Get(AI_MATKEY_COLOR_EMISSIVE, emissive);
+                material->Get(AI_MATKEY_SHININESS, shininess);
+                modelMaterial.MainColor = Color(diffuse.r, diffuse.g, diffuse.b);
+                modelMaterial.SetColor("_SpecularColor", Color(specular.r, specular.g, specular.b));
+                modelMaterial.SetColor("_EmissiveColor", Color(emissive.r, emissive.g, emissive.b));
+                modelMaterial.SetFloat("_Shininess", shininess);
+                break;
+            }
+            case aiShadingMode_Unlit:
+            default:
+                aiColor3D matColor (0.f,0.f,0.f);
+                material->Get(AI_MATKEY_COLOR_DIFFUSE, matColor);
+                modelMaterial.MainColor = Color(matColor.r, matColor.g, matColor.b);
+        }
+
 
         return modelMaterial;
+    }
+
+    Material Model::ProcessDefaultMaterial(const aiMaterial* material, const aiScene* scene)
+    {
+        Material defaultMaterial{};
+        defaultMaterial.Name = AI_DEFAULT_MATERIAL_NAME;
+        aiShadingMode shadingMode = aiShadingMode_Unlit;
+        material->Get(AI_MATKEY_SHADING_MODEL, shadingMode);
+
+        switch (shadingMode)
+        {
+            case aiShadingMode_PBR_BRDF: {
+                aiColor3D baseColor (0.f,0.f,0.f);
+                material->Get(AI_MATKEY_BASE_COLOR, baseColor);
+                defaultMaterial.MainColor = Color(baseColor.r, baseColor.g, baseColor.b);
+                defaultMaterial.SetFloat("_Metallic", 0.0f);
+                defaultMaterial.SetFloat("_Roughness", 0.5f);
+                break;
+            }
+            case aiShadingMode_Gouraud:
+            case aiShadingMode_Phong:
+            case aiShadingMode_Blinn:
+            case aiShadingMode_Unlit:
+            default:
+                aiColor3D diffuse (0.f,0.f,0.f);
+                material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
+                defaultMaterial.MainColor = Color(diffuse.r, diffuse.g, diffuse.b);
+        }
+        return defaultMaterial;
     }
 }

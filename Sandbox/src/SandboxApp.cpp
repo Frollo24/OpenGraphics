@@ -65,7 +65,13 @@ public:
         // HACK: materials should be modifiable by changing the reference to the material
         const auto sphereRenderComponent = m_SphereGameObject->AddComponent<RenderComponent>();
         Model* sphereModel = new Model("assets/models/Sphere.obj");
-        const_cast<Material&>(sphereModel->GetMeshes().at(0).GetMaterial()).MainColor = Color(0.9f, 0.1f, 0.1f, 1.0f);
+
+        auto& sphereMaterial = const_cast<Material&>(sphereModel->GetMeshes().at(0).GetMaterial());
+        sphereMaterial.MainColor = Color(0.9f, 0.1f, 0.1f, 1.0f);
+        sphereMaterial.SetColor("_SpecularColor", Color::yellow);
+        sphereMaterial.SetColor("_EmissiveColor", Color::black);
+        Logger::Debug("{} shininess: {}", sphereMaterial.Name, sphereMaterial.GetFloat("_Shininess"));
+
         sphereRenderComponent->SetModel(sphereModel);
         const auto starRenderComponent = starGameObject->AddComponent<RenderComponent>();
         Model* starModel = new Model("assets/models/Star.obj");
@@ -114,7 +120,7 @@ public:
         RenderCommand::BindVertexArray(m_TriangleVertexArray);
         RenderCommand::SetVertexBuffer(m_VertexBuffer, m_TriangleVertexAttribBinding);
         RenderCommand::SetPrimitiveTopology(PrimitiveTopology::Triangles);
-        RenderCommand::Draw(0, 3);
+        // RenderCommand::Draw(0, 3);
 
         RenderSystem::EndFrame();
         GetWindow()->SwapBuffers();

@@ -89,8 +89,8 @@ namespace OpenGraphics
         const Matrix4x4 modelViewProj = proj * view * model;
 
         const Color diffuseColor = material.MainColor;
-        const Color specularColor = Color::white;
-        const Color emissiveColor = Color::black;
+        const Color specularColor = material.GetColor("_SpecularColor");
+        const Color emissiveColor = material.GetColor("_EmissiveColor");
 
         m_SelectedShader->SetMat4("u_ModelViewProj", modelViewProj);
         m_SelectedShader->SetMat4("u_Model", model);

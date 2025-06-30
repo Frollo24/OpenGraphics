@@ -35,6 +35,7 @@
 // Elements
 #include "OpenEngine/Elements/VectorGizmo.h"
 #include "OpenEngine/Elements/PointGizmo.h"
+#include "OpenEngine/Elements/Material.h"
 #include "OpenEngine/Elements/Model.h"
 
 // Window system

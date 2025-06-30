@@ -1,6 +1,7 @@
 #pragma once
 
 #include "OpenEngine/Core/Base.h"
+#include "OpenEngine/Elements/Material.h"
 #include "OpenEngine/Render/RenderEntity.h"
 
 #include <assimp/scene.h>
@@ -43,6 +44,7 @@ namespace OpenGraphics
 
         void LoadMaterials(const aiScene* scene);
         Material ProcessMaterial(const aiMaterial* material, const aiScene* scene);
+        Material ProcessDefaultMaterial(const aiMaterial* material, const aiScene* scene);
 
     private:
         std::vector<Mesh> m_Meshes;

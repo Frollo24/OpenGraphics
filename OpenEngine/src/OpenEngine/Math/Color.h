@@ -46,3 +46,7 @@ namespace OpenGraphics
     inline const Color& Color::black = Color(0.0f, 0.0f, 0.0f, 1.0f);
     inline const Color& Color::clear = Color(0.0f, 0.0f, 0.0f, 0.0f);
 }
+
+inline std::ostream& operator<<(std::ostream& os, const OpenGraphics::Color& color) {
+    return os << "Color: { R: " << color.r << ", G: " << color.g << ", B: " << color.b << " }";
+}
