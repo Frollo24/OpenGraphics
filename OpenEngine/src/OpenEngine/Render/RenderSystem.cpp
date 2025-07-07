@@ -33,8 +33,13 @@ namespace OpenGraphics
 
     void RenderSystem::Shutdown()
     {
+        RenderWorkflow::DeleteResources();
+
         delete s_RenderWorkflow;
         s_RenderWorkflow = nullptr;
+
+        RenderCommand::BindVertexArray(nullptr);
+        RenderCommand::UseShader(nullptr);
 
         RenderingData::Shutdown();
     }

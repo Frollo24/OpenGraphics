@@ -16,5 +16,6 @@
 #include <ctime>
 #include <cstdlib>
 #include <limits>
+#include <memory>
 #include <random>
 

@@ -5,7 +5,7 @@
 
 namespace OpenGraphics
 {
-    Pipeline::Pipeline(const PipelineState& state, Shader* const shader)
+    Pipeline::Pipeline(const PipelineState& state, const Ref<Shader>& shader)
         : m_State(state), m_Shader(shader)
     {
     }

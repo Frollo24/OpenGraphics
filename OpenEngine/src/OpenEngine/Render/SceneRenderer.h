@@ -38,7 +38,7 @@ namespace OpenGraphics
 
     private:
         Scene* m_Scene = nullptr;
-        Shader* m_SelectedShader = nullptr;
+        Ref<Shader> m_SelectedShader = nullptr;
         RenderCamera* m_SelectedCamera = nullptr;
         RenderCamera* m_EditorCamera = nullptr;  // TODO: promote to a Editor Camera
     };

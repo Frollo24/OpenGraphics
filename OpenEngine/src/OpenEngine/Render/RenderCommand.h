@@ -12,7 +12,7 @@ namespace OpenGraphics
     struct RenderState
     {
         VertexArray* VertexArray = nullptr;
-        Shader* Shader = nullptr;
+        Ref<Shader> Shader = nullptr;
         PrimitiveTopology PrimitiveTopology = PrimitiveTopology::Triangles;
     };
 
@@ -32,7 +32,7 @@ namespace OpenGraphics
         static void SetDepthState(const PipelineDepthState& depthState);
         static void SetBlendState(const PipelineBlendState& blendState);
         static void SetPolygonState(const PipelinePolygonState& polygonState);
-        static void UseShader(const Shader* shader);
+        static void UseShader(BorrowRef<Shader> shader);
 
         static void Draw(uint32_t first, uint32_t vertexCount);
         static void DrawIndexed(uint32_t indexCount);

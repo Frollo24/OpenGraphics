@@ -47,10 +47,10 @@ public:
         ShaderSpecs triangleFragmentShader{};
         triangleFragmentShader.Filepath = "assets/shaders/TriangleShader.frag";
         triangleFragmentShader.Type = ShaderType::Fragment;
-        m_TriangleShader = new Shader({triangleVertexShader, triangleFragmentShader});
+        auto triangleShader = CreateRef<Shader>({triangleVertexShader, triangleFragmentShader});
 
         PipelineState trianglePipelineState{};
-        m_TrianglePipeline = new Pipeline(trianglePipelineState, m_TriangleShader);
+        m_TrianglePipeline = new Pipeline(trianglePipelineState, triangleShader);
 
         m_RenderCamera = new RenderCamera(Matrix4x4::Perspective(60.0f, 4.0f / 3.0f, 0.3f, 50.0f));
         m_RenderCamera->SetPosition(Vector3D(0.5f, 1.0f, 3.0f));
@@ -135,7 +135,6 @@ public:
         delete m_VertexBuffer;
 
         delete m_TrianglePipeline;
-        delete m_TriangleShader;
     }
 
 private:
@@ -143,7 +142,6 @@ private:
     VertexArray* m_TriangleVertexArray = nullptr;
     VertexAttribBinding m_TriangleVertexAttribBinding = {};
 
-    Shader* m_TriangleShader = nullptr;
     Pipeline* m_TrianglePipeline = nullptr;
 
     RenderCamera* m_RenderCamera = nullptr;

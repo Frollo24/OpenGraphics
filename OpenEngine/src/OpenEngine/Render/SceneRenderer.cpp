@@ -44,7 +44,7 @@ namespace OpenGraphics
 
     void SceneRenderer::SetPipeline(const Pipeline& pipeline)
     {
-        m_SelectedShader = const_cast<Shader*>(pipeline.GetShader());
+        m_SelectedShader = pipeline.GetShader();
         pipeline.Bind();
     }
 

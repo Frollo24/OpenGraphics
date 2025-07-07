@@ -16,17 +16,17 @@ namespace OpenGraphics
     class OPEN_API Pipeline
     {
     public:
-        Pipeline(const PipelineState& state, Shader* shader);
+        Pipeline(const PipelineState& state, const Ref<Shader>& shader);
         ~Pipeline() = default;
 
         void Bind() const;
 
         [[nodiscard]] inline const PipelineState& GetPipelineState() const { return m_State; }
-        [[nodiscard]] inline const Shader* GetShader() const { return m_Shader; }
+        [[nodiscard]] inline const Ref<Shader>& GetShader() const { return m_Shader; }
 
     private:
         PipelineState m_State{};
-        Shader* m_Shader = nullptr;
+        Ref<Shader> m_Shader = nullptr;
     };
 }
 

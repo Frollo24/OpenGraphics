@@ -11,10 +11,10 @@ namespace OpenGraphics
         Buffer* SkyboxIndexBuffer = nullptr;
         VertexArray* SkyboxVertexArray = nullptr;
 
-        Texture* BlackTexture = nullptr;
-        Texture* WhiteTexture = nullptr;
-        Texture* CheckerboardTexture = nullptr;
-        Texture* ErrorCheckerboardTexture = nullptr;
+        Ref<Texture> BlackTexture = nullptr;
+        Ref<Texture> WhiteTexture = nullptr;
+        Ref<Texture> CheckerboardTexture = nullptr;
+        Ref<Texture> ErrorCheckerboardTexture = nullptr;
     };
 
     static RenderingDataImpl* s_RenderingData = nullptr;
@@ -48,8 +48,8 @@ namespace OpenGraphics
         onePixelTextureDesc.GenerateMipmaps = false;
         onePixelTextureDesc.FilterMode = TextureFilterMode::Nearest;
 
-        s_RenderingData->BlackTexture = new Texture(onePixelTextureDesc);
-        s_RenderingData->WhiteTexture = new Texture(onePixelTextureDesc);
+        s_RenderingData->BlackTexture = CreateRef<Texture>(onePixelTextureDesc);
+        s_RenderingData->WhiteTexture = CreateRef<Texture>(onePixelTextureDesc);
         s_RenderingData->BlackTexture->SetData(&black);
         s_RenderingData->WhiteTexture->SetData(&white);
 
@@ -58,8 +58,8 @@ namespace OpenGraphics
         checkerTextureDesc.ImageFormat = ImageFormat::RGBA8;
         checkerTextureDesc.GenerateMipmaps = false;
         checkerTextureDesc.FilterMode = TextureFilterMode::Nearest;
-        s_RenderingData->CheckerboardTexture = new Texture(checkerTextureDesc);
-        s_RenderingData->ErrorCheckerboardTexture = new Texture(checkerTextureDesc);
+        s_RenderingData->CheckerboardTexture = CreateRef<Texture>(checkerTextureDesc);
+        s_RenderingData->ErrorCheckerboardTexture = CreateRef<Texture>(checkerTextureDesc);
 
         std::array<uint32_t, 16 * 16> checkerboardPixels = { 0 }, errorCheckerboardPixels = { 0 };
         for (int x = 0; x < 16; x++) {
@@ -78,8 +78,10 @@ namespace OpenGraphics
         delete s_RenderingData->SkyboxVertexBuffer;
         delete s_RenderingData->SkyboxIndexBuffer;
 
-        delete s_RenderingData->WhiteTexture;
-        delete s_RenderingData->BlackTexture;
+        s_RenderingData->WhiteTexture = nullptr;
+        s_RenderingData->BlackTexture = nullptr;
+        s_RenderingData->CheckerboardTexture = nullptr;
+        s_RenderingData->ErrorCheckerboardTexture = nullptr;
 
         delete s_RenderingData;
         s_RenderingData = nullptr;

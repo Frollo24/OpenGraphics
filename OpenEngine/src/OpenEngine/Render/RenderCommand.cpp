@@ -133,6 +133,8 @@ namespace OpenGraphics
     void RenderCommand::BindVertexArray(const VertexArray* vertexArray)
     {
         s_RenderState.VertexArray = const_cast<VertexArray*>(vertexArray);
+		if (!vertexArray)
+			return;
         glBindVertexArray(vertexArray->GetRendererID());
     }
 
@@ -216,10 +218,12 @@ namespace OpenGraphics
 		glPolygonMode(GL_FRONT_AND_BACK, Utils::PolygonRasterModeToGLPolygonMode(polygonState.PolygonMode));
 	}
 
-    void RenderCommand::UseShader(const Shader* shader)
+    void RenderCommand::UseShader(BorrowRef<Shader> shader)
     {
+		s_RenderState.Shader = shader;
+		if (!shader)
+			return;
         glUseProgram(shader->GetRendererID());
-		s_RenderState.Shader = const_cast<Shader*>(shader);
     }
 
     void RenderCommand::Draw(uint32_t first, uint32_t vertexCount)

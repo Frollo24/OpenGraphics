@@ -17,7 +17,7 @@
 namespace OpenGraphics
 {
     // GameObjects
-    static Shader* s_ModelShader = nullptr;
+    static Ref<Shader> s_ModelShader = nullptr;
     static Pipeline* s_ModelPipeline = nullptr;
 
     // Gizmos
@@ -25,14 +25,14 @@ namespace OpenGraphics
     static VectorGizmo* s_Yaxis = nullptr;
     static VectorGizmo* s_Zaxis = nullptr;
     static PointGizmo* s_Origin = nullptr;
-    static Shader* s_VectorGizmoShader = nullptr;
-    static Shader* s_PointGizmoShader = nullptr;
+    static Ref<Shader> s_VectorGizmoShader = nullptr;
+    static Ref<Shader> s_PointGizmoShader = nullptr;
     static Pipeline* s_AxisPipeline = nullptr;
 
     // Skybox
-    static Shader* s_SkyboxShader = nullptr;
+    static Ref<Shader> s_SkyboxShader = nullptr;
     static Pipeline* s_SkyboxPipeline = nullptr;
-    static Texture* s_SkyboxCubemap = nullptr;
+    static Ref<Texture> s_SkyboxCubemap = nullptr;
 
     void RenderWorkflow::Render(const std::vector<const RenderCamera*>& cameras)
     {
@@ -78,7 +78,7 @@ namespace OpenGraphics
         cubemapDesc.FilterMode = TextureFilterMode::Nearest;
         cubemapDesc.MipmapMode = TextureMipmapFilterMode::LinearMipmap;
         cubemapDesc.GenerateMipmaps = true;
-        s_SkyboxCubemap = new Texture(cubemapDesc);
+        s_SkyboxCubemap = CreateRef<Texture>(cubemapDesc);
         s_SkyboxCubemap->SetData(cubemapData.data());
 
         ShaderSpecs skyboxVertexShader{};
@@ -130,13 +130,13 @@ namespace OpenGraphics
     void RenderWorkflow::DeleteResources()
     {
 #pragma region GameObjects
-        delete s_ModelShader;
+        s_ModelShader = nullptr;
         delete s_ModelPipeline;
 #pragma endregion
 
 #pragma region Skybox
-        delete s_SkyboxCubemap;
-        delete s_SkyboxShader;
+        s_SkyboxCubemap = nullptr;
+        s_SkyboxShader = nullptr;
         delete s_SkyboxPipeline;
 #pragma endregion
 
@@ -147,8 +147,8 @@ namespace OpenGraphics
         delete s_Origin;
 
         delete s_AxisPipeline;
-        delete s_VectorGizmoShader;
-        delete s_PointGizmoShader;
+        s_VectorGizmoShader = nullptr;
+        s_PointGizmoShader = nullptr;
 #pragma endregion
     }
 
