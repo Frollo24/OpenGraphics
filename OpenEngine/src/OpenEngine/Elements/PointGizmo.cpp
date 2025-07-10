@@ -23,6 +23,12 @@ namespace OpenGraphics
         m_VertexArray = new VertexArray({m_VertexAttribBinding});
     }
 
+    PointGizmo::~PointGizmo()
+    {
+        delete m_VertexBuffer;
+        delete m_VertexArray;
+    }
+
     void PointGizmo::Render() const
     {
         RenderCommand::BindVertexArray(m_VertexArray);

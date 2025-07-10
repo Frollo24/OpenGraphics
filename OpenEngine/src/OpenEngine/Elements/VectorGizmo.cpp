@@ -21,6 +21,12 @@ namespace OpenGraphics
         InitVertexData(first, second);
     }
 
+    VectorGizmo::~VectorGizmo()
+    {
+        delete m_VertexBuffer;
+        delete m_VertexArray;
+    }
+
     void VectorGizmo::InitVertexData(const ColorVertex& first, const ColorVertex& second)
     {
         BufferDescription vertexDescription = {};

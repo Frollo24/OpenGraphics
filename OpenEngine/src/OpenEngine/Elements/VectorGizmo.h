@@ -15,6 +15,7 @@ namespace OpenGraphics
     public:
         VectorGizmo(const Vector3D& start, const Vector3D& end, const Color& color);
         VectorGizmo(const Vector3D& positionStart, const Vector3D& positionEnd, const Color& colorStart, const Color& colorEnd);
+        ~VectorGizmo();
 
         void Render() const;
 

@@ -14,6 +14,7 @@ namespace OpenGraphics
     {
     public:
         PointGizmo(const Vector3D& position, const Color& color);
+        ~PointGizmo();
 
         void Render() const;
 
