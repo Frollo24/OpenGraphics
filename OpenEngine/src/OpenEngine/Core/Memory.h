@@ -4,9 +4,22 @@
 
 namespace OpenGraphics
 {
-    struct RefCount
+    template <typename T, size_t N>
+    struct OPEN_API MemoryBuffer
     {
+    public:
+        T* At(size_t index);
+        const T* At(size_t index) const;
+        T& operator[](const size_t index) { return *At(index); }
+        T operator[](const size_t index) const { return *At(index); }
+
     private:
+        alignas(T) unsigned char m_MemoryBlock[N * sizeof(T)] = {};
+    };
+
+    struct RefCountBase
+    {
+    protected:
         inline void Increase() { ++m_RefCount; }
         inline void Decrease() { --m_RefCount; }
         inline uint32_t GetReferenceCount() const { return m_RefCount.load(); }
@@ -15,6 +28,30 @@ namespace OpenGraphics
 
         template<typename T>
         friend class Ref;
+
+        template<typename T, size_t N>
+        friend class RefArray;
+    };
+
+    template <typename T>
+    struct RefCountPtr : public RefCountBase
+    {
+    public:
+        RefCountPtr() = default;
+        RefCountPtr(std::nullptr_t) : m_Pointer(nullptr) {}
+        RefCountPtr(T* pointer) : m_Pointer(pointer) {}
+        template <typename... Args>
+        RefCountPtr(Args&&... args) : m_Pointer(new T(std::forward<Args>(args)...)) {}
+        ~RefCountPtr() = default;
+
+    private:
+        T* m_Pointer = nullptr;
+
+        template<typename T0, typename Elem>
+        friend constexpr Ref<T0> CreateRef(const std::initializer_list<Elem> initializer_list);
+
+        template<typename T0, typename... Args>
+        friend constexpr Ref<T0> CreateRef(Args&&... args);
     };
 
     template<typename T>
@@ -23,7 +60,7 @@ namespace OpenGraphics
     public:
         Ref() = default;
         Ref(std::nullptr_t) : m_Pointer(nullptr) {}
-        Ref(T* pointer) : m_Pointer(pointer), m_RefCount(new RefCount)
+        Ref(T* pointer) : m_Pointer(pointer), m_RefCount(new RefCountPtr<T>(pointer))
         {
             IncreaseRefCount();
         }
@@ -67,46 +104,49 @@ namespace OpenGraphics
         const T* Get() const { return m_Pointer; }
 
     private:
-        void IncreaseRefCount() const
+        Ref(T* pointer, RefCountBase* refCount) : m_Pointer(pointer), m_RefCount(refCount)
         {
-            if (m_Pointer)
-                m_RefCount->Increase();
+            IncreaseRefCount();
         }
 
-        void DecreaseRefCount() const
-        {
-            if (!m_RefCount) return;
-
-            m_RefCount->Decrease();
-            if (m_RefCount->GetReferenceCount() == 0)
-            {
-                delete m_RefCount;
-                m_RefCount = nullptr;
-                if (m_Pointer)
-                {
-                    delete m_Pointer;
-                    m_Pointer = nullptr;
-                }
-            }
-        }
+        void IncreaseRefCount() const;
+        void DecreaseRefCount() const;
 
         mutable T* m_Pointer = nullptr;
-        mutable RefCount* m_RefCount = nullptr;
+        mutable RefCountBase* m_RefCount = nullptr;
+        bool m_OwnsRefCount = true;
+
+        template<typename T0, size_t N>
+        friend class RefArray;
+
+        template<typename T0, typename Elem>
+        friend constexpr Ref<T0> CreateRef(const std::initializer_list<Elem> initializer_list);
+
+        template<typename T0, typename... Args>
+        friend constexpr Ref<T0> CreateRef(Args&&... args);
     };
 
-    template<typename T, typename Elem>
-    constexpr Ref<T> CreateRef(const std::initializer_list<Elem> initializer_list)
+    template<typename T, size_t N>
+    class OPEN_API RefArray
     {
-        return Ref<T>(new T(initializer_list));
-    }
+    public:
+        RefArray()
+        {
+            AssignRefCounts();
+        }
 
-    template<typename T, typename... Args>
-    constexpr Ref<T> CreateRef(Args&&... args)
-    {
-        // NOTE: we should reduce the number of allocations to one
-        return Ref<T>(new T(std::forward<Args>(args)...));
-    }
+        template<typename... Args>
+        constexpr Ref<T> CreateRef(size_t index, Args&&... args);
+
+    private:
+        void AssignRefCounts();
+
+        MemoryBuffer<T, N> m_MemoryBlock;
+        MemoryBuffer<RefCountPtr<T>, N> m_RefCounts;
+    };
 
     template <typename T>
     using BorrowRef = const Ref<T>&;
 }
+
+#include "Memory.inl"

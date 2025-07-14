@@ -83,6 +83,11 @@ public:
 
         m_SceneRenderer = SceneRenderer(m_Scene);
         m_SceneRenderer.SetEditorCamera(m_RenderCamera);
+
+        TextureDescription textureDesc = {};
+        auto refArray = RefArray<Texture, 5>();
+        const auto ref = refArray.CreateRef(rng.Range(0, 4), textureDesc);
+        Logger::Info(ref->GetRendererID());
     }
 
     void Update() override {
