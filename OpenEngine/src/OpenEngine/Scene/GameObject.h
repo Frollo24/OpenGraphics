@@ -28,7 +28,7 @@ namespace OpenGraphics
                 return nullptr;
 
             auto newComponent = new T();
-            newComponent->SetGameObject(this);
+            newComponent->SetGameObject(*this);
             m_ComponentList.push_back(newComponent);
 
             return newComponent;

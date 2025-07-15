@@ -18,15 +18,15 @@ namespace OpenGraphics
         [[nodiscard]] inline const std::vector<Vertex>& GetVertices() const { return m_Vertices; }
         [[nodiscard]] inline const std::vector<Index>& GetIndices() const { return m_Indices; }
         [[nodiscard]] inline const Material& GetMaterial() const { return m_Material; }
-        [[nodiscard]] inline const RenderEntity* GetRenderEntity() const { return m_RenderEntity; }
+        [[nodiscard]] inline const RenderEntity& GetRenderEntity() const { return m_RenderEntity; }
 
-        inline void Render() const { m_RenderEntity->Render(); }
+        inline void Render() const { m_RenderEntity.Render(); }
 
     private:
         std::vector<Vertex> m_Vertices;
         std::vector<Index> m_Indices;
         Material m_Material;
-        RenderEntity* m_RenderEntity = nullptr;
+        RenderEntity m_RenderEntity;
     };
 
     class OPEN_API Model

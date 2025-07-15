@@ -18,7 +18,7 @@ namespace OpenGraphics
 
         static const VertexArray& GetSkyboxVertexArray();
 
-        static const Texture& GetBlackTexture();
-        static const Texture& GetWhiteTexture();
+        static const Ref<Texture>& GetBlackTexture();
+        static const Ref<Texture>& GetWhiteTexture();
     };
 }

@@ -22,9 +22,9 @@ namespace OpenGraphics
         static void DeleteResources();
 
     protected:
-        void DrawGameObjects(const RenderCamera* camera);
-        void DrawSkybox(const RenderCamera* camera);
-        void DrawGizmos(const RenderCamera* camera);
+        void DrawGameObjects(const RenderCamera& camera);
+        void DrawSkybox(const RenderCamera& camera);
+        void DrawGizmos(const RenderCamera& camera);
 
     private:
         SceneRenderer* m_SceneRenderer = nullptr;

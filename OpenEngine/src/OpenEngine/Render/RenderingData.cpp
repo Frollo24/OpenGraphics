@@ -102,14 +102,14 @@ namespace OpenGraphics
         return *s_RenderingData->SkyboxVertexArray;
     }
 
-    const Texture& RenderingData::GetBlackTexture()
+    const Ref<Texture>& RenderingData::GetBlackTexture()
     {
-        return *s_RenderingData->BlackTexture;
+        return s_RenderingData->BlackTexture;
     }
 
-    const Texture& RenderingData::GetWhiteTexture()
+    const Ref<Texture>& RenderingData::GetWhiteTexture()
     {
-        return *s_RenderingData->WhiteTexture;
+        return s_RenderingData->WhiteTexture;
     }
 
 }

@@ -13,7 +13,7 @@ namespace OpenGraphics
         virtual ~Component();
 
         [[nodiscard]] inline GameObject& GetGameObject() const { return *m_GameObject; }
-        inline void SetGameObject(GameObject* gameObject) { m_GameObject = gameObject; }
+        inline void SetGameObject(GameObject& gameObject) { m_GameObject = &gameObject; }
 
         virtual void OnCreate() {}
         virtual void OnUpdate() {}

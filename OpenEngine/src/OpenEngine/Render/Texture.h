@@ -87,8 +87,8 @@ namespace OpenGraphics
         Texture(const TextureDescription& desc);
         ~Texture();
 
-        [[nodiscard]] inline uint32_t GetRendererID() const { return m_RendererID; }
         [[nodiscard]] inline const TextureDescription& GetDescription() const { return m_TextureDesc; }
+        [[nodiscard]] inline uint32_t GetRendererID() const { return m_RendererID; }
 
         void SetData(const void* data);
         void BindTextureUnit(uint32_t textureUnit) const;

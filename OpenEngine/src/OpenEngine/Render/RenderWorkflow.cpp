@@ -38,9 +38,9 @@ namespace OpenGraphics
     {
         for (const auto& camera : cameras)
         {
-            DrawGameObjects(camera);
-            DrawSkybox(camera);
-            DrawGizmos(camera);
+            DrawGameObjects(*camera);
+            DrawSkybox(*camera);
+            DrawGizmos(*camera);
         }
     }
 
@@ -152,17 +152,17 @@ namespace OpenGraphics
 #pragma endregion
     }
 
-    void RenderWorkflow::DrawGameObjects(const RenderCamera* camera)
+    void RenderWorkflow::DrawGameObjects(const RenderCamera& camera)
     {
         // NOTE: This should be called per material type
         m_SceneRenderer->SetPipeline(*s_ModelPipeline);
 
         // NOTE: This should be called per material instance
-        RenderingData::GetWhiteTexture().BindTextureUnit(0);
-        RenderingData::GetWhiteTexture().BindTextureUnit(1);
-        RenderingData::GetWhiteTexture().BindTextureUnit(2);
+        RenderingData::GetWhiteTexture()->BindTextureUnit(0);
+        RenderingData::GetWhiteTexture()->BindTextureUnit(1);
+        RenderingData::GetWhiteTexture()->BindTextureUnit(2);
 
-        m_SceneRenderer->BeginCamera(*camera);
+        m_SceneRenderer->BeginCamera(camera);
         auto scene = m_SceneRenderer->GetScene();
         auto sphereGameObject = scene->GetGameObjects().at(0);
         /*
@@ -191,10 +191,10 @@ namespace OpenGraphics
         starGameObject->OnRender();
     }
 
-    void RenderWorkflow::DrawSkybox(const RenderCamera* camera)
+    void RenderWorkflow::DrawSkybox(const RenderCamera& camera)
     {
-        Matrix4x4 skyboxView = camera->GetView();
-        const Matrix4x4& skyboxProj = camera->GetProjection();
+        Matrix4x4 skyboxView = camera.GetView();
+        const Matrix4x4& skyboxProj = camera.GetProjection();
 
 #if LEFT_HANDED
         skyboxView.Scale(Vector3D(1, 1, -1));
@@ -214,9 +214,9 @@ namespace OpenGraphics
         RenderCommand::DrawIndexed(36);
     }
 
-    void RenderWorkflow::DrawGizmos(const RenderCamera* camera)
+    void RenderWorkflow::DrawGizmos(const RenderCamera& camera)
     {
-        Vector3D cameraPosition = camera->GetPosition();
+        Vector3D cameraPosition = camera.GetPosition();
 
         RenderCommand::SetViewport(0, 500, 100, 100);
         s_AxisPipeline->Bind();

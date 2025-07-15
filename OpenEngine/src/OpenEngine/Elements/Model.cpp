@@ -9,26 +9,23 @@ namespace OpenGraphics
 {
     Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices, const Material& material)
         : m_Vertices(vertices), m_Indices(indices), m_Material(material),
-        m_RenderEntity(new RenderEntity(vertices, indices))
+        m_RenderEntity(RenderEntity(vertices, indices))
     {
     }
 
     Mesh::Mesh(const Mesh &other)
+        : m_Vertices(other.m_Vertices), m_Indices(other.m_Indices), m_Material(other.m_Material),
+        m_RenderEntity(RenderEntity(other.m_Vertices, other.m_Indices))
     {
-        m_Vertices = other.m_Vertices;
-        m_Indices = other.m_Indices;
-        m_Material = other.m_Material;
-        m_RenderEntity = new RenderEntity(m_Vertices, m_Indices);
     }
 
     Mesh::~Mesh()
     {
-        delete m_RenderEntity;
         m_Vertices.clear();
         m_Indices.clear();
     }
 
-    Model::Model(const std::string &path)
+    Model::Model(const std::string& path)
     {
         Assimp::Importer import;
         const aiScene* scene = import.ReadFile(path,
@@ -60,7 +57,7 @@ namespace OpenGraphics
         }
     }
 
-    Mesh Model::ProcessMesh(const aiMesh *mesh, const aiScene *scene)
+    Mesh Model::ProcessMesh(const aiMesh* mesh, const aiScene* scene)
     {
         std::vector<Vertex> vertices;
         std::vector<uint32_t> indices;
@@ -117,7 +114,7 @@ namespace OpenGraphics
         return Mesh(vertices, indices, material);
     }
 
-    void Model::LoadMaterials(const aiScene *scene)
+    void Model::LoadMaterials(const aiScene* scene)
     {
         m_Materials.reserve(scene->mNumMaterials);
 
@@ -140,7 +137,7 @@ namespace OpenGraphics
         }
     }
 
-    Material Model::ProcessMaterial(const aiMaterial *material, const aiScene *scene)
+    Material Model::ProcessMaterial(const aiMaterial* material, const aiScene* scene)
     {
         Material modelMaterial{};
         modelMaterial.Name = material->GetName().C_Str();
