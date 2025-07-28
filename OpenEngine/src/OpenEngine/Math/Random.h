@@ -13,7 +13,7 @@ namespace OpenGraphics
     {
     public:
         static void Init();
-        static void Seed(const uint32_t& seed);
+        static void Seed(uint32_t seed);
 
         static int NextInt();
         static Color NextColor();
@@ -24,8 +24,8 @@ namespace OpenGraphics
     class UniformRandom
     {
     public:
-        explicit UniformRandom(const uint32_t& seed = time(nullptr));
-        void Seed(const uint32_t& seed);
+        explicit UniformRandom(uint32_t seed = time(nullptr));
+        void Seed(uint32_t seed);
 
         int NextInt();
         Color NextColor();

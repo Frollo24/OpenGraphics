@@ -9,7 +9,7 @@ namespace OpenGraphics
     class OPEN_API Component
     {
     public:
-        Component(const GameObject* gameObject = nullptr);
+        Component(GameObject* gameObject = nullptr);
         virtual ~Component();
 
         [[nodiscard]] inline GameObject& GetGameObject() const { return *m_GameObject; }

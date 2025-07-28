@@ -3,8 +3,8 @@
 
 namespace OpenGraphics
 {
-    Component::Component(const GameObject* gameObject)
-        : m_GameObject(const_cast<GameObject*>(gameObject))
+    Component::Component(GameObject* gameObject)
+        : m_GameObject(gameObject)
     {
         OnCreate();
     }

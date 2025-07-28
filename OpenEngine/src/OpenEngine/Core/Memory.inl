@@ -70,7 +70,7 @@ namespace OpenGraphics
     }
 
     template<typename T, typename Elem>
-    constexpr Ref<T> CreateRef(const std::initializer_list<Elem> initializer_list)
+    constexpr Ref<T> CreateRef(const std::initializer_list<Elem>& initializer_list)
     {
         const auto refCount = new RefCountPtr<T>(initializer_list);
         return Ref<T>(refCount->m_Pointer, refCount);

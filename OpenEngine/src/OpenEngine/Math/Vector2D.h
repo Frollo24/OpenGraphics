@@ -11,7 +11,7 @@ namespace OpenGraphics
 		float x, y;
 
         Vector2D() : x(0), y(0) {}
-    	Vector2D(float x, float y) : x(x), y(y) {}
+    	Vector2D(const float x, const float y) : x(x), y(y) {}
 
     	static const Vector2D& zero;
     	static const Vector2D& right;
@@ -28,7 +28,7 @@ namespace OpenGraphics
     	[[nodiscard]] Vector2D Normalized() const;
     	void Set(float newX, float newY);
 
-    	static Vector2D Lerp(const Vector2D& a, const Vector2D& b, const float& t);
+    	static Vector2D Lerp(const Vector2D& a, const Vector2D& b, float t);
 
         [[nodiscard]] inline Vector2D operator-() const
     	{

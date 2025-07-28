@@ -12,10 +12,10 @@ namespace OpenGraphics
     	float x, y, z, w;
 
         Vector4D() : x(0), y(0), z(0), w(0) {}
-        Vector4D(float x, float y) : x(x), y(y), z(0), w(0) {}
-        Vector4D(float x, float y, float z) : x(x), y(y), z(z), w(0) {}
-        Vector4D(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
-    	Vector4D(const Vector3D& vector, float w) : x(vector.x), y(vector.y), z(vector.z), w(w) {}
+        Vector4D(const float x, const float y) : x(x), y(y), z(0), w(0) {}
+        Vector4D(const float x, const float y, const float z) : x(x), y(y), z(z), w(0) {}
+        Vector4D(const float x, const float y, const float z, const float w) : x(x), y(y), z(z), w(w) {}
+    	Vector4D(const Vector3D& vector, const float w) : x(vector.x), y(vector.y), z(vector.z), w(w) {}
 
     	static const Vector4D& zero;
     	static const Vector4D& one;
@@ -28,7 +28,7 @@ namespace OpenGraphics
     	[[nodiscard]] Vector4D Normalized() const;
     	void Set(float newX, float newY, float newZ, float newW);
 
-    	static Vector4D Lerp(const Vector4D& a, const Vector4D& b, const float& t);
+    	static Vector4D Lerp(const Vector4D& a, const Vector4D& b, float t);
 
         [[nodiscard]] inline Vector4D operator-() const
     	{

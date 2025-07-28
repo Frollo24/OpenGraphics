@@ -99,9 +99,9 @@ namespace OpenGraphics
 		for (const auto& [type, source] : shaderSources) {
 			if (type == ShaderType::None) continue;
 
-			GLenum shaderType = ShaderTypeToGLenum(type);
+			const GLenum shaderType = ShaderTypeToGLenum(type);
 
-			GLuint shaderID = glCreateShader(shaderType);
+			const GLuint shaderID = glCreateShader(shaderType);
 			const char* c_source = source.c_str();
 			glShaderSource(shaderID, 1, &c_source, 0);
 			glCompileShader(shaderID);
@@ -169,11 +169,11 @@ namespace OpenGraphics
     {
     	ShaderStringMap sources{};
     	sources.reserve(shaderFiles.size());
-    	for (const auto& shader : shaderFiles)
+    	for (const auto& [filepath, shaderType] : shaderFiles)
     	{
-    		const std::string text = ReadFile(shader.Filepath);
+    		const std::string text = ReadFile(filepath);
     		const std::string source = PreProcess(text);
-    		sources[shader.Type] = source;
+    		sources[shaderType] = source;
     	}
     	m_RendererID = Compile(sources);
     }
@@ -185,41 +185,41 @@ namespace OpenGraphics
 
     GLint Shader::GetUniformLocation(const std::string& name) const
     {
-    	if (auto locationCache = m_UniformLocationCache.find(name);
+    	if (const auto locationCache = m_UniformLocationCache.find(name);
 			locationCache != m_UniformLocationCache.end()) return locationCache->second;
 
-    	GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+    	const GLint location = glGetUniformLocation(m_RendererID, name.c_str());
     	m_UniformLocationCache[name] = location;
     	return location;
     }
 
 	void Shader::SetFloat(const std::string &name, const float &value) const
 	{
-    	GLint location = GetUniformLocation(name);
+    	const GLint location = GetUniformLocation(name);
     	glProgramUniform1f(m_RendererID, location, value);
     }
 
 	void Shader::SetFloat3(const std::string &name, const Vector3D &value) const
 	{
-    	GLint location = GetUniformLocation(name);
+    	const GLint location = GetUniformLocation(name);
     	glProgramUniform3f(m_RendererID, location, value.x, value.y, value.z);
     }
 
     void Shader::SetFloat4(const std::string& name, const Vector4D& value) const
 	{
-    	GLint location = GetUniformLocation(name);
+    	const GLint location = GetUniformLocation(name);
     	glProgramUniform4f(m_RendererID, location, value.x, value.y, value.z, value.w);
     }
 
 	void Shader::SetColor(const std::string& name, const Color& color) const
 	{
-    	GLint location = GetUniformLocation(name);
+    	const GLint location = GetUniformLocation(name);
     	glProgramUniform4f(m_RendererID, location, color.r, color.g, color.b, color.a);
     }
 
     void Shader::SetMat4(const std::string& name, const Matrix4x4& matrix) const
 	{
-    	GLint location = GetUniformLocation(name);
+    	const GLint location = GetUniformLocation(name);
     	glProgramUniformMatrix4fv(m_RendererID, location, 1, GL_FALSE, glm::value_ptr(matrix.toGlmMatrix()));
     }
 }

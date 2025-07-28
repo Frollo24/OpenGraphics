@@ -12,7 +12,7 @@ namespace OpenGraphics
         Vector4D columns[4];
 
         Matrix4x4() : columns{Vector4D(), Vector4D(), Vector4D(), Vector4D()} {}
-        Matrix4x4(float s)
+        Matrix4x4(const float s)
             : columns{
                 Vector4D(s, 0, 0, 0),
                 Vector4D(0, s, 0, 0),
@@ -26,7 +26,7 @@ namespace OpenGraphics
         static const Matrix4x4& zero;
         static const Matrix4x4& identity;
 
-        float Determinant() const;
+        [[nodiscard]] float Determinant() const;
         Matrix4x4& Inverse();
         Matrix4x4& Transpose();
 
@@ -43,7 +43,7 @@ namespace OpenGraphics
 
         [[nodiscard]] inline Matrix4x4 operator*(const Matrix4x4& other) const
         {
-            glm::mat4 result = this->toGlmMatrix() * other.toGlmMatrix();
+            const glm::mat4 result = this->toGlmMatrix() * other.toGlmMatrix();
             return Matrix4x4(
                 Vector4D(result[0].x, result[0].y, result[0].z, result[0].w),
                 Vector4D(result[1].x, result[1].y, result[1].z, result[1].w),
@@ -54,7 +54,7 @@ namespace OpenGraphics
 
         [[nodiscard]] inline Vector4D operator*(const Vector4D& other) const
         {
-            glm::vec4 result = this->toGlmMatrix() * other.toGlmVector();
+            const glm::vec4 result = this->toGlmMatrix() * other.toGlmVector();
             return Vector4D(result.x, result.y, result.z, result.w);
         }
 

@@ -22,9 +22,9 @@ namespace OpenGraphics
     protected:
         inline void Increase() { ++m_RefCount; }
         inline void Decrease() { --m_RefCount; }
-        inline uint32_t GetReferenceCount() const { return m_RefCount.load(); }
+        [[nodiscard]] inline uint32_t GetReferenceCount() const { return m_RefCount.load(); }
 
-        mutable volatile std::atomic_uint32_t m_RefCount = 0;
+        volatile std::atomic_uint32_t m_RefCount = 0;
 
         template<typename T>
         friend class Ref;
@@ -48,7 +48,7 @@ namespace OpenGraphics
         T* m_Pointer = nullptr;
 
         template<typename T0, typename Elem>
-        friend constexpr Ref<T0> CreateRef(const std::initializer_list<Elem> initializer_list);
+        friend constexpr Ref<T0> CreateRef(const std::initializer_list<Elem>& initializer_list);
 
         template<typename T0, typename... Args>
         friend constexpr Ref<T0> CreateRef(Args&&... args);
@@ -120,7 +120,7 @@ namespace OpenGraphics
         friend class RefArray;
 
         template<typename T0, typename Elem>
-        friend constexpr Ref<T0> CreateRef(const std::initializer_list<Elem> initializer_list);
+        friend constexpr Ref<T0> CreateRef(const std::initializer_list<Elem>& initializer_list);
 
         template<typename T0, typename... Args>
         friend constexpr Ref<T0> CreateRef(Args&&... args);

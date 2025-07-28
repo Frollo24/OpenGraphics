@@ -125,7 +125,7 @@ namespace OpenGraphics
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     }
 
-    void RenderCommand::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+    void RenderCommand::SetViewport(const uint32_t x, const uint32_t y, const uint32_t width, const uint32_t height)
 	{
 		glViewport(x, y, width, height);
     }
@@ -140,16 +140,16 @@ namespace OpenGraphics
 
     void RenderCommand::SetVertexBuffer(const Buffer* vertexBuffer, const VertexAttribBinding& binding)
     {
-        GLuint vertexArrayID = s_RenderState.VertexArray->GetRendererID();
-        GLuint vertexBufferID = vertexBuffer->GetRendererID();
+        const GLuint vertexArrayID = s_RenderState.VertexArray->GetRendererID();
+        const GLuint vertexBufferID = vertexBuffer->GetRendererID();
         glBindVertexArray(vertexArrayID);
         glVertexArrayVertexBuffer(vertexArrayID, binding.GetBinding(), vertexBufferID, 0, binding.GetStride());
     }
 
     void RenderCommand::SetIndexBuffer(const Buffer *indexBuffer)
     {
-        GLuint vertexArrayID = s_RenderState.VertexArray->GetRendererID();
-        GLuint indexBufferID = indexBuffer->GetRendererID();
+        const GLuint vertexArrayID = s_RenderState.VertexArray->GetRendererID();
+        const GLuint indexBufferID = indexBuffer->GetRendererID();
         glBindVertexArray(vertexArrayID);
         glVertexArrayElementBuffer(vertexArrayID, indexBufferID);
     }
@@ -226,25 +226,25 @@ namespace OpenGraphics
         glUseProgram(shader->GetRendererID());
     }
 
-    void RenderCommand::Draw(uint32_t first, uint32_t vertexCount)
+    void RenderCommand::Draw(const uint32_t first, const uint32_t vertexCount)
     {
 		GLenum topology = Utils::PrimitiveTopologyToGLPrimitiveTopology(s_RenderState.PrimitiveTopology);
         glDrawArrays(topology, first, vertexCount);
     }
 
-    void RenderCommand::DrawIndexed(uint32_t indexCount)
+    void RenderCommand::DrawIndexed(const uint32_t indexCount)
     {
 		GLenum topology = Utils::PrimitiveTopologyToGLPrimitiveTopology(s_RenderState.PrimitiveTopology);
         glDrawElements(topology, indexCount, GL_UNSIGNED_INT, nullptr);
     }
 
 	/*
-    void RenderCommand::DrawLines(uint32_t vertexCount)
+    void RenderCommand::DrawLines(const uint32_t vertexCount)
 	{
 		glDrawArrays(GL_LINES, 0, vertexCount);
     }
 
-    void RenderCommand::DrawPoints(uint32_t first, uint32_t vertexCount)
+    void RenderCommand::DrawPoints(const uint32_t first, const uint32_t vertexCount)
 	{
 		glDrawArrays(GL_POINTS, first, vertexCount);
     }

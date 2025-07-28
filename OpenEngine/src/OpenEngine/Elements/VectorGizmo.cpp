@@ -7,16 +7,16 @@ namespace OpenGraphics
 {
     VectorGizmo::VectorGizmo(const Vector3D& start, const Vector3D& end, const Color& color)
     {
-        ColorVertex first = {start, color};
-        ColorVertex second = {end, color};
+        const ColorVertex first = {start, color};
+        const ColorVertex second = {end, color};
 
         InitVertexData(first, second);
     }
 
     VectorGizmo::VectorGizmo(const Vector3D& positionStart, const Vector3D& positionEnd, const Color& colorStart, const Color& colorEnd)
     {
-        ColorVertex first = {positionStart, colorStart};
-        ColorVertex second = {positionEnd, colorEnd};
+        const ColorVertex first = {positionStart, colorStart};
+        const ColorVertex second = {positionEnd, colorEnd};
 
         InitVertexData(first, second);
     }

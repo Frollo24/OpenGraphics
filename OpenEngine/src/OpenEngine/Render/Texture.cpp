@@ -143,7 +143,7 @@ namespace OpenGraphics
         const GLenum target = GetOpenGLTarget(desc);
         glCreateTextures(target, 1, &m_RendererID);
 
-        bool isMultisampled = static_cast<int>(desc.SampleCount) > 1;
+        const bool isMultisampled = static_cast<int>(desc.SampleCount) > 1;
         if (!isMultisampled)
         {
 	        const GLint filterMode = TextureFilterModeToOpenGLFilterMode(desc.FilterMode, desc.MipmapMode);
@@ -161,8 +161,7 @@ namespace OpenGraphics
         if (desc.GenerateMipmaps)
             mipLevels = CalculateMipmapLevels(desc.ImageExtent);
 
-        GLenum internalFormat = ImageFormatToOpenGLInternalFormat(desc.ImageFormat);
-        const ImageExtent& extent = desc.ImageExtent;
+        const GLenum internalFormat = ImageFormatToOpenGLInternalFormat(desc.ImageFormat);
     	const GLsizei width = static_cast<GLsizei>(desc.ImageExtent.Width);
     	const GLsizei height = static_cast<GLsizei>(desc.ImageExtent.Height);
     	const GLsizei depth = static_cast<GLsizei>(desc.ImageExtent.Depth);
@@ -208,8 +207,8 @@ namespace OpenGraphics
 
     void Texture::SetData(const void* data)
     {
-    	GLenum format = ImageFormatToOpenGLFormat(m_TextureDesc.ImageFormat);
-    	GLenum type = ImageFormatToOpenGLType(m_TextureDesc.ImageFormat);
+    	const GLenum format = ImageFormatToOpenGLFormat(m_TextureDesc.ImageFormat);
+    	const GLenum type = ImageFormatToOpenGLType(m_TextureDesc.ImageFormat);
 
     	const GLsizei width = static_cast<GLsizei>(m_TextureDesc.ImageExtent.Width);
     	const GLsizei height = static_cast<GLsizei>(m_TextureDesc.ImageExtent.Height);
@@ -242,7 +241,7 @@ namespace OpenGraphics
     		glGenerateTextureMipmap(m_RendererID);
     }
 
-    void Texture::BindTextureUnit(uint32_t textureUnit) const
+    void Texture::BindTextureUnit(const uint32_t textureUnit) const
     {
     	glBindTextureUnit(textureUnit, m_RendererID);
     }

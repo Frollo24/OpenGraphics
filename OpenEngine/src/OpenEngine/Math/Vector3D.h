@@ -11,8 +11,8 @@ namespace OpenGraphics
 		float x, y, z;
 
         Vector3D() : x(0), y(0), z(0) {}
-    	Vector3D(float x, float y) : x(x), y(y), z(0) {}
-        Vector3D(float x, float y, float z) : x(x), y(y), z(z) {}
+    	Vector3D(const float x, const float y) : x(x), y(y), z(0) {}
+        Vector3D(const float x, const float y, const float z) : x(x), y(y), z(z) {}
 
     	static const Vector3D& zero;
     	static const Vector3D& right;
@@ -30,9 +30,9 @@ namespace OpenGraphics
     	void Normalize();
     	[[nodiscard]] Vector3D Normalized() const;
     	void Set(float newX, float newY, float newZ);
-    	Vector3D RotateAroundAxis(const Vector3D& axis, const float& angle);
+    	Vector3D RotateAroundAxis(const Vector3D& axis, float angle);
 
-    	static Vector3D Lerp(const Vector3D& a, const Vector3D& b, const float& t);
+    	static Vector3D Lerp(const Vector3D& a, const Vector3D& b, float t);
 
         [[nodiscard]] inline Vector3D operator-() const
     	{

@@ -34,7 +34,7 @@ namespace OpenGraphics
     static Pipeline* s_SkyboxPipeline = nullptr;
     static Ref<Texture> s_SkyboxCubemap = nullptr;
 
-    void RenderWorkflow::Render(const std::vector<const RenderCamera*>& cameras)
+    void RenderWorkflow::Render(const std::vector<const RenderCamera*>& cameras) const
     {
         for (const auto& camera : cameras)
         {
@@ -152,7 +152,7 @@ namespace OpenGraphics
 #pragma endregion
     }
 
-    void RenderWorkflow::DrawGameObjects(const RenderCamera& camera)
+    void RenderWorkflow::DrawGameObjects(const RenderCamera& camera) const
     {
         // NOTE: This should be called per material type
         m_SceneRenderer->SetPipeline(*s_ModelPipeline);
@@ -163,8 +163,8 @@ namespace OpenGraphics
         RenderingData::GetWhiteTexture()->BindTextureUnit(2);
 
         m_SceneRenderer->BeginCamera(camera);
-        auto scene = m_SceneRenderer->GetScene();
-        auto sphereGameObject = scene->GetGameObjects().at(0);
+        const auto scene = m_SceneRenderer->GetScene();
+        const auto sphereGameObject = scene->GetGameObjects().at(0);
         /*
         Vector3D cameraPosition = camera->GetPosition();
         Matrix4x4 model = sphereGameObject->GetTransform()->GetModelMatrix();
@@ -180,7 +180,7 @@ namespace OpenGraphics
         sphereGameObject->OnRender();
 
 
-        auto starGameObject = scene->GetGameObjects().at(1);
+        const auto starGameObject = scene->GetGameObjects().at(1);
         /*
         model = starGameObject->GetTransform()->GetModelMatrix();
 
@@ -191,7 +191,7 @@ namespace OpenGraphics
         starGameObject->OnRender();
     }
 
-    void RenderWorkflow::DrawSkybox(const RenderCamera& camera)
+    void RenderWorkflow::DrawSkybox(const RenderCamera& camera) const
     {
         Matrix4x4 skyboxView = camera.GetView();
         const Matrix4x4& skyboxProj = camera.GetProjection();
@@ -214,9 +214,9 @@ namespace OpenGraphics
         RenderCommand::DrawIndexed(36);
     }
 
-    void RenderWorkflow::DrawGizmos(const RenderCamera& camera)
+    void RenderWorkflow::DrawGizmos(const RenderCamera& camera) const
     {
-        Vector3D cameraPosition = camera.GetPosition();
+        const Vector3D cameraPosition = camera.GetPosition();
 
         RenderCommand::SetViewport(0, 500, 100, 100);
         s_AxisPipeline->Bind();
@@ -225,8 +225,8 @@ namespace OpenGraphics
 #if LEFT_HANDED
         vectorModel.columns[2].z *= -1;
 #endif
-        Matrix4x4 vectorView = Matrix4x4::LookAt(cameraPosition.Normalized(), Vector3D::zero, Vector3D::up);
-        Matrix4x4 vectorProj = Matrix4x4::Ortho(-1.25f, 1.25f, -1.25f, 1.25f, 0.03f, 2.0f);
+        const Matrix4x4 vectorView = Matrix4x4::LookAt(cameraPosition.Normalized(), Vector3D::zero, Vector3D::up);
+        const Matrix4x4 vectorProj = Matrix4x4::Ortho(-1.25f, 1.25f, -1.25f, 1.25f, 0.03f, 2.0f);
 
         s_VectorGizmoShader->SetMat4("u_ModelViewProj", vectorProj * vectorView * vectorModel);
         s_Xaxis->Render();

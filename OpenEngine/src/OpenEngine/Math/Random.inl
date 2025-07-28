@@ -7,7 +7,7 @@ namespace OpenGraphics
         srand(time(NULL));
     }
 
-    inline void FastRandom::Seed(const uint32_t& seed)
+    inline void FastRandom::Seed(const uint32_t seed)
     {
         srand(seed);
     }
@@ -33,10 +33,10 @@ namespace OpenGraphics
     }
 
 
-    inline UniformRandom::UniformRandom(const uint32_t& seed)
+    inline UniformRandom::UniformRandom(const uint32_t seed)
         : m_RandomEngine(seed) {}
 
-    inline void UniformRandom::Seed(const uint32_t &seed)
+    inline void UniformRandom::Seed(const uint32_t seed)
     {
         m_RandomEngine.seed(seed);
     }
@@ -64,13 +64,13 @@ namespace OpenGraphics
         return distribution(m_RandomEngine);
     }
 
-    inline int UniformRandom::Range(int minInclusive, int maxInclusive)
+    inline int UniformRandom::Range(const int minInclusive, const int maxInclusive)
     {
         std::uniform_int_distribution<int> distribution(minInclusive, maxInclusive);
         return distribution(m_RandomEngine);
     }
 
-    inline float UniformRandom::Range(float minInclusive, float maxInclusive)
+    inline float UniformRandom::Range(const float minInclusive, const float maxInclusive)
     {
         std::uniform_real_distribution<float> distribution(minInclusive, maxInclusive);
         return distribution(m_RandomEngine);

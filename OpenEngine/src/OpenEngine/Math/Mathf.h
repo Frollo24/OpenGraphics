@@ -12,7 +12,7 @@ namespace OpenGraphics
         static constexpr float PositiveInfinity = std::numeric_limits<float>::infinity();
         static constexpr float NegativeInfinity = -std::numeric_limits<float>::infinity();
 
-        static float Lerp(const float& a, const float& b, const float& t);
+        static float Lerp(float a, float b, float t);
 
         static int Pow(int base, int exponent);
         static float Pow(float base, int exponent);

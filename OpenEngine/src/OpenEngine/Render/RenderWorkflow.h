@@ -12,7 +12,7 @@ namespace OpenGraphics
         RenderWorkflow() = default;
         virtual ~RenderWorkflow() = default;
 
-        virtual void Render(const std::vector<const RenderCamera*>& cameras);
+        virtual void Render(const std::vector<const RenderCamera*>& cameras) const;
 
         [[nodiscard]] inline SceneRenderer* GetSceneRenderer() const { return m_SceneRenderer; }
         inline void SetSceneRenderer(SceneRenderer* sceneRenderer) { m_SceneRenderer = sceneRenderer; }
@@ -22,9 +22,9 @@ namespace OpenGraphics
         static void DeleteResources();
 
     protected:
-        void DrawGameObjects(const RenderCamera& camera);
-        void DrawSkybox(const RenderCamera& camera);
-        void DrawGizmos(const RenderCamera& camera);
+        void DrawGameObjects(const RenderCamera& camera) const;
+        void DrawSkybox(const RenderCamera& camera) const;
+        void DrawGizmos(const RenderCamera& camera) const;
 
     private:
         SceneRenderer* m_SceneRenderer = nullptr;

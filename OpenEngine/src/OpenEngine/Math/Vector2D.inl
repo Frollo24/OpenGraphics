@@ -25,13 +25,13 @@ namespace OpenGraphics
         return (*this) * norm;
     }
 
-    inline void Vector2D::Set(float newX, float newY)
+    inline void Vector2D::Set(const float newX, const float newY)
     {
         this->x = newX;
         this->y = newY;
     }
 
-    inline Vector2D Vector2D::Lerp(const Vector2D& a, const Vector2D& b, const float& t)
+    inline Vector2D Vector2D::Lerp(const Vector2D& a, const Vector2D& b, const float t)
     {
         return a * (1 - t) + b * t;
     }

@@ -40,11 +40,11 @@ namespace OpenGraphics
 
     private:
         void LoadMeshes(const aiScene* scene);
-        Mesh ProcessMesh(const aiMesh* mesh, const aiScene* scene);
+        Mesh ProcessMesh(const aiMesh* mesh, const aiScene* scene) const;
 
         void LoadMaterials(const aiScene* scene);
-        Material ProcessMaterial(const aiMaterial* material, const aiScene* scene);
-        Material ProcessDefaultMaterial(const aiMaterial* material, const aiScene* scene);
+        Material ProcessMaterial(const aiMaterial* material, const aiScene* scene) const;
+        Material ProcessDefaultMaterial(const aiMaterial* material, const aiScene* scene) const;
 
     private:
         std::vector<Mesh> m_Meshes;

@@ -13,7 +13,7 @@ namespace OpenGraphics
         Window();
         ~Window();
 
-        bool ShouldClose() const;
+        [[nodiscard]] bool ShouldClose() const;
         void SwapBuffers() const;
 
     private:

@@ -5,7 +5,7 @@
 
 namespace OpenGraphics
 {
-    inline float Mathf::Lerp(const float& a, const float& b, const float& t)
+    inline float Mathf::Lerp(const float a, const float b, const float t)
     {
         return a * (1 - t) + b * t;
     }
@@ -46,7 +46,7 @@ namespace OpenGraphics
         return result;
     }
 
-    inline float Mathf::Pow(float base, float exponent)
+    inline float Mathf::Pow(const float base, const float exponent)
     {
         return powf(base, exponent);
     }

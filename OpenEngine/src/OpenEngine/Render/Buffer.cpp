@@ -5,7 +5,7 @@
 
 namespace OpenGraphics
 {
-    static GLenum BufferUsageToOpenGLBufferUsage(BufferUsage usage)
+    static GLenum BufferUsageToOpenGLBufferUsage(const BufferUsage usage)
     {
         switch (usage)
         {
@@ -36,7 +36,7 @@ namespace OpenGraphics
         glDeleteBuffers(1, &m_RendererID);
     }
 
-    void Buffer::SetData(uint32_t offset, uint32_t size, const void* data)
+    void Buffer::SetData(const uint32_t offset, const uint32_t size, const void* data)
     {
         glNamedBufferSubData(m_RendererID, offset, size, data);
     }

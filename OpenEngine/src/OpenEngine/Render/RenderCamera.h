@@ -11,7 +11,7 @@ namespace OpenGraphics
     public:
         RenderCamera() = default;
         RenderCamera(const Matrix4x4& projection) : m_Projection(projection) {}
-        RenderCamera(const float& fov, const float& aspect, const float& nearPlane, const float& farPlane)
+        RenderCamera(const float fov, const float aspect, const float nearPlane, const float farPlane)
             : m_Projection(Matrix4x4::Perspective(fov, aspect, nearPlane, farPlane)) {}
         virtual ~RenderCamera() = default;
 

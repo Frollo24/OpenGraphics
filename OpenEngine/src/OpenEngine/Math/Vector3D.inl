@@ -29,14 +29,14 @@ namespace OpenGraphics
         return (*this) * norm;
     }
 
-    inline void Vector3D::Set(float newX, float newY, float newZ)
+    inline void Vector3D::Set(const float newX, const float newY, const float newZ)
     {
         this->x = newX;
         this->y = newY;
         this->z = newZ;
     }
 
-    inline Vector3D Vector3D::RotateAroundAxis(const Vector3D& axis, const float& angle)
+    inline Vector3D Vector3D::RotateAroundAxis(const Vector3D& axis, const float angle)
     {
         const glm::vec3 result = glm::rotate(toGlmVector(), glm::radians(angle), axis.toGlmVector());
 
@@ -47,7 +47,7 @@ namespace OpenGraphics
         return *this;
     }
 
-    inline Vector3D Vector3D::Lerp(const Vector3D& a, const Vector3D& b, const float& t)
+    inline Vector3D Vector3D::Lerp(const Vector3D& a, const Vector3D& b, const float t)
     {
         return a * (1 - t) + b * t;
     }

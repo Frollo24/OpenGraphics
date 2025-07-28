@@ -27,7 +27,7 @@ namespace OpenGraphics
         return (*this) * norm;
     }
 
-    inline void Vector4D::Set(float newX, float newY, float newZ, float newW)
+    inline void Vector4D::Set(const float newX, const float newY, const float newZ, const float newW)
     {
         this->x = newX;
         this->y = newY;
@@ -35,7 +35,7 @@ namespace OpenGraphics
         this->w = newW;
     }
 
-    inline Vector4D Vector4D::Lerp(const Vector4D& a, const Vector4D& b, const float& t)
+    inline Vector4D Vector4D::Lerp(const Vector4D& a, const Vector4D& b, float t)
     {
         return a * (1 - t) + b * t;
     }

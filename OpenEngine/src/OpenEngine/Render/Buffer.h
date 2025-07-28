@@ -31,14 +31,14 @@ namespace OpenGraphics
         Buffer(const BufferDescription& desc);
         ~Buffer();
 
-        inline const BufferDescription& GetDescription() const { return m_BufferDesc; }
-        inline uint32_t GetRendererID() const { return m_RendererID; }
+        [[nodiscard]] inline const BufferDescription& GetDescription() const { return m_BufferDesc; }
+        [[nodiscard]] inline uint32_t GetRendererID() const { return m_RendererID; }
 
         virtual void SetData(uint32_t offset, uint32_t size, const void* data);
 
     private:
         BufferDescription m_BufferDesc;
-        uint32_t m_RendererID;
+        uint32_t m_RendererID = 0;
     };
 
 }

@@ -3,7 +3,7 @@
 
 namespace OpenGraphics
 {
-    void Logger::Init(LogLevel level)
+    void Logger::Init(const LogLevel level)
     {
         s_Level = level;
     }

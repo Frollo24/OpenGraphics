@@ -57,7 +57,7 @@ namespace OpenGraphics
         }
     }
 
-    Mesh Model::ProcessMesh(const aiMesh* mesh, const aiScene* scene)
+    Mesh Model::ProcessMesh(const aiMesh* mesh, const aiScene* scene) const
     {
         std::vector<Vertex> vertices;
         std::vector<uint32_t> indices;
@@ -137,7 +137,7 @@ namespace OpenGraphics
         }
     }
 
-    Material Model::ProcessMaterial(const aiMaterial* material, const aiScene* scene)
+    Material Model::ProcessMaterial(const aiMaterial* material, const aiScene* scene) const
     {
         Material modelMaterial{};
         modelMaterial.Name = material->GetName().C_Str();
@@ -145,7 +145,7 @@ namespace OpenGraphics
         aiShadingMode shadingMode = aiShadingMode_Unlit;
         ai_int shadingModeInt = 0;
         material->Get(AI_MATKEY_SHADING_MODEL, shadingModeInt);
-        shadingMode = (aiShadingMode)shadingModeInt;
+        shadingMode = static_cast<aiShadingMode>(shadingModeInt);
 
         switch (shadingMode)
         {
@@ -186,7 +186,7 @@ namespace OpenGraphics
         return modelMaterial;
     }
 
-    Material Model::ProcessDefaultMaterial(const aiMaterial* material, const aiScene* scene)
+    Material Model::ProcessDefaultMaterial(const aiMaterial* material, const aiScene* scene) const
     {
         Material defaultMaterial{};
         defaultMaterial.Name = AI_DEFAULT_MATERIAL_NAME;

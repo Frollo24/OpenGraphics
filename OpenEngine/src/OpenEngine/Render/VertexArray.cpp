@@ -82,7 +82,7 @@ namespace OpenGraphics
                 case Mat3:
                 case Mat4:
                 {
-                    uint32_t count = attribute.GetComponentCount();
+                    const uint32_t count = attribute.GetComponentCount();
                     for (uint8_t i = 0; i < count; i++)
                     {
                         glEnableVertexArrayAttrib(m_RendererID, currentAttribIndex);

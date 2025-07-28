@@ -11,7 +11,7 @@ namespace OpenGraphics
         Mat3, Mat4
     };
 
-    static uint32_t ShaderDataTypeSize(ShaderDataType type)
+    static uint32_t ShaderDataTypeSize(const ShaderDataType type)
     {
         switch (type)
         {
@@ -44,7 +44,7 @@ namespace OpenGraphics
         VertexAttribute(const ShaderDataType type, const std::string& name, const bool normalized = false)
             : Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(normalized) {}
 
-        uint32_t GetComponentCount() const
+        [[nodiscard]] uint32_t GetComponentCount() const
         {
             switch (Type)
             {
@@ -73,10 +73,10 @@ namespace OpenGraphics
         VertexAttribBinding(const std::initializer_list<VertexAttribute>& attributes) : m_Attributes(attributes) { CalculateStrideAndOffset(); }
         VertexAttribBinding(const std::vector<VertexAttribute>& attributes) : m_Attributes(attributes) { CalculateStrideAndOffset(); }
 
-        inline const std::vector<VertexAttribute>& GetAttributes() const { return m_Attributes; }
-        inline InputRate GetInputRate() const { return m_InputRate; }
-        inline uint32_t GetBinding() const { return m_Binding; }
-        inline uint32_t GetStride() const { return m_Stride; }
+        [[nodiscard]] inline const std::vector<VertexAttribute>& GetAttributes() const { return m_Attributes; }
+        [[nodiscard]] inline InputRate GetInputRate() const { return m_InputRate; }
+        [[nodiscard]] inline uint32_t GetBinding() const { return m_Binding; }
+        [[nodiscard]] inline uint32_t GetStride() const { return m_Stride; }
 
         inline void SetInputRate(const InputRate& inputRate) { m_InputRate = inputRate; }
 
@@ -97,8 +97,8 @@ namespace OpenGraphics
         VertexArray(const std::vector<VertexAttribBinding>& bindings);
         ~VertexArray();
 
-        inline const std::vector<VertexAttribBinding>& GetBindings() const { return m_Bindings; }
-        inline uint32_t GetRendererID() const { return m_RendererID; }
+        [[nodiscard]] inline const std::vector<VertexAttribBinding>& GetBindings() const { return m_Bindings; }
+        [[nodiscard]] inline uint32_t GetRendererID() const { return m_RendererID; }
 
     private:
         void HandleAttributes(const VertexAttribBinding& binding, const uint32_t& bindingIndex, uint32_t& currentAttribIndex) const;

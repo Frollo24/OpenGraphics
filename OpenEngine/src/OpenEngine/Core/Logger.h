@@ -23,14 +23,14 @@ namespace OpenGraphics
         static void Shutdown();
 
         template <typename... Args>
-        static void Log(LogLevel level, const std::string& message, Args&&... args)
+        static void Log(const LogLevel level, const std::string& message, Args&&... args)
         {
             std::cout << ParseLogLevel(level);
             std::cout << std::vformat(message, std::make_format_args(args...)) << "\u001b[0m" << std::endl;
         }
 
         template <typename T>
-        static void Log(LogLevel level, const T& message)
+        static void Log(const LogLevel level, const T& message)
         {
             std::cout << ParseLogLevel(level);
             std::cout << message << "\u001b[0m" << std::endl;
@@ -109,7 +109,7 @@ namespace OpenGraphics
         }
 
     private:
-        inline static const std::string_view ParseLogLevel(LogLevel level)
+        [[nodiscard]] inline static std::string_view ParseLogLevel(const LogLevel level)
         {
             switch (level)
             {
