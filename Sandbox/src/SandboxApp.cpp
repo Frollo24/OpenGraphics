@@ -88,6 +88,11 @@ public:
         auto refArray = RefArray<Texture, 5>();
         const auto ref = refArray.CreateRef(rng.Range(0, 4), textureDesc);
         Logger::Info(ref->GetRendererID());
+
+        auto dynamicRefArray = DynamicRefArray<Texture>(1);
+        dynamicRefArray.EmplaceNew(textureDesc);
+        dynamicRefArray.EmplaceNew(textureDesc);
+        auto dynRef = dynamicRefArray.CreateRefAt(0);
     }
 
     void Update() override {

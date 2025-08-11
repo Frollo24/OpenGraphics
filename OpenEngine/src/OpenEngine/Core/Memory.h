@@ -17,6 +17,29 @@ namespace OpenGraphics
         alignas(T) unsigned char m_MemoryBlock[N * sizeof(T)] = {};
     };
 
+    template <typename T>
+    struct OPEN_API UnboundedMemoryBuffer
+    {
+    public:
+        UnboundedMemoryBuffer(const size_t N) :
+            m_Size(std::min(1ull, N)),
+            m_MemoryBlock(new unsigned char[std::min(1ull, N) * sizeof(T)]) {}
+        ~UnboundedMemoryBuffer() { delete[] m_MemoryBlock; }
+
+        T* At(size_t index);
+        const T* At(size_t index) const;
+        T& operator[](const size_t index) { return *At(index); }
+        T operator[](const size_t index) const { return *At(index); }
+
+        [[nodiscard]] size_t Size() const { return m_Size; }
+
+        void Resize(size_t newSize);
+
+    private:
+        size_t m_Size = 0;
+        alignas(T) unsigned char* m_MemoryBlock = nullptr;
+    };
+
     struct RefCountBase
     {
     protected:
@@ -31,6 +54,9 @@ namespace OpenGraphics
 
         template<typename T, size_t N>
         friend class RefArray;
+
+        template<typename T>
+        friend class DynamicRefArray;
     };
 
     template <typename T>
@@ -46,6 +72,10 @@ namespace OpenGraphics
 
     private:
         T* m_Pointer = nullptr;
+
+        // HACK: Not pretty, but it works
+        template<typename T0>
+        friend class DynamicRefArray;
 
         template<typename T0, typename Elem>
         friend constexpr Ref<T0> CreateRef(const std::initializer_list<Elem>& initializer_list);
@@ -119,6 +149,9 @@ namespace OpenGraphics
         template<typename T0, size_t N>
         friend class RefArray;
 
+        template<typename T0>
+        friend class DynamicRefArray;
+
         template<typename T0, typename Elem>
         friend constexpr Ref<T0> CreateRef(const std::initializer_list<Elem>& initializer_list);
 
@@ -143,6 +176,27 @@ namespace OpenGraphics
 
         MemoryBuffer<T, N> m_MemoryBlock;
         MemoryBuffer<RefCountPtr<T>, N> m_RefCounts;
+    };
+
+    template<typename T>
+    class OPEN_API DynamicRefArray
+    {
+    public:
+        DynamicRefArray(size_t count = 10);
+
+        template<typename... Args>
+        constexpr void EmplaceNew(Args&&... args);
+
+        constexpr Ref<T> CreateRefAt(size_t index);
+
+        void Resize();
+
+    private:
+        void AssignRefCounts();
+
+        UnboundedMemoryBuffer<T> m_MemoryBlock;
+        std::vector<RefCountBase*> m_RefCounts;
+        std::size_t m_Count = 0;
     };
 
     template <typename T>
