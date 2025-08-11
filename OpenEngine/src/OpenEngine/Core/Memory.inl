@@ -3,25 +3,25 @@
 namespace OpenGraphics
 {
     template<typename T, size_t N>
-    T* MemoryBuffer<T, N>::At(size_t index)
+    T* MemoryBuffer<T, N>::At(const size_t index)
     {
         return &reinterpret_cast<T*>(m_MemoryBlock)[index];
     }
 
     template<typename T, size_t N>
-    const T* MemoryBuffer<T, N>::At(size_t index) const
+    const T* MemoryBuffer<T, N>::At(const size_t index) const
     {
         return &reinterpret_cast<const T*>(m_MemoryBlock)[index];
     }
 
     template<typename T>
-    T* UnboundedMemoryBuffer<T>::At(size_t index)
+    T* UnboundedMemoryBuffer<T>::At(const size_t index)
     {
         return &reinterpret_cast<T*>(m_MemoryBlock)[index];
     }
 
     template<typename T>
-    const T* UnboundedMemoryBuffer<T>::At(size_t index) const
+    const T* UnboundedMemoryBuffer<T>::At(const size_t index) const
     {
         return &reinterpret_cast<const T*>(m_MemoryBlock)[index];
     }
