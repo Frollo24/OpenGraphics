@@ -29,10 +29,12 @@ namespace OpenGraphics
 
     void VectorGizmo::InitVertexData(const ColorVertex& first, const ColorVertex& second)
     {
+        const std::array<ColorVertex, 2> vertices = {first, second};
+
         BufferDescription vertexDescription = {};
         vertexDescription.Type = BufferType::Vertex;
         vertexDescription.Size = sizeof(ColorVertex) * 2;
-        vertexDescription.Data = (void*)(std::array<ColorVertex, 2>{first, second}.data());
+        vertexDescription.Data = const_cast<void*>(reinterpret_cast<const void*>(vertices.data()));
         m_VertexBuffer = new Buffer(vertexDescription);
 
         m_VertexAttribBinding = GetGizmoVertexBinding();
