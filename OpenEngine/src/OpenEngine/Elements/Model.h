@@ -36,18 +36,18 @@ namespace OpenGraphics
         ~Model();
 
         [[nodiscard]] inline const std::vector<Mesh>& GetMeshes() const { return m_Meshes; }
-        [[nodiscard]] inline const std::vector<Material>& GetMaterials() const { return m_Materials; }
+        [[nodiscard]] inline const std::vector<Ref<MaterialInstance>>& GetMaterials() const { return m_Materials; }
 
     private:
         void LoadMeshes(const aiScene* scene);
         Mesh ProcessMesh(const aiMesh* mesh, const aiScene* scene) const;
 
         void LoadMaterials(const aiScene* scene);
-        Material ProcessMaterial(const aiMaterial* material, const aiScene* scene) const;
-        Material ProcessDefaultMaterial(const aiMaterial* material, const aiScene* scene) const;
+        Ref<MaterialInstance> ProcessMaterial(const aiMaterial* material, const aiScene* scene) const;
+        Ref<MaterialInstance> ProcessDefaultMaterial(const aiMaterial* material, const aiScene* scene) const;
 
     private:
         std::vector<Mesh> m_Meshes;
-        std::vector<Material> m_Materials;
+        std::vector<Ref<MaterialInstance>> m_Materials;
     };
 }

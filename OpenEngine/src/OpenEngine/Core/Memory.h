@@ -22,8 +22,8 @@ namespace OpenGraphics
     {
     public:
         UnboundedMemoryBuffer(const size_t N) :
-            m_Size(std::min(1ull, N)),
-            m_MemoryBlock(new unsigned char[std::min(1ull, N) * sizeof(T)]) {}
+            m_Size(std::max(1ull, N)),
+            m_MemoryBlock(new unsigned char[std::max(1ull, N) * sizeof(T)]) {}
         ~UnboundedMemoryBuffer() { delete[] m_MemoryBlock; }
 
         T* At(size_t index);
@@ -76,9 +76,14 @@ namespace OpenGraphics
         // HACK: Not pretty, but it works
         template<typename T0>
         friend class DynamicRefArray;
+        template<typename T0>
+        friend class Ref;
 
         template<typename T0, typename Elem>
         friend constexpr Ref<T0> CreateRef(const std::initializer_list<Elem>& initializer_list);
+
+        template<typename T0>
+        friend constexpr Ref<T0> CreateRef(const Ref<T0>& reference);
 
         template<typename T0, typename... Args>
         friend constexpr Ref<T0> CreateRef(Args&&... args);
@@ -95,7 +100,8 @@ namespace OpenGraphics
             IncreaseRefCount();
         }
 
-        Ref(const Ref& other) : m_Pointer(other.m_Pointer), m_RefCount(other.m_RefCount)
+        Ref(const Ref& other)
+            : m_Pointer(other.m_Pointer), m_RefCount(other.m_RefCount), m_OwnsRefCount(other.m_OwnsRefCount)
         {
             IncreaseRefCount();
         }
@@ -124,14 +130,14 @@ namespace OpenGraphics
         operator bool() { return m_Pointer != nullptr; }
         operator bool() const { return m_Pointer != nullptr; }
 
-        T* operator->() { return m_Pointer; }
-        const T* operator->() const { return m_Pointer; }
+        T* operator->() { return Get(); }
+        const T* operator->() const { return Get(); }
 
-        T& operator*() { return *m_Pointer; }
-        const T& operator*() const { return *m_Pointer; }
+        T& operator*() { return *Get(); }
+        const T& operator*() const { return *Get(); }
 
-        T* Get() { return m_Pointer; }
-        const T* Get() const { return m_Pointer; }
+        T* Get() { Update(); return m_Pointer; }
+        const T* Get() const { Update(); return m_Pointer; }
 
     private:
         Ref(T* pointer, RefCountBase* refCount) : m_Pointer(pointer), m_RefCount(refCount)
@@ -141,6 +147,7 @@ namespace OpenGraphics
 
         void IncreaseRefCount() const;
         void DecreaseRefCount() const;
+        void Update() const;
 
         mutable T* m_Pointer = nullptr;
         mutable RefCountBase* m_RefCount = nullptr;
@@ -154,6 +161,9 @@ namespace OpenGraphics
 
         template<typename T0, typename Elem>
         friend constexpr Ref<T0> CreateRef(const std::initializer_list<Elem>& initializer_list);
+
+        template<typename T0>
+        friend constexpr Ref<T0> CreateRef(const Ref<T0>& reference);
 
         template<typename T0, typename... Args>
         friend constexpr Ref<T0> CreateRef(Args&&... args);
@@ -188,6 +198,7 @@ namespace OpenGraphics
         constexpr void EmplaceNew(Args&&... args);
 
         constexpr Ref<T> CreateRefAt(size_t index);
+        constexpr Ref<T> CreateRefLast();
 
         void Resize();
 

@@ -39,6 +39,10 @@ namespace OpenGraphics
     template<typename T>
     void Ref<T>::IncreaseRefCount() const
     {
+        if (!m_RefCount) return;
+
+        Update();
+
         if (m_Pointer)
             m_RefCount->Increase();
     }
@@ -47,6 +51,8 @@ namespace OpenGraphics
     void Ref<T>::DecreaseRefCount() const
     {
         if (!m_RefCount) return;
+
+        Update();
 
         m_RefCount->Decrease();
         if (m_RefCount->GetReferenceCount() == 0)
@@ -70,6 +76,15 @@ namespace OpenGraphics
         }
     }
 
+    template<typename T>
+    void Ref<T>::Update() const
+    {
+        if (const auto& refCountPtr = static_cast<RefCountPtr<T>*>(m_RefCount);
+            refCountPtr->m_Pointer != m_Pointer)
+            m_Pointer = refCountPtr->m_Pointer;
+    }
+
+
     template<typename T, size_t N>
     template<typename... Args>
     constexpr Ref<T> RefArray<T, N>::CreateRef(size_t index, Args&&... args)
@@ -92,7 +107,7 @@ namespace OpenGraphics
 
     template<typename T>
     DynamicRefArray<T>::DynamicRefArray(const size_t count)
-        : m_MemoryBlock(count), m_RefCounts(count, new RefCountPtr<T>)
+        : m_MemoryBlock(count), m_RefCounts(count)
     {
         AssignRefCounts();
     }
@@ -114,6 +129,13 @@ namespace OpenGraphics
         Ref<T> ref = Ref<T>(m_MemoryBlock.At(index), m_RefCounts[index]);
         ref.m_OwnsRefCount = false;
         return ref;
+    }
+
+    template<typename T>
+    constexpr Ref<T> DynamicRefArray<T>::CreateRefLast()
+    {
+        const size_t lastIndex = m_Count - 1;
+        return CreateRefAt(lastIndex);
     }
 
     template<typename T>
@@ -144,6 +166,12 @@ namespace OpenGraphics
     {
         const auto refCount = new RefCountPtr<T>(initializer_list);
         return Ref<T>(refCount->m_Pointer, refCount);
+    }
+
+    template<typename T>
+    constexpr Ref<T> CreateRef(const Ref<T>& reference)
+    {
+        return Ref<T>(reference);
     }
 
     template<typename T, typename... Args>

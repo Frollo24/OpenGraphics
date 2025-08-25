@@ -1,5 +1,6 @@
 #include "ogpch.h"
 #include "Model.h"
+#include "MaterialManager.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -110,7 +111,7 @@ namespace OpenGraphics
                 indices.push_back(face.mIndices[j]);
         }
 
-        const Material material = m_Materials[mesh->mMaterialIndex];
+        const Material material = *m_Materials[mesh->mMaterialIndex];
         return Mesh(vertices, indices, material);
     }
 
@@ -137,7 +138,7 @@ namespace OpenGraphics
         }
     }
 
-    Material Model::ProcessMaterial(const aiMaterial* material, const aiScene* scene) const
+    Ref<MaterialInstance> Model::ProcessMaterial(const aiMaterial* material, const aiScene* scene) const
     {
         Material modelMaterial{};
         modelMaterial.Name = material->GetName().C_Str();
@@ -182,11 +183,11 @@ namespace OpenGraphics
                 modelMaterial.MainColor = Color(matColor.r, matColor.g, matColor.b);
         }
 
-
-        return modelMaterial;
+        Ref<MaterialInstance> instance = MaterialManager::GetOrCreate(modelMaterial.Name, modelMaterial);
+        return instance;
     }
 
-    Material Model::ProcessDefaultMaterial(const aiMaterial* material, const aiScene* scene) const
+    Ref<MaterialInstance> Model::ProcessDefaultMaterial(const aiMaterial* material, const aiScene* scene) const
     {
         Material defaultMaterial{};
         defaultMaterial.Name = AI_DEFAULT_MATERIAL_NAME;
@@ -212,6 +213,8 @@ namespace OpenGraphics
                 material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
                 defaultMaterial.MainColor = Color(diffuse.r, diffuse.g, diffuse.b);
         }
-        return defaultMaterial;
+
+        Ref<MaterialInstance> instance = MaterialManager::GetOrCreate(defaultMaterial.Name, defaultMaterial);
+        return instance;
     }
 }

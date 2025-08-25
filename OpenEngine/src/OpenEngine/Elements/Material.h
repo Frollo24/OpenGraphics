@@ -31,7 +31,6 @@ namespace OpenGraphics
         void* Value = nullptr;
     };
 
-    // HACK: we should distinguish between material type and material instance
     struct OPEN_API Material
     {
         std::string Name;
@@ -54,6 +53,37 @@ namespace OpenGraphics
         {
             return MainColor == other.MainColor;
         }
+    };
+
+    class OPEN_API MaterialType
+    {
+    public:
+        MaterialType() = default;
+        MaterialType(const Material& material) : m_Material(material) {}
+
+        operator Material&() { return m_Material; }
+        operator const Material&() const { return m_Material; }
+
+    private:
+        friend class MaterialInstance;
+        Material m_Material{};
+    };
+
+    class OPEN_API MaterialInstance
+    {
+    public:
+        MaterialInstance() = default;
+        MaterialInstance(const Material& material) : m_Material(material), m_Type(nullptr) {}
+
+        MaterialInstance(const Ref<MaterialType>& material)
+            : m_Material(*material), m_Type(material) {}
+
+        operator Material&() { return m_Material; }
+        operator const Material&() const { return m_Material; }
+
+    private:
+        Material m_Material{};
+        Ref<MaterialType> m_Type = nullptr;
     };
 }
 
