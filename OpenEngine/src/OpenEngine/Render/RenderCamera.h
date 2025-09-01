@@ -19,12 +19,9 @@ namespace OpenGraphics
         inline void SetProjection(const Matrix4x4& proj) { m_Projection = proj; }
 
         [[nodiscard]] inline const Matrix4x4& GetView() const { return m_View; }
-        virtual void SetView(const Matrix4x4& view) { m_View = view; }  // TODO: implemented by subclasses
-
         [[nodiscard]] inline const Vector3D& GetPosition() const { return m_Position; }
-        virtual void SetPosition(const Vector3D& position) { m_Position = position; }  // TODO: implemented by subclasses
 
-    private:
+    protected:
         Matrix4x4 m_Projection = Matrix4x4::identity;
         Matrix4x4 m_View = Matrix4x4::identity;
         Vector3D m_Position = Vector3D::zero;

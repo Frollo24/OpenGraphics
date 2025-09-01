@@ -29,7 +29,7 @@ namespace OpenGraphics
         {
             if (const auto& camera = gameObject->GetComponent<CameraComponent>())
             {
-                cameras.push_back(camera->GetRenderCamera());
+                cameras.push_back(camera->GetSceneCamera());
             }
         }
 

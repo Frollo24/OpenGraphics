@@ -52,9 +52,9 @@ public:
         PipelineState trianglePipelineState{};
         m_TrianglePipeline = new Pipeline(trianglePipelineState, triangleShader);
 
-        m_RenderCamera = new RenderCamera(Matrix4x4::Perspective(60.0f, 4.0f / 3.0f, 0.3f, 50.0f));
-        m_RenderCamera->SetPosition(Vector3D(0.5f, 1.0f, 3.0f));
-        m_RenderCamera->SetView(Matrix4x4::LookAt(m_RenderCamera->GetPosition(), Vector3D::zero, Vector3D::up));
+        m_EditorCamera = new EditorCamera(Matrix4x4::Perspective(60.0f, 4.0f / 3.0f, 0.3f, 50.0f));
+        m_EditorCamera->SetPosition(Vector3D(0.5f, 1.0f, 3.0f));
+        m_EditorCamera->SetView(Matrix4x4::LookAt(m_EditorCamera->GetPosition(), Vector3D::zero, Vector3D::up));
 
         m_Scene = new Scene();
 
@@ -82,7 +82,7 @@ public:
         m_Scene->AddGameObject(starGameObject);
 
         m_SceneRenderer = SceneRenderer(m_Scene);
-        m_SceneRenderer.SetEditorCamera(m_RenderCamera);
+        m_SceneRenderer.SetEditorCamera(m_EditorCamera);
 
         TextureDescription textureDesc = {};
         auto refArray = RefArray<Texture, 5>();
@@ -108,7 +108,7 @@ public:
 #if ROTATE_CAMERA
         static float angle = 0.0f;
         float speed = 1.5f;
-        m_RenderCamera->SetPosition(
+        m_EditorCamera->SetPosition(
             Vector3D(
                 0.5f * cos(angle) - 3.0f * sin(angle),
                 1.0f,
@@ -117,7 +117,7 @@ public:
         angle += speed * float(1.0 / 144.0);
 #endif
 
-        m_RenderCamera->SetView(Matrix4x4::LookAt(m_RenderCamera->GetPosition(), Vector3D::zero, Vector3D::up));
+        m_EditorCamera->SetView(Matrix4x4::LookAt(m_EditorCamera->GetPosition(), Vector3D::zero, Vector3D::up));
     }
 
     void Render() override {
@@ -141,7 +141,7 @@ public:
 
     void Cleanup() override {
         Logger::Trace("Resource cleanup...");
-        delete m_RenderCamera;
+        delete m_EditorCamera;
         delete m_Scene;
 
         delete m_TriangleVertexArray;
@@ -157,7 +157,7 @@ private:
 
     Pipeline* m_TrianglePipeline = nullptr;
 
-    RenderCamera* m_RenderCamera = nullptr;
+    EditorCamera* m_EditorCamera = nullptr;
     Scene* m_Scene = nullptr;
     GameObject* m_SphereGameObject = nullptr;
 

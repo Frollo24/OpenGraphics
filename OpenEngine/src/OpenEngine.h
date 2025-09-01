@@ -37,6 +37,7 @@
 #include "OpenEngine/Elements/PointGizmo.h"
 #include "OpenEngine/Elements/Material.h"
 #include "OpenEngine/Elements/Model.h"
+#include "OpenEngine/Elements/EditorCamera.h"
 
 // Window system
 #include "OpenEngine/Windowing/WindowSystem.h"

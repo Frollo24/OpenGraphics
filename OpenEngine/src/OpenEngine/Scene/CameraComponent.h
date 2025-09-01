@@ -2,7 +2,7 @@
 
 #include "OpenEngine/Core/Base.h"
 #include "OpenEngine/Scene/Component.h"
-#include "OpenEngine/Render/RenderCamera.h"
+#include "OpenEngine/Elements/SceneCamera.h"
 
 namespace OpenGraphics
 {
@@ -12,9 +12,11 @@ namespace OpenGraphics
         CameraComponent() = default;
         ~CameraComponent() = default;
 
-        [[nodiscard]] const RenderCamera* GetRenderCamera() const { return m_RenderCamera; }
+        [[nodiscard]] const SceneCamera* GetSceneCamera() const { return m_SceneCamera; }
+
+        void OnUpdate() override;
 
     private:
-        RenderCamera* m_RenderCamera = nullptr;
+        SceneCamera* m_SceneCamera = nullptr;
     };
 }

@@ -2,6 +2,7 @@
 
 #include "OpenEngine/Core/Base.h"
 #include "OpenEngine/Elements/Model.h"
+#include "OpenEngine/Elements/EditorCamera.h"
 #include "OpenEngine/Render/Pipeline.h"
 #include "OpenEngine/Render/RenderCamera.h"
 #include "OpenEngine/Scene/Scene.h"
@@ -33,13 +34,13 @@ namespace OpenGraphics
         [[nodiscard]] inline const Scene* GetScene() const { return m_Scene; }
 
         // TODO: improve interface
-        [[nodiscard]] inline const RenderCamera* GetEditorCamera() const { return m_EditorCamera; }
-        void SetEditorCamera(RenderCamera* camera) { m_EditorCamera = camera; }
+        [[nodiscard]] inline const EditorCamera* GetEditorCamera() const { return m_EditorCamera; }
+        void SetEditorCamera(EditorCamera* camera) { m_EditorCamera = camera; }
 
     private:
         Scene* m_Scene = nullptr;
         Ref<Shader> m_SelectedShader = nullptr;
         RenderCamera* m_SelectedCamera = nullptr;
-        RenderCamera* m_EditorCamera = nullptr;  // TODO: promote to a Editor Camera
+        EditorCamera* m_EditorCamera = nullptr;
     };
 }

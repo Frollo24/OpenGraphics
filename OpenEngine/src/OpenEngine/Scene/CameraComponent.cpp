@@ -3,5 +3,8 @@
 
 namespace OpenGraphics
 {
-
+    void CameraComponent::OnUpdate()
+    {
+        m_SceneCamera->Update();
+    }
 }
