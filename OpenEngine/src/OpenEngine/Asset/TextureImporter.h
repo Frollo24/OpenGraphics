@@ -1,7 +1,7 @@
 #pragma once
 
 #include "OpenEngine/Core/Base.h"
-#include "OpenEngine/Render/Texture.h"  // NOTE: enum ImageFormat, maybe we can declare it elsewhere
+#include "OpenEngine/Elements/Image.h"
 
 namespace OpenGraphics
 {
