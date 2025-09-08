@@ -16,7 +16,7 @@ namespace OpenGraphics
         BufferDescription vertexDescription = {};
         vertexDescription.Type = BufferType::Vertex;
         vertexDescription.Size = sizeof(ColorVertex) * 2;
-        vertexDescription.Data = (void*)(&data);
+        vertexDescription.Data = reinterpret_cast<void*>(&data);
         m_VertexBuffer = new Buffer(vertexDescription);
 
         m_VertexAttribBinding = GetGizmoVertexBinding();

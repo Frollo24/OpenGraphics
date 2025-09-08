@@ -95,7 +95,7 @@ public:
         dynamicRefArray.EmplaceNew(textureDesc);
         auto dynRef2 = dynamicRefArray.CreateRefAt(0);
 
-        Assertions::Assert(dynRef1.Get() == dynRef2.Get(), "Bad pointer sync");
+        OG_ASSERT(dynRef1.Get() == dynRef2.Get(), "Bad pointer sync");
     }
 
     void Update() override {

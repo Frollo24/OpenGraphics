@@ -12,7 +12,7 @@ namespace OpenGraphics
         Vector4D columns[4];
 
         Matrix4x4() : columns{Vector4D(), Vector4D(), Vector4D(), Vector4D()} {}
-        Matrix4x4(const float s)
+        explicit Matrix4x4(const float s)
             : columns{
                 Vector4D(s, 0, 0, 0),
                 Vector4D(0, s, 0, 0),

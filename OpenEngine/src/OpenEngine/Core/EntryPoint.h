@@ -5,9 +5,9 @@ extern OpenGraphics::Application* OpenGraphics::CreateApplication(); // To be de
 
 namespace OpenGraphics
 {
-    int Main(int argc, char** argv)
+    inline int Main(int argc, char** argv)
     {
-        auto app = CreateApplication();
+        const auto app = CreateApplication();
         app->OnCreate();
         app->Run();
         app->OnDestroy();
@@ -17,7 +17,7 @@ namespace OpenGraphics
     }
 }
 
-int main(int argc, char** argv)
+int main(const int argc, char** argv)
 {
     return OpenGraphics::Main(argc, argv);
 }

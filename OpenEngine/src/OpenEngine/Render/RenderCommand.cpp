@@ -127,7 +127,8 @@ namespace OpenGraphics
 
     void RenderCommand::SetViewport(const uint32_t x, const uint32_t y, const uint32_t width, const uint32_t height)
 	{
-		glViewport(x, y, width, height);
+		glViewport(static_cast<GLint>(x), static_cast<GLint>(y),
+			static_cast<GLsizei>(width), static_cast<GLsizei>(height));
     }
 
     void RenderCommand::BindVertexArray(const VertexArray* vertexArray)
@@ -143,7 +144,8 @@ namespace OpenGraphics
         const GLuint vertexArrayID = s_RenderState.VertexArray->GetRendererID();
         const GLuint vertexBufferID = vertexBuffer->GetRendererID();
         glBindVertexArray(vertexArrayID);
-        glVertexArrayVertexBuffer(vertexArrayID, binding.GetBinding(), vertexBufferID, 0, binding.GetStride());
+        glVertexArrayVertexBuffer(vertexArrayID, binding.GetBinding(),
+        	vertexBufferID, 0, static_cast<GLsizei>(binding.GetStride()));
     }
 
     void RenderCommand::SetIndexBuffer(const Buffer *indexBuffer)
@@ -197,10 +199,10 @@ namespace OpenGraphics
 			);
 
 			glColorMaski(idx,
-				GLboolean(blendAttachment.ColorWriteMask & ColorWriteMask::ColorWriteMaskR),
-				GLboolean(blendAttachment.ColorWriteMask & ColorWriteMask::ColorWriteMaskG),
-				GLboolean(blendAttachment.ColorWriteMask & ColorWriteMask::ColorWriteMaskB),
-				GLboolean(blendAttachment.ColorWriteMask & ColorWriteMask::ColorWriteMaskA)
+				static_cast<GLboolean>(blendAttachment.ColorWriteMask & ColorWriteMask::ColorWriteMaskR),
+				static_cast<GLboolean>(blendAttachment.ColorWriteMask & ColorWriteMask::ColorWriteMaskG),
+				static_cast<GLboolean>(blendAttachment.ColorWriteMask & ColorWriteMask::ColorWriteMaskB),
+				static_cast<GLboolean>(blendAttachment.ColorWriteMask & ColorWriteMask::ColorWriteMaskA)
 			);
 		}
 
@@ -228,25 +230,13 @@ namespace OpenGraphics
 
     void RenderCommand::Draw(const uint32_t first, const uint32_t vertexCount)
     {
-		GLenum topology = Utils::PrimitiveTopologyToGLPrimitiveTopology(s_RenderState.PrimitiveTopology);
-        glDrawArrays(topology, first, vertexCount);
+		const GLenum topology = Utils::PrimitiveTopologyToGLPrimitiveTopology(s_RenderState.PrimitiveTopology);
+        glDrawArrays(topology, static_cast<GLint>(first), static_cast<GLsizei>(vertexCount));
     }
 
     void RenderCommand::DrawIndexed(const uint32_t indexCount)
     {
-		GLenum topology = Utils::PrimitiveTopologyToGLPrimitiveTopology(s_RenderState.PrimitiveTopology);
-        glDrawElements(topology, indexCount, GL_UNSIGNED_INT, nullptr);
+		const GLenum topology = Utils::PrimitiveTopologyToGLPrimitiveTopology(s_RenderState.PrimitiveTopology);
+        glDrawElements(topology, static_cast<GLsizei>(indexCount), GL_UNSIGNED_INT, nullptr);
     }
-
-	/*
-    void RenderCommand::DrawLines(const uint32_t vertexCount)
-	{
-		glDrawArrays(GL_LINES, 0, vertexCount);
-    }
-
-    void RenderCommand::DrawPoints(const uint32_t first, const uint32_t vertexCount)
-	{
-		glDrawArrays(GL_POINTS, first, vertexCount);
-    }
-    */
 }

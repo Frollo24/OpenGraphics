@@ -21,7 +21,7 @@ namespace OpenGraphics
     struct OPEN_API UnboundedMemoryBuffer
     {
     public:
-        UnboundedMemoryBuffer(const size_t N) :
+        explicit UnboundedMemoryBuffer(const size_t N) :
             m_Size(std::max(1ull, N)),
             m_MemoryBlock(new unsigned char[std::max(1ull, N) * sizeof(T)]) {}
         ~UnboundedMemoryBuffer() { delete[] m_MemoryBlock; }
@@ -192,7 +192,7 @@ namespace OpenGraphics
     class OPEN_API DynamicRefArray
     {
     public:
-        DynamicRefArray(size_t count = 10);
+        explicit DynamicRefArray(size_t count = 10);
 
         template<typename... Args>
         constexpr void EmplaceNew(Args&&... args);

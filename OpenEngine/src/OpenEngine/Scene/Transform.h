@@ -24,7 +24,7 @@ namespace OpenGraphics
         void Parent(Transform* parent);
         void Unparent();
 
-        bool IsDeepChildOf(Transform* deepParent);
+        bool IsDeepChildOf(Transform* deepParent) const;
 
     private:
         void UpdateModelMatrix();

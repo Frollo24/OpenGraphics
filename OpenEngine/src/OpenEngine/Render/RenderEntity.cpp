@@ -11,7 +11,7 @@ namespace OpenGraphics
         BufferDescription vertexDescription = {};
         vertexDescription.Type = BufferType::Vertex;
         vertexDescription.Size = sizeof(Vertex) * m_VertexCount;
-        vertexDescription.Data = (void*)(vertices.data());
+        vertexDescription.Data = const_cast<void*>(reinterpret_cast<const void*>(vertices.data()));
         m_VertexBuffer = new Buffer(vertexDescription);
 
         if (m_IndexCount)
@@ -19,7 +19,7 @@ namespace OpenGraphics
             BufferDescription indexDescription = {};
             indexDescription.Type = BufferType::Index;
             indexDescription.Size = sizeof(Index) * m_IndexCount;
-            indexDescription.Data = (void*)(indices.data());
+            indexDescription.Data = const_cast<void*>(reinterpret_cast<const void*>(indices.data()));
             m_IndexBuffer = new Buffer(indexDescription);
         }
 

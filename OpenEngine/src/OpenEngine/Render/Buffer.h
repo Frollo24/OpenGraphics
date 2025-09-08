@@ -34,7 +34,7 @@ namespace OpenGraphics
         [[nodiscard]] inline const BufferDescription& GetDescription() const { return m_BufferDesc; }
         [[nodiscard]] inline uint32_t GetRendererID() const { return m_RendererID; }
 
-        virtual void SetData(uint32_t offset, uint32_t size, const void* data);
+        void SetData(uint32_t offset, uint32_t size, const void* data);
 
     private:
         BufferDescription m_BufferDesc;

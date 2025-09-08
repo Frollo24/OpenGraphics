@@ -94,7 +94,7 @@ namespace OpenGraphics
 	static GLuint Compile(const ShaderStringMap& shaderSources)
 	{
 		GLuint program = glCreateProgram();
-		std::array<GLuint, (int)ShaderType::Count - 1> glShaderIDs{};  // ShaderType::None is also a shader type
+		std::array<GLuint, static_cast<int>(ShaderType::Count) - 1> glShaderIDs{};  // ShaderType::None is also a shader type
 		int shaderIndex = 0;
 		for (const auto& [type, source] : shaderSources) {
 			if (type == ShaderType::None) continue;

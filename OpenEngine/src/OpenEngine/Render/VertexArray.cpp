@@ -61,7 +61,7 @@ namespace OpenGraphics
                 {
                     glEnableVertexArrayAttrib(m_RendererID, currentAttribIndex);
                     glVertexArrayAttribBinding(m_RendererID, currentAttribIndex, bindingIndex);
-                    glVertexArrayAttribFormat(m_RendererID, currentAttribIndex, attribute.GetComponentCount(),
+                    glVertexArrayAttribFormat(m_RendererID, currentAttribIndex, static_cast<GLint>(attribute.GetComponentCount()),
                         GL_FLOAT, attribute.Normalized ? GL_TRUE : GL_FALSE, attribute.Offset);
                     currentAttribIndex++;
                     break;
@@ -74,7 +74,7 @@ namespace OpenGraphics
                 {
                     glEnableVertexArrayAttrib(m_RendererID, currentAttribIndex);
                     glVertexArrayAttribBinding(m_RendererID, currentAttribIndex, bindingIndex);
-                    glVertexArrayAttribIFormat(m_RendererID, currentAttribIndex, attribute.GetComponentCount(),
+                    glVertexArrayAttribIFormat(m_RendererID, currentAttribIndex, static_cast<GLint>(attribute.GetComponentCount()),
                         GL_INT, attribute.Offset);
                     currentAttribIndex++;
                     break;
@@ -87,7 +87,7 @@ namespace OpenGraphics
                     {
                         glEnableVertexArrayAttrib(m_RendererID, currentAttribIndex);
                         glVertexArrayAttribBinding(m_RendererID, currentAttribIndex, bindingIndex);
-                        glVertexArrayAttribFormat(m_RendererID, currentAttribIndex, count, GL_FLOAT,
+                        glVertexArrayAttribFormat(m_RendererID, currentAttribIndex, static_cast<GLint>(count), GL_FLOAT,
                             attribute.Normalized ? GL_TRUE : GL_FALSE, attribute.Offset + sizeof(float) * count * i);
                         currentAttribIndex++;
                     }

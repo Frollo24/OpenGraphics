@@ -60,8 +60,7 @@ namespace OpenGraphics
     {
         if (!m_Parent) return;
 
-        auto it = std::find(m_Parent->m_Children.begin(), m_Parent->m_Children.end(), this);
-        if (it != m_Parent->m_Children.end())
+        if (const auto it = std::ranges::find(m_Parent->m_Children, this); it != m_Parent->m_Children.end())
             m_Parent->m_Children.erase(it);
 
         m_Parent = nullptr;
@@ -69,7 +68,7 @@ namespace OpenGraphics
         SetDirty();
     }
 
-    bool Transform::IsDeepChildOf(Transform* deepParent)
+    bool Transform::IsDeepChildOf(Transform* deepParent) const
     {
         if (m_Parent == nullptr) return false;
         if (m_Parent == deepParent) return true;

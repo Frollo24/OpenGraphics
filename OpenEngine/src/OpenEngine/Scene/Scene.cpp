@@ -21,8 +21,7 @@ namespace OpenGraphics
 
     void Scene::RemoveGameObject(const GameObject* gameObject)
     {
-        auto it = std::find(m_GameObjects.begin(), m_GameObjects.end(), gameObject);
-        if (it != m_GameObjects.end())
+        if (const auto it = std::ranges::find(m_GameObjects, gameObject); it != m_GameObjects.end())
             m_GameObjects.erase(it);
 
         delete gameObject;

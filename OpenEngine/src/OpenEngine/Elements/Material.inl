@@ -19,7 +19,7 @@ namespace OpenGraphics
     template<MaterialPropertyType propType, typename T>
     void Material::SetProperty(const std::string& name, const T& value)
     {
-        if (auto propertyLocation = Properties.find(name); propertyLocation != Properties.end())
+        if (const auto propertyLocation = Properties.find(name); propertyLocation != Properties.end())
         {
             if (Properties[name].Type != propType)
             {
