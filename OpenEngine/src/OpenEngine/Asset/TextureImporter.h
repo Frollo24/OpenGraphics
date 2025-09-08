@@ -9,9 +9,9 @@ namespace OpenGraphics
     {
         void* Data = nullptr;
         uint32_t Size = 0;
-        int32_t Width = 0;
-        int32_t Height = 0;
-        int32_t Channels = 0;
+        uint32_t Width = 0;
+        uint32_t Height = 0;
+        uint32_t Channels = 0;
         ImageFormat Format = ImageFormat::None;
     };
 
@@ -22,4 +22,4 @@ namespace OpenGraphics
         static std::array<ImageData, 6> LoadCubemapFromSeparateFaces(const std::string& folder, const std::array<std::string, 6>& facesNames);
         static void FreeImageData(const void* imageData);
     };
-} // OpenGraphics
+}

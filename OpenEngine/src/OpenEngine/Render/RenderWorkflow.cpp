@@ -73,7 +73,7 @@ namespace OpenGraphics
 
         TextureDescription cubemapDesc = {};
         cubemapDesc.ImageType = ImageType::Cubemap;
-        cubemapDesc.ImageExtent = { (uint32_t)cubemapFaces[0].Width, (uint32_t)cubemapFaces[0].Height, 1};
+        cubemapDesc.ImageExtent = { cubemapFaces[0].Width, cubemapFaces[0].Height, 1};
         cubemapDesc.ImageFormat = ImageFormat::RGB8;
         cubemapDesc.FilterMode = TextureFilterMode::Nearest;
         cubemapDesc.MipmapMode = TextureMipmapFilterMode::LinearMipmap;

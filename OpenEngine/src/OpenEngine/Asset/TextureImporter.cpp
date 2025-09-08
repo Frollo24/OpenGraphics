@@ -49,4 +49,4 @@ namespace OpenGraphics
     {
         stbi_image_free(const_cast<void*>(imageData));
     }
-} // OpenGraphics
+}
