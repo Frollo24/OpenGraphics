@@ -12,11 +12,17 @@ namespace OpenGraphics
     class OPEN_API RenderEntity
     {
     public:
+        RenderEntity(const std::vector<Vertex>& vertices,
+            const PrimitiveTopology& topology = PrimitiveTopology::Triangles);
         RenderEntity(const std::vector<Vertex>& vertices, const std::vector<Index>& indices,
             const PrimitiveTopology& topology = PrimitiveTopology::Triangles);
         ~RenderEntity();
 
         void Render() const;
+
+    private:
+        void InitHandles(const void* vertexData, const void* indexData);
+        void DeleteHandles();
 
     private:
         VertexArray* m_VertexArray = nullptr;

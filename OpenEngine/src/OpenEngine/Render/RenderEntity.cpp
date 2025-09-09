@@ -4,35 +4,25 @@
 
 namespace OpenGraphics
 {
+    RenderEntity::RenderEntity(const std::vector<Vertex> &vertices, const PrimitiveTopology& topology)
+        : m_VertexCount(vertices.size()), m_Topology(topology)
+    {
+        const void* vertexData = vertices.data();
+        InitHandles(vertexData, nullptr);
+    }
+
     RenderEntity::RenderEntity(const std::vector<Vertex> &vertices, const std::vector<Index> &indices,
         const PrimitiveTopology& topology)
         : m_VertexCount(vertices.size()), m_IndexCount(indices.size()), m_Topology(topology)
     {
-        BufferDescription vertexDescription = {};
-        vertexDescription.Type = BufferType::Vertex;
-        vertexDescription.Size = sizeof(Vertex) * m_VertexCount;
-        vertexDescription.Data = const_cast<void*>(reinterpret_cast<const void*>(vertices.data()));
-        m_VertexBuffer = new Buffer(vertexDescription);
-
-        if (m_IndexCount)
-        {
-            BufferDescription indexDescription = {};
-            indexDescription.Type = BufferType::Index;
-            indexDescription.Size = sizeof(Index) * m_IndexCount;
-            indexDescription.Data = const_cast<void*>(reinterpret_cast<const void*>(indices.data()));
-            m_IndexBuffer = new Buffer(indexDescription);
-        }
-
-        m_VertexAttribBinding = GetRenderEntityVertexBinding();
-        m_VertexArray = new VertexArray({m_VertexAttribBinding});
+        const void* vertexData = vertices.data();
+        const void* indexData = indices.data();
+        InitHandles(vertexData, indexData);
     }
 
     RenderEntity::~RenderEntity()
     {
-        if (!m_IndexBuffer)
-            delete m_IndexBuffer;
-
-        delete m_VertexBuffer;
+        DeleteHandles();
     }
 
     void RenderEntity::Render() const
@@ -52,4 +42,39 @@ namespace OpenGraphics
         }
     }
 
+    void RenderEntity::InitHandles(const void* vertexData, const void* indexData)
+    {
+        BufferDescription vertexDescription = {};
+        vertexDescription.Type = BufferType::Vertex;
+        vertexDescription.Size = sizeof(Vertex) * m_VertexCount;
+        vertexDescription.Data = const_cast<void*>(vertexData);
+        m_VertexBuffer = new Buffer(vertexDescription);
+
+        if (m_IndexCount && indexData)
+        {
+            BufferDescription indexDescription = {};
+            indexDescription.Type = BufferType::Index;
+            indexDescription.Size = sizeof(Index) * m_IndexCount;
+            indexDescription.Data = const_cast<void*>(indexData);
+            m_IndexBuffer = new Buffer(indexDescription);
+        }
+
+        m_VertexAttribBinding = GetRenderEntityVertexBinding();
+        m_VertexArray = new VertexArray({m_VertexAttribBinding});
+    }
+
+    void RenderEntity::DeleteHandles()
+    {
+        delete m_VertexArray;
+        m_VertexArray = nullptr;
+
+        if (!m_IndexBuffer)
+        {
+            delete m_IndexBuffer;
+            m_IndexBuffer = nullptr;
+        }
+
+        delete m_VertexBuffer;
+        m_VertexBuffer = nullptr;
+    }
 }
