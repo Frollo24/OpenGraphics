@@ -88,17 +88,23 @@ namespace OpenGraphics
 
         const Matrix4x4 modelViewProj = proj * view * model;
 
-        const Color diffuseColor = material.MainColor;
+        const Color mainColor = material.MainColor;
         const Color specularColor = material.GetColor("_SpecularColor");
         const Color emissiveColor = material.GetColor("_EmissiveColor");
+
+        const float metallic = material.GetFloat("_Metallic");
+        const float roughness = material.GetFloat("_Roughness");
 
         m_SelectedShader->SetMat4("u_ModelViewProj", modelViewProj);
         m_SelectedShader->SetMat4("u_Model", model);
         m_SelectedShader->SetMat4("u_Normal", normal);
-        m_SelectedShader->SetColor("u_MainColor", diffuseColor);
-        m_SelectedShader->SetColor("u_Material.diffuseColor", diffuseColor);
+        m_SelectedShader->SetColor("u_MainColor", mainColor);
+        m_SelectedShader->SetColor("u_Material.diffuseColor", mainColor);
         m_SelectedShader->SetColor("u_Material.specularColor", specularColor);
         m_SelectedShader->SetColor("u_Material.emissiveColor", emissiveColor);
+        m_SelectedShader->SetColor("u_Material.baseColor", mainColor);
+        m_SelectedShader->SetFloat("u_Material.metallic", metallic);
+        m_SelectedShader->SetFloat("u_Material.roughness", roughness);
         mesh.Render();
     }
 }

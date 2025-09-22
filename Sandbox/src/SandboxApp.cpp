@@ -61,6 +61,7 @@ public:
         m_SphereGameObject = new GameObject();
         m_SphereGameObject->GetTransform()->Scale(Vector3D(.75f, .75f, .75f));
         const auto starGameObject = new GameObject(Vector3D(0, 0, 2), m_SphereGameObject->GetTransform());
+        starGameObject->GetTransform()->Rotate(Vector3D::left, 15);
 
         // HACK: materials should be modifiable by changing the reference to the material
         const auto sphereRenderComponent = m_SphereGameObject->AddComponent<RenderComponent>();
@@ -70,12 +71,17 @@ public:
         sphereMaterial.MainColor = Color(0.9f, 0.1f, 0.1f, 1.0f);
         sphereMaterial.SetColor("_SpecularColor", Color::yellow);
         sphereMaterial.SetColor("_EmissiveColor", Color::black);
+        sphereMaterial.SetFloat("_Metallic", 0.0f);
+        sphereMaterial.SetFloat("_Roughness", 0.25f);
         Logger::Debug("{} shininess: {}", sphereMaterial.Name, sphereMaterial.GetFloat("_Shininess"));
 
         sphereRenderComponent->SetModel(sphereModel);
         const auto starRenderComponent = starGameObject->AddComponent<RenderComponent>();
         Model* starModel = new Model("assets/models/Star.obj");
-        const_cast<Material&>(starModel->GetMeshes().at(0).GetMaterial()).MainColor = Color(0.8f, 0.65f, 0.0f, 1.0f);
+        auto& starMaterial = const_cast<Material&>(starModel->GetMeshes().at(0).GetMaterial());
+        starMaterial.MainColor = Color(0.8f, 0.65f, 0.0f, 1.0f);
+        starMaterial.SetFloat("_Metallic", 0.85f);
+        starMaterial.SetFloat("_Roughness", 0.25f);
         starRenderComponent->SetModel(starModel);
 
         m_Scene->AddGameObject(m_SphereGameObject);

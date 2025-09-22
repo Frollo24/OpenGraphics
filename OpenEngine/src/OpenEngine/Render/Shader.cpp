@@ -80,7 +80,9 @@ namespace OpenGraphics
     			const std::string versionLine = includedFile.substr(0, includedFile.find_first_of('\n') + 1);
     			const std::string includedSource = includedFile.substr(versionLine.length());
 
-    			finalSource << includedSource.substr(0, includedSource.find_first_of('\0')) << '\n';
+    			const std::string preprocessedSource = PreProcess(includedSource.substr(0, includedSource.find_first_of('\0')));
+
+    			finalSource << preprocessedSource << '\n';
     		}
     		else
     		{
