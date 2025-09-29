@@ -84,8 +84,18 @@ public:
         starMaterial.SetFloat("_Roughness", 0.25f);
         starRenderComponent->SetModel(starModel);
 
+        const auto lightGameObject = new GameObject(Vector3D(4.0f, 1.0f, 2.5f));
+        const auto lightComponent = lightGameObject->AddComponent<LightComponent>();
+
+        auto lightData = lightComponent->GetLightData();
+        lightData.Intensity = 40.0f;
+        lightData.Type = LightType::Point;
+        lightData.Unit = PhotometricUnit::Candela;
+        lightComponent->SetLightData(lightData);
+
         m_Scene->AddGameObject(m_SphereGameObject);
         m_Scene->AddGameObject(starGameObject);
+        m_Scene->AddGameObject(lightGameObject);
 
         m_SceneRenderer = SceneRenderer(m_Scene);
         m_SceneRenderer.SetEditorCamera(m_EditorCamera);

@@ -8,6 +8,7 @@
 #include "OpenEngine/Asset/TextureImporter.h"
 #include "OpenEngine/Elements/VectorGizmo.h"
 #include "OpenEngine/Elements/PointGizmo.h"
+#include "OpenEngine/Scene/LightComponent.h"
 // #include "OpenEngine/Scene/Scene.h"
 // #include "OpenEngine/Scene/RenderComponent.h"
 
@@ -156,6 +157,34 @@ namespace OpenGraphics
 
     void RenderWorkflow::DrawGameObjects(const RenderCamera& camera) const
     {
+        // HACK: Light data should be set in a Uniform Buffer
+        const auto lightGameObject = m_SceneRenderer->GetScene()->GetGameObjects().at(2);
+        const auto lightData = lightGameObject->GetComponent<LightComponent>()->GetLightData();
+        const auto shader = s_ModelPipeline->GetShader();
+        if (lightData.Type == LightType::Directional)
+        {
+            shader->SetFloat3("u_DirectionalLight.color",
+                Vector3D(lightData.LightColor.r, lightData.LightColor.g, lightData.LightColor.b));
+            shader->SetFloat("u_DirectionalLight.intensity", lightData.Intensity);
+            shader->SetFloat3("u_DirectionalLight.direction", Vector3D(-1.0, -1.0, -1.0).Normalized());
+            shader->SetFloat3("u_PointLight.color", Vector3D::zero);
+            shader->SetFloat("u_PointLight.intensity", 0.0f);
+            shader->SetFloat3("u_PointLight.position", Vector3D::zero);
+            shader->SetFloat("u_PointLight.radius", 0.0f);
+        }
+        else if (lightData.Type == LightType::Point)
+        {
+            shader->SetFloat3("u_DirectionalLight.color", Vector3D::zero);
+            shader->SetFloat("u_DirectionalLight.intensity", 0.0f);
+            shader->SetFloat3("u_DirectionalLight.direction", Vector3D::zero);
+            shader->SetFloat3("u_PointLight.color",
+                Vector3D(lightData.LightColor.r, lightData.LightColor.g, lightData.LightColor.b));
+            shader->SetFloat("u_PointLight.intensity", lightData.Intensity);
+            const Vector4D& lastColumn = lightGameObject->GetTransform()->GetModelMatrix()[3];
+            shader->SetFloat3("u_PointLight.position", Vector3D(lastColumn.x, lastColumn.y, lastColumn.z));
+            shader->SetFloat("u_PointLight.radius", 20.0f);
+        }
+
         // NOTE: This should be called per material type
         m_SceneRenderer->SetPipeline(*s_ModelPipeline);
 

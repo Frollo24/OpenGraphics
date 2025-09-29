@@ -72,8 +72,11 @@ vec3 PointLightDisneyEpicWorld(PointLight pointLight, DisneyEpicSurfaceData surf
     vec3 worldViewDirection = normalize(u_CameraPosition - worldPos);
 
     float dist = distance(pointLight.position, worldPos);
-    float distanceAttenuation = 1.0 / (0.1 + dist * dist);
-    distanceAttenuation = mix(distanceAttenuation, 0, clamp(dist / pointLight.radius, 0, 1));
+    // Prevent division by zero assuming the light is a sphere of 1cm radius
+    float distanceAttenuation = 1.0 / max(dist * dist, 0.0001);
+    // Epic Games windowing falloff to get the lights to reach zero radiance at radius distance
+    float smoothFactor = max(1.0 - pow(dist / pointLight.radius, 4.0), 0.0);
+    distanceAttenuation *= smoothFactor;
 
     Light light;
     light.color = pointLight.color;
@@ -89,8 +92,11 @@ vec3 SpotLightBlinnPhongWorld(SpotLight spotLight, DisneyEpicSurfaceData surface
     vec3 worldViewDirection = normalize(u_CameraPosition - worldPos);
 
     float dist = distance(spotLight.position, worldPos);
-    float distanceAttenuation = 1.0 / (0.1 + dist * dist);
-    distanceAttenuation = mix(distanceAttenuation, 0, clamp(dist / spotLight.radius, 0, 1));
+    // Prevent division by zero assuming the light is a sphere of 1cm radius
+    float distanceAttenuation = 1.0 / max(dist * dist, 0.0001);
+    // Epic Games windowing falloff to get the lights to reach zero radiance at radius distance
+    float smoothFactor = max(1.0 - pow(dist / spotLight.radius, 4.0), 0.0);
+    distanceAttenuation *= smoothFactor;
 
     float theta = dot(lightDirection, -spotLight.direction);
     // We invert the substraction because the cosine function (i.e. the dot product) goes
