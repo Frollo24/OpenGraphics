@@ -24,10 +24,6 @@ uniform Material u_Material;
 #include "Transform.glsl"
 #include "Lighting.glsl"
 
-// HACK: This sould be managed by an UBO
-uniform DirectionalLight u_DirectionalLight;
-uniform PointLight u_PointLight;
-
 void main() {
     int textureSz = textureSize(u_NormalTexture, 0).x;
     bool usingNormalmap = textureSz > 1 ? true : false;

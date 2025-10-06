@@ -228,6 +228,13 @@ namespace OpenGraphics
         glUseProgram(shader->GetRendererID());
     }
 
+    void RenderCommand::BindUniformBuffer(const Buffer* uniformBuffer, const uint32_t index)
+	{
+		OG_ASSERT(uniformBuffer->GetDescription().Type == BufferType::Uniform,
+			"Trying to bind a buffer which is not a Uniform Buffer Object!");
+		glBindBufferBase(GL_UNIFORM_BUFFER, index, uniformBuffer->GetRendererID());
+    }
+
     void RenderCommand::Draw(const uint32_t first, const uint32_t vertexCount)
     {
 		const GLenum topology = Utils::PrimitiveTopologyToGLPrimitiveTopology(s_RenderState.PrimitiveTopology);

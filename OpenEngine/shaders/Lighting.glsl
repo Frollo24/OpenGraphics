@@ -33,5 +33,10 @@ struct Light {
 
 uniform vec3 u_CameraPosition;  // TODO: think for a better place for this
 
+layout (std140, binding = 0) uniform Lights {
+    uniform DirectionalLight u_DirectionalLight;
+    uniform PointLight u_PointLight;
+};
+
 #include "BlinnPhongFunctions.glsl"
 #include "DisneyEpicGamesFunctions.glsl"

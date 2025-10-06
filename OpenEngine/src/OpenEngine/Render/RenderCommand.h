@@ -34,11 +34,10 @@ namespace OpenGraphics
         static void SetPolygonState(const PipelinePolygonState& polygonState);
         static void UseShader(BorrowRef<Shader> shader);
 
+        static void BindUniformBuffer(const Buffer* uniformBuffer, uint32_t index);
+
         static void Draw(uint32_t first, uint32_t vertexCount);
         static void DrawIndexed(uint32_t indexCount);
-
-        // static void DrawLines(uint32_t vertexCount);
-        // static void DrawPoints(uint32_t first, uint32_t vertexCount);
 
     private:
         inline static RenderState s_RenderState = {};

@@ -6,7 +6,7 @@ namespace OpenGraphics
 {
     enum class BufferType
     {
-        Vertex, Index
+        Vertex, Index, Uniform
     };
 
     // NOTE: It may be preferable to break it down by frequency and type of use

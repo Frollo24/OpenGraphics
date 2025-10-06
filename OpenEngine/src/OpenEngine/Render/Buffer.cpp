@@ -40,4 +40,4 @@ namespace OpenGraphics
     {
         glNamedBufferSubData(m_RendererID, offset, size, data);
     }
-} // OpenGraphics
+}

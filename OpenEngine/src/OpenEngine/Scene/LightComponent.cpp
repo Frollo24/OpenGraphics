@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "RenderComponent.h"
 #include "OpenEngine/Math/Mathf.h"
+#include "OpenEngine/Render/RenderCommand.h"
 
 namespace OpenGraphics
 {
@@ -45,6 +46,15 @@ namespace OpenGraphics
     {
     }
 
+    void LightComponent::OnCreate()
+    {
+        BufferDescription lightDataBufferDesc{};
+        lightDataBufferDesc.Type = BufferType::Uniform;
+        lightDataBufferDesc.Size = sizeof(Vector4D) * 4; // 2 for directional light + 2 for point light
+        lightDataBufferDesc.Usage = BufferUsage::DynamicDraw;
+        m_LightDataBuffer = new Buffer(lightDataBufferDesc);
+    }
+
     void LightComponent::OnUpdate()
     {
         Utils::AdjustLightData(m_LightData);
@@ -52,6 +62,27 @@ namespace OpenGraphics
 
     void LightComponent::OnRender()
     {
-        // TODO: upload data to a Uniform Buffer when available
+        std::array<Vector4D, 4> lightData{Vector4D::zero};
+        const auto& [color, intensity, unit, type] = m_LightData;
+        if (type == LightType::Directional)
+        {
+            lightData[0] = Vector4D(color.r, color.g, color.b, intensity);
+            lightData[1] = Vector4D(-1.0, -1.0, -1.0).Normalized();
+        }
+        else if (type == LightType::Point)
+        {
+            Vector4D lastColumn = GetGameObject().GetTransform()->GetModelMatrix()[3];
+            lastColumn.w = 20.0f;
+            lightData[2] = Vector4D(color.r, color.g, color.b, intensity);
+            lightData[3] = lastColumn;
+        }
+
+        m_LightDataBuffer->SetData(0, sizeof(Vector4D) * 4, lightData.data());
+        RenderCommand::BindUniformBuffer(m_LightDataBuffer, 0);
+    }
+
+    void LightComponent::OnDestroy()
+    {
+        delete m_LightDataBuffer;
     }
 }

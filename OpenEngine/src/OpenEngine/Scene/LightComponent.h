@@ -3,6 +3,7 @@
 #include "OpenEngine/Core/Base.h"
 #include "OpenEngine/Scene/Component.h"
 #include "OpenEngine/Math/Color.h"
+#include "OpenEngine/Render/Buffer.h"
 
 namespace OpenGraphics
 {
@@ -41,10 +42,15 @@ namespace OpenGraphics
         [[nodiscard]] inline const LightData& GetLightData() const { return m_LightData; }
         inline void SetLightData(const LightData& lightData) { m_LightData = lightData; }
 
+        void OnCreate() override;
         void OnUpdate() override;
         void OnRender() override;
+        void OnDestroy() override;
 
     private:
         LightData m_LightData{};
+
+        // HACK: The Uniform Buffer should be handled by the RenderingData
+        Buffer* m_LightDataBuffer = nullptr;
     };
 }
