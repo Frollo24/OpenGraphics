@@ -12,7 +12,7 @@ namespace OpenGraphics
     class OPEN_API SceneRenderer
     {
     public:
-        SceneRenderer(const Scene* scene);
+        SceneRenderer(const Scene* scene, bool leftHanded = false);
 
         [[nodiscard]] std::vector<const RenderCamera*> GetCameras() const;
 
@@ -32,6 +32,7 @@ namespace OpenGraphics
         void DrawMesh(const Mesh& mesh, const Transform& transform, const Material& material) const;
 
         [[nodiscard]] inline const Scene* GetScene() const { return m_Scene; }
+        [[nodiscard]] inline bool IsLeftHanded() const { return m_IsLeftHanded; }
 
         // TODO: improve interface
         [[nodiscard]] inline const EditorCamera* GetEditorCamera() const { return m_EditorCamera; }
@@ -42,5 +43,7 @@ namespace OpenGraphics
         Ref<Shader> m_SelectedShader = nullptr;
         RenderCamera* m_SelectedCamera = nullptr;
         EditorCamera* m_EditorCamera = nullptr;
+        bool m_HasStartedRendering = false;
+        bool m_IsLeftHanded = false; // NOTE: this could be a parameter for each scene or unique for a project
     };
 }

@@ -10,7 +10,6 @@ namespace OpenGraphics
         RenderingData::Init();
 
         s_RenderWorkflow = new RenderWorkflow();
-        RenderWorkflow::InitResources();
     }
 
     void RenderSystem::BeginFrame()
@@ -33,8 +32,6 @@ namespace OpenGraphics
 
     void RenderSystem::Shutdown()
     {
-        RenderWorkflow::DeleteResources();
-
         delete s_RenderWorkflow;
         s_RenderWorkflow = nullptr;
 

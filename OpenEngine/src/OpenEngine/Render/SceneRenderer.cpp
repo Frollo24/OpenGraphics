@@ -3,11 +3,12 @@
 
 #include "OpenEngine/Scene/CameraComponent.h"
 #include "OpenEngine/Render/RenderCommand.h"
+#include "OpenEngine/Render/RenderingData.h"
 
 namespace OpenGraphics
 {
-    SceneRenderer::SceneRenderer(const Scene* scene)
-        : m_Scene(const_cast<Scene*>(scene))
+    SceneRenderer::SceneRenderer(const Scene* scene, const bool leftHanded)
+        : m_Scene(const_cast<Scene*>(scene)), m_IsLeftHanded(leftHanded)
     {
 
     }
@@ -46,16 +47,24 @@ namespace OpenGraphics
     {
         m_SelectedShader = pipeline.GetShader();
         pipeline.Bind();
+        if (!m_SelectedCamera)
+            return;
+
+        Vector3D cameraPosition = m_SelectedCamera->GetPosition();
+        if (m_IsLeftHanded)
+            cameraPosition.z *= -1;
+
+        m_SelectedShader->SetFloat3("u_CameraPosition", cameraPosition);
     }
 
     void SceneRenderer::BeginCamera(const RenderCamera& renderCamera)
     {
         m_SelectedCamera = const_cast<RenderCamera*>(&renderCamera);
+    }
 
-        const Vector3D cameraPosition = m_SelectedCamera->GetPosition();
-
-        m_SelectedShader->SetFloat4("u_LightDir", Vector4D(1.0f, 1.0f, 1.0f, 0.0f));
-        m_SelectedShader->SetFloat3("u_CameraPosition", cameraPosition);
+    void SceneRenderer::EndCamera()
+    {
+        m_SelectedCamera = nullptr;
     }
 
     void SceneRenderer::EndRendering()
@@ -81,11 +90,17 @@ namespace OpenGraphics
 
     void SceneRenderer::DrawMesh(const Mesh& mesh, const Transform& transform, const Material& material) const
     {
-        const Matrix4x4& model = transform.GetModelMatrix();
-        const Matrix4x4& normal = Matrix4x4(model).Inverse().Transpose();
-        const Matrix4x4 view = m_SelectedCamera->GetView();
+        Matrix4x4 model = transform.GetModelMatrix();
+        Matrix4x4 view = m_SelectedCamera->GetView();
         const Matrix4x4 proj = m_SelectedCamera->GetProjection();
 
+        if (m_IsLeftHanded)
+        {
+            model.Scale(Vector3D(1, 1, -1));
+            view.Scale(Vector3D(1, 1, -1));
+        }
+
+        const Matrix4x4 normal = Matrix4x4(model).Inverse().Transpose();
         const Matrix4x4 modelViewProj = proj * view * model;
 
         const Color mainColor = material.MainColor;
@@ -94,6 +109,11 @@ namespace OpenGraphics
 
         const float metallic = material.GetFloat("_Metallic");
         const float roughness = material.GetFloat("_Roughness");
+
+        // NOTE: This should be a property of any material instance
+        RenderingData::GetWhiteTexture()->BindTextureUnit(0);
+        RenderingData::GetWhiteTexture()->BindTextureUnit(1);
+        RenderingData::GetWhiteTexture()->BindTextureUnit(2);
 
         m_SelectedShader->SetMat4("u_ModelViewProj", modelViewProj);
         m_SelectedShader->SetMat4("u_Model", model);
