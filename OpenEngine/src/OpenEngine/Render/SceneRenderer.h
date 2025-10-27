@@ -16,7 +16,7 @@ namespace OpenGraphics
 
         [[nodiscard]] std::vector<const RenderCamera*> GetCameras() const;
 
-        void BeginRendering();
+        void BeginRendering(bool recordedRendering = true);
         void SetPipeline(const Pipeline& pipeline);
         void BeginCamera(const RenderCamera& renderCamera);
         void EndCamera();
@@ -34,8 +34,6 @@ namespace OpenGraphics
         [[nodiscard]] inline const Scene* GetScene() const { return m_Scene; }
         [[nodiscard]] inline bool IsLeftHanded() const { return m_IsLeftHanded; }
 
-        // TODO: improve interface
-        [[nodiscard]] inline const EditorCamera* GetEditorCamera() const { return m_EditorCamera; }
         void SetEditorCamera(EditorCamera* camera) { m_EditorCamera = camera; }
 
     private:
@@ -44,6 +42,7 @@ namespace OpenGraphics
         RenderCamera* m_SelectedCamera = nullptr;
         EditorCamera* m_EditorCamera = nullptr;
         bool m_HasStartedRendering = false;
+        bool m_RecordedRendering = false;
         bool m_IsLeftHanded = false; // NOTE: this could be a parameter for each scene or unique for a project
     };
 }

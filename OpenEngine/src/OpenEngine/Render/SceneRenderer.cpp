@@ -37,10 +37,20 @@ namespace OpenGraphics
         return cameras;
     }
 
-    void SceneRenderer::BeginRendering()
+    void SceneRenderer::BeginRendering(const bool recordedRendering)
     {
+        if (m_HasStartedRendering)
+        {
+            OG_ASSERT(false, "Scene Renderer has already started rendering, did you forget to call EndRendering?");
+            return;
+        }
+
+        m_HasStartedRendering = true;
+
         // TODO: select whether to render to a render texture or to the default framebuffer
-        // TODO: select whether to start direct rendering of recorded rendering
+
+        // TODO: select whether to start direct rendering of recorded rendering (i.e. implement a render queue)
+        m_RecordedRendering = recordedRendering;
     }
 
     void SceneRenderer::SetPipeline(const Pipeline& pipeline)
@@ -69,8 +79,18 @@ namespace OpenGraphics
 
     void SceneRenderer::EndRendering()
     {
-        // TODO: check not to call this method if BeginRendering hasn't been called before
-        // TODO: submit commands if recorded rendering was started
+        if (!m_HasStartedRendering)
+        {
+            OG_ASSERT(false, "Scene Renderer hasn't started rendering, did you forget to call BeginRendering?");
+            return;
+        }
+
+        m_HasStartedRendering = false;
+
+        if (m_RecordedRendering)
+        {
+            // TODO: submit commands if recorded rendering was started
+        }
     }
 
     void SceneRenderer::DrawModel(const Model& model, const Transform& transform) const
