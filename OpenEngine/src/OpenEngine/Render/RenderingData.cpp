@@ -15,6 +15,8 @@ namespace OpenGraphics
         VertexArray* SkyboxVertexArray = nullptr;
         Ref<Texture> SkyboxCubemapTexture = nullptr;
 
+        std::array<Buffer*, static_cast<int>(UBOBindingIndex::COUNT)> UniformBuffers = {nullptr};
+
         Ref<Texture> BlackTexture = nullptr;
         Ref<Texture> WhiteTexture = nullptr;
         Ref<Texture> CheckerboardTexture = nullptr;
@@ -151,6 +153,14 @@ namespace OpenGraphics
         s_RenderingData->SkyboxCubemapTexture = CreateRef<Texture>(cubemapDesc);
         s_RenderingData->SkyboxCubemapTexture->SetData(cubemapData.data());
 
+        // Uniform buffers
+        BufferDescription lightDataBufferDesc{};
+        lightDataBufferDesc.Type = BufferType::Uniform;
+        lightDataBufferDesc.Size = sizeof(Vector4D) * 4; // 2 for directional light + 2 for point light
+        lightDataBufferDesc.Usage = BufferUsage::DynamicDraw;
+        Buffer* lightDataBuffer = new Buffer(lightDataBufferDesc);
+        s_RenderingData->UniformBuffers[0] = lightDataBuffer;
+
         // Common textures
         constexpr uint32_t black = 0x00000000;
         constexpr uint32_t white = 0xffffffff;
@@ -225,6 +235,11 @@ namespace OpenGraphics
     const Ref<Texture>& RenderingData::GetSkyboxCubemapTexture()
     {
         return s_RenderingData->SkyboxCubemapTexture;
+    }
+
+    Buffer& RenderingData::GetUniformBuffer(UBOBindingIndex index)
+    {
+        return *s_RenderingData->UniformBuffers[static_cast<int>(index)];
     }
 
     const Ref<Texture>& RenderingData::GetBlackTexture()

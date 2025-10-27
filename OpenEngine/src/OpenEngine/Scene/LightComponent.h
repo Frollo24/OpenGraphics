@@ -49,8 +49,5 @@ namespace OpenGraphics
 
     private:
         LightData m_LightData{};
-
-        // HACK: The Uniform Buffer should be handled by the RenderingData
-        Buffer* m_LightDataBuffer = nullptr;
     };
 }

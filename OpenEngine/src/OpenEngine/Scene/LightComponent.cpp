@@ -5,6 +5,7 @@
 #include "RenderComponent.h"
 #include "OpenEngine/Math/Mathf.h"
 #include "OpenEngine/Render/RenderCommand.h"
+#include "OpenEngine/Render/RenderingData.h"
 
 namespace OpenGraphics
 {
@@ -48,11 +49,7 @@ namespace OpenGraphics
 
     void LightComponent::OnCreate()
     {
-        BufferDescription lightDataBufferDesc{};
-        lightDataBufferDesc.Type = BufferType::Uniform;
-        lightDataBufferDesc.Size = sizeof(Vector4D) * 4; // 2 for directional light + 2 for point light
-        lightDataBufferDesc.Usage = BufferUsage::DynamicDraw;
-        m_LightDataBuffer = new Buffer(lightDataBufferDesc);
+        // Advise the light manager to register a new light
     }
 
     void LightComponent::OnUpdate()
@@ -77,12 +74,13 @@ namespace OpenGraphics
             lightData[3] = lastColumn;
         }
 
-        m_LightDataBuffer->SetData(0, sizeof(Vector4D) * 4, lightData.data());
-        RenderCommand::BindUniformBuffer(m_LightDataBuffer, 0);
+        Buffer& lightDataBuffer = RenderingData::GetUniformBuffer(UBOBindingIndex::LightData);
+        lightDataBuffer.SetData(0, sizeof(Vector4D) * 4, lightData.data());
+        RenderCommand::BindUniformBuffer(&lightDataBuffer, 0);
     }
 
     void LightComponent::OnDestroy()
     {
-        delete m_LightDataBuffer;
+        // Advise the light manager to unregister a new light
     }
 }

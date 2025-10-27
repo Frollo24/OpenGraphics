@@ -8,17 +8,28 @@
 
 namespace OpenGraphics
 {
+    enum class UBOBindingIndex
+    {
+        LightData,
+        COUNT
+    };
+
     class OPEN_API RenderingData
     {
     public:
         static void Init();
         static void Shutdown();
 
+        // Skybox data
         static const Buffer& GetSkyboxVertexBuffer();
         static const Buffer& GetSkyboxIndexBuffer();
         static const VertexArray& GetSkyboxVertexArray();
         static const Ref<Texture>& GetSkyboxCubemapTexture();
 
+        // Uniform buffers
+        static Buffer& GetUniformBuffer(UBOBindingIndex index);
+
+        // Common textures
         static const Ref<Texture>& GetBlackTexture();
         static const Ref<Texture>& GetWhiteTexture();
 
