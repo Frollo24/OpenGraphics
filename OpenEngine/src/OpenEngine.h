@@ -28,6 +28,7 @@
 #include "OpenEngine/Scene/Scene.h"
 #include "OpenEngine/Scene/Transform.h"
 #include "OpenEngine/Scene/RenderComponent.h"
+#include "OpenEngine/Scene/ModelRenderComponent.h"
 #include "OpenEngine/Scene/CameraComponent.h"
 #include "OpenEngine/Scene/LightComponent.h"
 

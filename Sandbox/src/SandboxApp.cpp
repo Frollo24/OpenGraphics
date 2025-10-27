@@ -64,7 +64,7 @@ public:
         starGameObject->GetTransform()->Rotate(Vector3D::left, 15);
 
         // HACK: materials should be modifiable by changing the reference to the material
-        const auto sphereRenderComponent = m_SphereGameObject->AddComponent<RenderComponent>();
+        const auto sphereRenderComponent = m_SphereGameObject->AddComponent<ModelRenderComponent>();
         Model* sphereModel = new Model("assets/models/Sphere.obj");
 
         auto& sphereMaterial = const_cast<Material&>(sphereModel->GetMeshes().at(0).GetMaterial());
@@ -76,7 +76,7 @@ public:
         Logger::Debug("{} shininess: {}", sphereMaterial.Name, sphereMaterial.GetFloat("_Shininess"));
 
         sphereRenderComponent->SetModel(sphereModel);
-        const auto starRenderComponent = starGameObject->AddComponent<RenderComponent>();
+        const auto starRenderComponent = starGameObject->AddComponent<ModelRenderComponent>();
         Model* starModel = new Model("assets/models/Star.obj");
         auto& starMaterial = const_cast<Material&>(starModel->GetMeshes().at(0).GetMaterial());
         starMaterial.MainColor = Color(0.8f, 0.65f, 0.0f, 1.0f);
