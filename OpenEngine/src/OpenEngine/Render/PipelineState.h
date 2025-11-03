@@ -1,6 +1,7 @@
 #pragma once
 
 #include "OpenEngine/Core/Base.h"
+#include "OpenEngine/Render/Common.h"
 
 namespace OpenGraphics
 {
@@ -81,7 +82,6 @@ namespace OpenGraphics
 		float A = 0.0f;
 	};
 
-	inline constexpr int MAX_COLOR_ATTACHMENTS = 8;
 	struct PipelineBlendState
 	{
 		std::array<BlendAttachment, MAX_COLOR_ATTACHMENTS> BlendAttachments{};

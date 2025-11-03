@@ -115,6 +115,7 @@ namespace OpenGraphics
     void RenderCommand::BeginFrame()
     {
         glClearColor(0.2f, 0.3f, 0.8f, 1.0f);
+		glClearDepthf(1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
@@ -123,6 +124,71 @@ namespace OpenGraphics
         // Reset buffer writing to true for any buffer
         glDepthMask(GL_TRUE);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    }
+
+    void RenderCommand::BeginRenderPass(const Framebuffer* framebuffer)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer->GetRendererID());
+
+		const FramebufferDescription& description = framebuffer->GetDescription();
+		const GLuint framebufferID = framebuffer->GetRendererID();
+		GLuint drawbuffer = 0;
+		int attachmentIndex = 0;
+		ClearValues clearValues = {};
+
+		for (const AttachmentType& attachment : description.Attachments)
+		{
+			if (attachment == AttachmentType::None)
+				break;
+
+			clearValues = description.ClearValues[attachmentIndex++];
+			switch (attachment)
+			{
+				case AttachmentType::Color:
+					if (static_cast<bool>(clearValues.ClearFlags & ClearFlags::Color))
+					{
+						std::array<GLfloat, 4> clearColor = {
+							clearValues.Color.r, clearValues.Color.g, clearValues.Color.b, clearValues.Color.a
+						};
+						glClearNamedFramebufferfv(framebufferID, GL_COLOR, drawbuffer++, clearColor.data());
+					}
+					break;
+				case AttachmentType::Depth:
+					if (static_cast<bool>(clearValues.ClearFlags & ClearFlags::Depth))
+					{
+						GLfloat depth = clearValues.Depth;
+						glClearNamedFramebufferfv(framebufferID, GL_DEPTH, 0, &depth);
+					}
+					break;
+				case AttachmentType::Stencil:
+					if (static_cast<bool>(clearValues.ClearFlags & ClearFlags::Stencil))
+					{
+						GLint stencil = clearValues.Stencil;
+						glClearNamedFramebufferiv(framebufferID, GL_STENCIL, 0, &stencil);
+					}
+					break;
+				case AttachmentType::DepthStencil:
+					if (clearValues.ClearFlags == ClearFlags::DepthStencil)
+					{
+						const GLfloat depth = clearValues.Depth;
+						const GLint stencil = clearValues.Stencil;
+						glClearNamedFramebufferfi(framebufferID, GL_DEPTH_STENCIL, 0, depth, stencil);
+					}
+					break;
+				default:
+					break;
+			}
+		}
+    }
+
+    void RenderCommand::EndRenderPass()
+	{
+		// At the moment this does nothing
+    }
+
+    void RenderCommand::DefaultFrameBuffer()
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     void RenderCommand::SetViewport(const uint32_t x, const uint32_t y, const uint32_t width, const uint32_t height)

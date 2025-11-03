@@ -112,6 +112,19 @@ public:
         auto dynRef2 = dynamicRefArray.CreateRefAt(0);
 
         OG_ASSERT(dynRef1.Get() == dynRef2.Get(), "Bad pointer sync");
+
+        TextureDescription renderTargetDesc = {};
+        renderTargetDesc.ImageExtent = { 800, 600, 1};
+        renderTargetDesc.ImageFormat = ImageFormat::RGBA8;
+        renderTargetDesc.SampleCount = SampleCount::Count4;
+        renderTargetDesc.GenerateMipmaps = false;
+
+        FramebufferDescription framebufferDesc = {};
+        framebufferDesc.RenderTargets[0] = CreateRef<Texture>(renderTargetDesc);
+        framebufferDesc.ClearValues[0].Color = Color::black;
+        framebufferDesc.Attachments[0] = AttachmentType::Color;
+
+        m_Framebuffer = new Framebuffer(framebufferDesc);
     }
 
     void Update() override {
@@ -140,16 +153,20 @@ public:
         RenderSystem::BeginFrame();
 
         // NOTE: on a proper editor application, we can use two similar scene renderers which only differs on
-        // having an aditional editor camera
+        // having an additional editor camera
         m_SceneRenderer.BeginRendering();
         RenderSystem::RenderScene(m_SceneRenderer);
         m_SceneRenderer.EndRendering();
 
+        RenderCommand::BeginRenderPass(m_Framebuffer);
         m_TrianglePipeline->Bind();
         RenderCommand::BindVertexArray(m_TriangleVertexArray);
         RenderCommand::SetVertexBuffer(m_VertexBuffer, m_TriangleVertexAttribBinding);
         RenderCommand::SetPrimitiveTopology(PrimitiveTopology::Triangles);
-        // RenderCommand::Draw(0, 3);
+        RenderCommand::Draw(0, 3);
+        RenderCommand::EndRenderPass();
+
+        RenderCommand::DefaultFrameBuffer();
 
         RenderSystem::EndFrame();
         GetWindow()->SwapBuffers();
@@ -178,6 +195,8 @@ private:
     GameObject* m_SphereGameObject = nullptr;
 
     SceneRenderer m_SceneRenderer = nullptr;
+
+    Framebuffer* m_Framebuffer = nullptr;
 };
 
 OpenGraphics::Application* OpenGraphics::CreateApplication() {

@@ -19,6 +19,7 @@
 #include "OpenEngine/Render/VertexArray.h"
 #include "OpenEngine/Render/Shader.h"
 #include "OpenEngine/Render/Texture.h"
+#include "OpenEngine/Render/Framebuffer.h"
 #include "OpenEngine/Render/RenderCommand.h"
 #include "OpenEngine/Render/RenderEntity.h"
 #include "OpenEngine/Render/RenderCamera.h"

@@ -6,6 +6,7 @@
 #include "OpenEngine/Render/VertexArray.h"
 #include "OpenEngine/Render/PrimitiveTopology.h"
 #include "OpenEngine/Render/Pipeline.h"
+#include "OpenEngine/Render/Framebuffer.h"
 
 namespace OpenGraphics
 {
@@ -21,6 +22,10 @@ namespace OpenGraphics
     public:
         static void BeginFrame();
         static void EndFrame();
+
+        static void BeginRenderPass(const Framebuffer* framebuffer);
+        static void EndRenderPass();
+        static void DefaultFrameBuffer();
 
         static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
 
