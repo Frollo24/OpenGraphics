@@ -37,7 +37,7 @@ namespace OpenGraphics
         return cameras;
     }
 
-    void SceneRenderer::BeginRendering(const bool recordedRendering)
+    void SceneRenderer::BeginRendering(Framebuffer* const renderFramebuffer, const bool recordedRendering)
     {
         if (m_HasStartedRendering)
         {
@@ -47,7 +47,7 @@ namespace OpenGraphics
 
         m_HasStartedRendering = true;
 
-        // TODO: select whether to render to a render texture or to the default framebuffer
+        m_RenderFramebuffer = renderFramebuffer;
 
         // TODO: select whether to start direct rendering of recorded rendering (i.e. implement a render queue)
         m_RecordedRendering = recordedRendering;
@@ -90,6 +90,19 @@ namespace OpenGraphics
         if (m_RecordedRendering)
         {
             // TODO: submit commands if recorded rendering was started
+        }
+
+        if (m_RenderFramebuffer)
+        {
+            // Not rendering into the default framebuffer, so we copy the result
+            // to this framebuffer
+
+            const uint32_t width = m_RenderFramebuffer->GetDescription().Width;
+            const uint32_t height = m_RenderFramebuffer->GetDescription().Height;
+
+            RenderCommand::BeginRenderPass(m_RenderFramebuffer);
+            RenderCommand::SetViewport(0, 0, width, height);
+            RenderCommand::EndRenderPass();
         }
     }
 

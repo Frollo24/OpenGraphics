@@ -15,6 +15,7 @@ namespace OpenGraphics
         VertexArray* VertexArray = nullptr;
         Ref<Shader> Shader = nullptr;
         PrimitiveTopology PrimitiveTopology = PrimitiveTopology::Triangles;
+        Framebuffer* Framebuffer = nullptr;
     };
 
     class OPEN_API RenderCommand

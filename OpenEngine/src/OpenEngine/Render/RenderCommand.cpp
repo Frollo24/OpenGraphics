@@ -128,6 +128,10 @@ namespace OpenGraphics
 
     void RenderCommand::BeginRenderPass(const Framebuffer* framebuffer)
 	{
+		s_RenderState.Framebuffer = const_cast<Framebuffer*>(framebuffer);
+		if (!framebuffer)
+			return;
+
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer->GetRendererID());
 
 		const FramebufferDescription& description = framebuffer->GetDescription();
@@ -188,6 +192,7 @@ namespace OpenGraphics
 
     void RenderCommand::DefaultFrameBuffer()
 	{
+		s_RenderState.Framebuffer = nullptr;
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 

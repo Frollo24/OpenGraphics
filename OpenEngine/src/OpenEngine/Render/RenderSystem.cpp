@@ -35,6 +35,7 @@ namespace OpenGraphics
         delete s_RenderWorkflow;
         s_RenderWorkflow = nullptr;
 
+        RenderCommand::DefaultFrameBuffer();
         RenderCommand::BindVertexArray(nullptr);
         RenderCommand::UseShader(nullptr);
 

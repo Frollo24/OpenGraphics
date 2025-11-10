@@ -4,6 +4,7 @@
 #include "OpenEngine/Elements/Model.h"
 #include "OpenEngine/Elements/EditorCamera.h"
 #include "OpenEngine/Render/Pipeline.h"
+#include "OpenEngine/Render/Framebuffer.h"
 #include "OpenEngine/Render/RenderCamera.h"
 #include "OpenEngine/Scene/Scene.h"
 
@@ -16,7 +17,7 @@ namespace OpenGraphics
 
         [[nodiscard]] std::vector<const RenderCamera*> GetCameras() const;
 
-        void BeginRendering(bool recordedRendering = true);
+        void BeginRendering(Framebuffer* renderFramebuffer = nullptr, bool recordedRendering = true);
         void SetPipeline(const Pipeline& pipeline);
         void BeginCamera(const RenderCamera& renderCamera);
         void EndCamera();
@@ -41,6 +42,7 @@ namespace OpenGraphics
         Ref<Shader> m_SelectedShader = nullptr;
         RenderCamera* m_SelectedCamera = nullptr;
         EditorCamera* m_EditorCamera = nullptr;
+        Framebuffer* m_RenderFramebuffer = nullptr;
         bool m_HasStartedRendering = false;
         bool m_RecordedRendering = false;
         bool m_IsLeftHanded = false; // NOTE: this could be a parameter for each scene or unique for a project

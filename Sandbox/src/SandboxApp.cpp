@@ -123,6 +123,8 @@ public:
         framebufferDesc.RenderTargets[0] = CreateRef<Texture>(renderTargetDesc);
         framebufferDesc.ClearValues[0].Color = Color::black;
         framebufferDesc.Attachments[0] = AttachmentType::Color;
+        framebufferDesc.Width = 800;
+        framebufferDesc.Height = 600;
 
         m_Framebuffer = new Framebuffer(framebufferDesc);
     }
@@ -154,7 +156,7 @@ public:
 
         // NOTE: on a proper editor application, we can use two similar scene renderers which only differs on
         // having an additional editor camera
-        m_SceneRenderer.BeginRendering();
+        m_SceneRenderer.BeginRendering(m_Framebuffer);
         RenderSystem::RenderScene(m_SceneRenderer);
         m_SceneRenderer.EndRendering();
 
