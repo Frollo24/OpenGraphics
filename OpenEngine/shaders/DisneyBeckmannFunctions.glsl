@@ -2,18 +2,19 @@
 
 #include "PBRFunctions.glsl"
 
-struct DisneyEpicSurfaceData {
+// TODO: expand
+struct DisneyBeckmannSurfaceData {
     vec4 baseColor;
     float metallic;
     float roughness;
 };
 
-vec3 AmbientDisneyEpic(DisneyEpicSurfaceData surface) {
+vec3 AmbientDisneyBeckmann(DisneyBeckmannSurfaceData surface) {
     // Ambient component
     return surface.baseColor.rgb * 0.01;
 }
 
-vec3 LightDisneyEpicWorld(Light light, DisneyEpicSurfaceData surface, vec3 worldViewDirection, vec3 worldNormal) {
+vec3 LightDisneyBeckmannWorld(Light light, DisneyBeckmannSurfaceData surface, vec3 worldViewDirection, vec3 worldNormal) {
     vec3 color = vec3(0.0);
 
     // Surface parameters
@@ -33,15 +34,16 @@ vec3 LightDisneyEpicWorld(Light light, DisneyEpicSurfaceData surface, vec3 world
     float NdotL = max(dot(N, L), 0.0);
     float NdotH = max(dot(N, H), 0.0);
     float NdotV = max(dot(N, V), 0.0);
+    float HdotL = max(dot(H, L), 0.0);
     float HdotV = max(dot(H, V), 0.0);
 
     // PBR parameters
-    float D = DistributionGGX(NdotH, roughness);
-    float G = GeometrySmith(NdotV, NdotL, roughness);
+    float D = DistributionBeckmann(NdotH, roughness);
+    float G = GeometryBeckmann(NdotV, NdotL, roughness);
     vec3 F = FresnelSchlick(HdotV, F0);
 
     // Diffuse component
-    vec3 diffuse = (1.0 - metallic) * baseColor * DiffuseLambertian();
+    vec3 diffuse = (1.0 - metallic) * baseColor * DiffuseDisneyBurley(NdotV, NdotL, HdotL, roughness);
 
     // Specular component
     vec3 specular = D * G * F;
@@ -55,7 +57,7 @@ vec3 LightDisneyEpicWorld(Light light, DisneyEpicSurfaceData surface, vec3 world
     return color;
 }
 
-vec3 DirectionalLightDisneyEpicWorld(DirectionalLight directionalLight, DisneyEpicSurfaceData surface, vec3 worldPos, vec3 worldNormal) {
+vec3 DirectionalLightDisneyBeckmannWorld(DirectionalLight directionalLight, DisneyBeckmannSurfaceData surface, vec3 worldPos, vec3 worldNormal) {
     vec3 worldViewDirection = normalize(u_CameraPosition - worldPos);
 
     Light light;
@@ -64,10 +66,10 @@ vec3 DirectionalLightDisneyEpicWorld(DirectionalLight directionalLight, DisneyEp
     light.direction = normalize(-directionalLight.direction);
     light.attenuation = 1.0;  // Directional light does not attenuate w.r.t. distance
 
-    return LightDisneyEpicWorld(light, surface, worldViewDirection, worldNormal);
+    return LightDisneyBeckmannWorld(light, surface, worldViewDirection, worldNormal);
 }
 
-vec3 PointLightDisneyEpicWorld(PointLight pointLight, DisneyEpicSurfaceData surface, vec3 worldPos, vec3 worldNormal) {
+vec3 PointLightDisneyBeckmannWorld(PointLight pointLight, DisneyBeckmannSurfaceData surface, vec3 worldPos, vec3 worldNormal) {
     vec3 lightDirection = normalize(pointLight.position - worldPos);
     vec3 worldViewDirection = normalize(u_CameraPosition - worldPos);
 
@@ -84,10 +86,10 @@ vec3 PointLightDisneyEpicWorld(PointLight pointLight, DisneyEpicSurfaceData surf
     light.direction = lightDirection;
     light.attenuation = distanceAttenuation;
 
-    return LightDisneyEpicWorld(light, surface, worldViewDirection, worldNormal);
+    return LightDisneyBeckmannWorld(light, surface, worldViewDirection, worldNormal);
 }
 
-vec3 SpotLightDisneyEpicWorld(SpotLight spotLight, DisneyEpicSurfaceData surface, vec3 worldPos, vec3 worldNormal) {
+vec3 SpotLightDisneyBeckmannWorld(SpotLight spotLight, DisneyBeckmannSurfaceData surface, vec3 worldPos, vec3 worldNormal) {
     vec3 lightDirection = normalize(spotLight.position - worldPos);
     vec3 worldViewDirection = normalize(u_CameraPosition - worldPos);
 
@@ -110,10 +112,10 @@ vec3 SpotLightDisneyEpicWorld(SpotLight spotLight, DisneyEpicSurfaceData surface
     light.direction = lightDirection;
     light.attenuation = distanceAttenuation * spotIntensityAttenuation;
 
-    return LightDisneyEpicWorld(light, surface, worldViewDirection, worldNormal);
+    return LightDisneyBeckmannWorld(light, surface, worldViewDirection, worldNormal);
 }
 
-vec3 EmissiveDisneyEpicWorld(DisneyEpicSurfaceData surface, vec3 worldPos) {
+vec3 EmissiveDisneyBeckmannWorld(DisneyBeckmannSurfaceData surface, vec3 worldPos) {
     // TODO: implement
     return vec3(0.0);
 }

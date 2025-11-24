@@ -40,3 +40,5 @@ layout (std140, binding = 0) uniform Lights {
 
 #include "BlinnPhongFunctions.glsl"
 #include "DisneyEpicGamesFunctions.glsl"
+#include "GoogleFilamentFunctions.glsl"
+#include "DisneyBeckmannFunctions.glsl"

@@ -45,11 +45,15 @@ namespace OpenGraphics
         modelVertexShader.Filepath = "assets/shaders/ModelShader.vert";
         modelVertexShader.Filepath = "assets/shaders/BlinnPhong.vert";
         modelVertexShader.Filepath = "assets/shaders/DisneyEpicPBR.vert";
+        modelVertexShader.Filepath = "assets/shaders/GoogleFilamentPBR.vert";
+        // modelVertexShader.Filepath = "assets/shaders/DisneyBeckmannPBR.vert";
         modelVertexShader.Type = ShaderType::Vertex;
         ShaderSpecs modelFragmentShader{};
         modelFragmentShader.Filepath = "assets/shaders/ModelShader.frag";
         modelFragmentShader.Filepath = "assets/shaders/BlinnPhong.frag";
         modelFragmentShader.Filepath = "assets/shaders/DisneyEpicPBR.frag";
+        modelFragmentShader.Filepath = "assets/shaders/GoogleFilamentPBR.frag";
+        // modelFragmentShader.Filepath = "assets/shaders/DisneyBeckmannPBR.frag";
         modelFragmentShader.Type = ShaderType::Fragment;
         s_ModelShader = new Shader({modelVertexShader, modelFragmentShader});
 
